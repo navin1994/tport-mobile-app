@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 
-// import TportNavigator from "./navigation/TportNavigator";
+import TportNavigator from "./navigation/TportNavigator";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -27,15 +27,13 @@ export default function App() {
     );
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text>Page content</Text>
-    </SafeAreaView>
-  );
+  return <TportNavigator />;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -1,34 +1,29 @@
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import LoginScreen from "../screens/auth/login/LoginScreen";
+import ForgotPasswordScreen from "../screens/auth/forgot_password/ForgotPasswordScreen";
+import TransporterRegistrationScreen from "../screens/transporter/TransporterRegistrationScreen";
+import UserRegistrationScreen from "../screens/user/UserRegistrationScreen";
 import Colors from "../shared/constants/Colors";
 
-// const defaultNavOptions = {
-//   headerStyle: {
-//     backgroundColor: Platform.OS === "android" ? Colors.primary : "",
-//   },
-//   headerTitleStyle: {
-//     // fontFamily: "open-sans-bold",
-//   },
-//   headerBackTitleStyle: {
-//     // fontFamily: "open-sans",
-//   },
-//   headerTintColor: Platform.OS === "android" ? "white" : Colors.primary,
-// };
+const Stack = createNativeStackNavigator();
 
-const TportNavigator = createStackNavigator(
-  {
-    Login: LoginScreen,
-  },
-  {
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: Colors.titleBackgroundColor,
-      },
-      headerTintColor: "white",
-    },
-  }
-);
+const TportNavigation = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="ForgotPwd" component={ForgotPasswordScreen} />
+        <Stack.Screen
+          name="TrnspReg"
+          component={TransporterRegistrationScreen}
+        />
+        <Stack.Screen name="UserReg" component={UserRegistrationScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
-export default createAppContainer(TportNavigator);
+export default TportNavigation;
