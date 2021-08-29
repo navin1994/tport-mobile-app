@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 
 import BackgroundImage from "../UI/BackgroundImage";
@@ -10,11 +10,11 @@ const window = Dimensions.get("window");
 const AuthScreenContainer = (props) => {
   const { navigation } = props;
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerShown: false,
+  //   });
+  // }, [navigation]);
 
   return (
     <BackgroundImage>

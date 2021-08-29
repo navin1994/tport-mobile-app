@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, View, Text, TextInput } from "react-native";
 
 const TextField = (props) => {
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
   LabelContainer: {
     position: "absolute",
     left: 20,
-    top: -17,
+    top: -12,
     backgroundColor: "#fff",
-    padding: 5,
+    paddingHorizontal: 5,
     borderRadius: 5,
   },
 });

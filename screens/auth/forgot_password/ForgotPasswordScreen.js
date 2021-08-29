@@ -16,7 +16,12 @@ const ForgotPasswordScreen = (props) => {
         <Text style={styles.title}>FORGOT PASSWORD</Text>
       </View>
       <TextField
-        label="User Id"
+        label={
+          <Text>
+            User Id
+            <Text style={{ color: "red" }}>*</Text>
+          </Text>
+        }
         leadingIcon={<Ionicons name="person-outline" size={25} color="black" />}
       />
       <RaisedButton

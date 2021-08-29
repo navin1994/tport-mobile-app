@@ -16,7 +16,7 @@ const TportNavigation = () => {
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
-            backgroundColor: Colors.titleBackgroundColor,
+            backgroundColor: Colors.titleBackground,
           },
           headerTintColor: "white",
           headerTitleStyle: {
@@ -25,8 +25,16 @@ const TportNavigation = () => {
           headerTitleAlign: "center",
         }}
       >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="ForgotPwd" component={ForgotPasswordScreen} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ForgotPwd"
+          component={ForgotPasswordScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="TrnspReg"
           component={TransporterRegistrationScreen}
