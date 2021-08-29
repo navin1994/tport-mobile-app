@@ -13,7 +13,18 @@ const Stack = createNativeStackNavigator();
 const TportNavigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: Colors.titleBackgroundColor,
+          },
+          headerTintColor: "white",
+          headerTitleStyle: {
+            fontFamily: "open-sans-bold",
+          },
+          headerTitleAlign: "center",
+        }}
+      >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="ForgotPwd" component={ForgotPasswordScreen} />
         <Stack.Screen

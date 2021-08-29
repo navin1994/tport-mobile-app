@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, View, StyleSheet } from "react-native";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 
@@ -27,13 +27,16 @@ export default function App() {
     );
   }
 
-  return <TportNavigator />;
+  return (
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.body}>
+        <TportNavigator />
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  screen: { flex: 1 },
+  body: { flex: 1, marginTop: 20 },
 });
