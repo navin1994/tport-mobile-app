@@ -165,7 +165,7 @@ const UserRegistrationScreen = (props) => {
                 </View>
                 <Text style={styles.msg}>I Have Read And Agree To The</Text>
               </View>
-              <TouchableCmp onPress={() => {}}>
+              <TouchableCmp onPress={() => navigation.navigate("TAndCModal")}>
                 <Text style={styles.clickbleText}>Terms Of Service.</Text>
               </TouchableCmp>
             </View>
