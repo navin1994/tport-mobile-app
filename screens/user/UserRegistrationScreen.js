@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useReducer } from "react";
 import {
   View,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   TouchableNativeFeedback,
   Platform,
   CheckBox,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -20,10 +21,86 @@ import Colors from "../../shared/constants/Colors";
 
 const window = Dimensions.get("window");
 
+const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value,
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid,
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      inputValues: updatedValues,
+      inputValidities: updatedValidities,
+      formIsValid: action.updatedFormIsValid,
+    };
+  }
+  return state;
+};
+
 const UserRegistrationScreen = (props) => {
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      userId: "",
+      password: "",
+      confirmPassword: "",
+      ownerName: "",
+      mobileNumber: "",
+      emailAddress: "",
+    },
+    inputValidities: {
+      userId: false,
+      password: false,
+      confirmPassword: false,
+      ownerName: false,
+      mobileNumber: false,
+      emailAddress: true,
+    },
+    formIsValid: false,
+  });
+
   const [isSelected, setSelection] = useState(false);
   const { navigation } = props;
+  let Icon = Ionicons;
   let TouchableCmp = TouchableOpacity;
+
+  const inputChangeHandler = (identifier, text) => {
+    let isValid = false;
+    if (text.trim().length > 0) {
+      isValid = true;
+    }
+    dispatchFormState({
+      type: FORM_INPUT_UPDATE,
+      value: text,
+      isValid: isValid,
+      input: identifier,
+    });
+  };
+
+  const formSubmitHandler = () => {
+    if (!formState.formIsValid) {
+      Alert.alert("Wrong Input", "Please check the errors in the form.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    if (!isSelected) {
+      Alert.alert("Error", "Please accept the terms and conditions.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+
+    console.log("Form is submitted");
+  };
 
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
@@ -36,7 +113,7 @@ const UserRegistrationScreen = (props) => {
         <HeaderLeft
           navigation={navigation}
           titleIcon={
-            <Ionicons
+            <Icon
               name={
                 Platform.OS === "android"
                   ? "md-person-circle-outline"
@@ -65,6 +142,8 @@ const UserRegistrationScreen = (props) => {
               </Text>
             </View>
             <TextField
+              value={formState.inputValues.userId}
+              onChangeText={inputChangeHandler.bind(this, "userId")}
               label={
                 <Text>
                   User Id
@@ -72,10 +151,16 @@ const UserRegistrationScreen = (props) => {
                 </Text>
               }
               leadingIcon={
-                <Ionicons name="person-outline" size={25} color="black" />
+                <Icon name="person-outline" size={25} color="black" />
               }
             />
+            {!formState.inputValidities.userId && (
+              <Text>Please enter valid user id.</Text>
+            )}
             <TextField
+              secureTextEntry={true}
+              value={formState.inputValues.password}
+              onChangeText={inputChangeHandler.bind(this, "password")}
               label={
                 <Text>
                   Password
@@ -83,14 +168,13 @@ const UserRegistrationScreen = (props) => {
                 </Text>
               }
               leadingIcon={
-                <Ionicons
-                  name="md-lock-closed-outline"
-                  size={25}
-                  color="black"
-                />
+                <Icon name="md-lock-closed-outline" size={25} color="black" />
               }
             />
             <TextField
+              secureTextEntry={true}
+              value={formState.inputValues.confirmPassword}
+              onChangeText={inputChangeHandler.bind(this, "confirmPassword")}
               label={
                 <Text>
                   Confirm Password
@@ -98,14 +182,12 @@ const UserRegistrationScreen = (props) => {
                 </Text>
               }
               leadingIcon={
-                <Ionicons
-                  name="md-lock-closed-outline"
-                  size={25}
-                  color="black"
-                />
+                <Icon name="md-lock-closed-outline" size={25} color="black" />
               }
             />
             <TextField
+              value={formState.inputValues.ownerName}
+              onChangeText={inputChangeHandler.bind(this, "ownerName")}
               label={
                 <Text>
                   Name Of Contact/Owner
@@ -113,7 +195,7 @@ const UserRegistrationScreen = (props) => {
                 </Text>
               }
               leadingIcon={
-                <Ionicons
+                <Icon
                   name={
                     Platform.OS === "android"
                       ? "md-person-circle-outline"
@@ -125,13 +207,17 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              maxLength={10}
+              keyboardType="phone-pad"
+              value={formState.inputValues.mobileNumber}
+              onChangeText={inputChangeHandler.bind(this, "mobileNumber")}
               label={
                 <Text>
                   Mobile Number<Text style={styles.required}>*</Text>
                 </Text>
               }
               leadingIcon={
-                <Ionicons
+                <Icon
                   name={
                     Platform.OS === "android"
                       ? "md-phone-portrait-outline"
@@ -143,9 +229,12 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              keyboardType="email-address"
+              value={formState.inputValues.emailAddress}
+              onChangeText={inputChangeHandler.bind(this, "emailAddress")}
               label="E-Mail Address"
               leadingIcon={
-                <Ionicons
+                <Icon
                   name={
                     Platform.OS === "android"
                       ? "md-mail-outline"
@@ -156,7 +245,7 @@ const UserRegistrationScreen = (props) => {
                 />
               }
             />
-            <View style={styles.tandcContainer}>
+            <View style={styles.tAndCContainer}>
               <View
                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
               >
@@ -166,10 +255,14 @@ const UserRegistrationScreen = (props) => {
                 <Text style={styles.msg}>I Have Read And Agree To The</Text>
               </View>
               <TouchableCmp onPress={() => navigation.navigate("TAndCModal")}>
-                <Text style={styles.clickbleText}>Terms Of Service.</Text>
+                <Text style={styles.clickableText}>Terms Of Service.</Text>
               </TouchableCmp>
             </View>
-            <RaisedButton style={styles.saveBtn} title="SAVE REGISTRATION" />
+            <RaisedButton
+              onPress={formSubmitHandler}
+              style={styles.saveBtn}
+              title="SAVE REGISTRATION"
+            />
           </View>
         </View>
       </ScrollView>
@@ -208,7 +301,7 @@ const styles = StyleSheet.create({
   required: {
     color: "red",
   },
-  tandcContainer: {
+  tAndCContainer: {
     marginVertical: 20,
     flexDirection: "column",
     justifyContent: "center",
@@ -218,7 +311,7 @@ const styles = StyleSheet.create({
     padding: 5,
     opacity: 0.7,
   },
-  clickbleText: {
+  clickableText: {
     fontFamily: "open-sans",
     color: "yellow",
   },
