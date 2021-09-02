@@ -1,4 +1,9 @@
-import React, { useLayoutEffect, useState, useReducer } from "react";
+import React, {
+  useLayoutEffect,
+  useState,
+  useReducer,
+  useCallback,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -40,7 +45,7 @@ const formReducer = (state, action) => {
     return {
       inputValues: updatedValues,
       inputValidities: updatedValidities,
-      formIsValid: action.updatedFormIsValid,
+      formIsValid: updatedFormIsValid,
     };
   }
   return state;
@@ -67,39 +72,54 @@ const UserRegistrationScreen = (props) => {
     formIsValid: false,
   });
 
-  const [isSelected, setSelection] = useState(false);
+  const [isChecked, setChecked] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [cnfPwdCheck, setCnfPwdCheck] = useState(true);
+  const [isUserIdValid, setIsUserIdValid] = useState({
+    flag: true,
+    errorMsg: "",
+  });
   const { navigation } = props;
   let Icon = Ionicons;
   let TouchableCmp = TouchableOpacity;
 
-  const inputChangeHandler = (identifier, text) => {
-    let isValid = false;
-    if (text.trim().length > 0) {
-      isValid = true;
+  const confirmPasswordHandler = () => {
+    const formControl = formState.inputValues;
+    if (formControl.password === formControl.confirmPassword) {
+      setCnfPwdCheck(true);
+      return;
     }
-    dispatchFormState({
-      type: FORM_INPUT_UPDATE,
-      value: text,
-      isValid: isValid,
-      input: identifier,
-    });
+    setCnfPwdCheck(false);
   };
 
+  const inputChangeHandler = useCallback(
+    (identifier, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: identifier,
+      });
+    },
+    [dispatchFormState]
+  );
+
   const formSubmitHandler = () => {
-    if (!formState.formIsValid) {
+    setIsSubmitted(true);
+    if (!formState.formIsValid || !cnfPwdCheck) {
       Alert.alert("Wrong Input", "Please check the errors in the form.", [
         { text: "Okay" },
       ]);
       return;
     }
-    if (!isSelected) {
+    if (!isChecked) {
       Alert.alert("Error", "Please accept the terms and conditions.", [
         { text: "Okay" },
       ]);
       return;
     }
 
-    console.log("Form is submitted");
+    console.log("Form is submitted==> ", formState.inputValues);
   };
 
   if (Platform.OS === "android" && Platform.Version >= 21) {
@@ -142,8 +162,12 @@ const UserRegistrationScreen = (props) => {
               </Text>
             </View>
             <TextField
-              value={formState.inputValues.userId}
-              onChangeText={inputChangeHandler.bind(this, "userId")}
+              isSubmitted={isSubmitted}
+              initiallyValid={false}
+              id="userId"
+              required
+              onInputChange={inputChangeHandler}
+              errorText="Please enter valid user id."
               label={
                 <Text>
                   User Id
@@ -154,13 +178,21 @@ const UserRegistrationScreen = (props) => {
                 <Icon name="person-outline" size={25} color="black" />
               }
             />
-            {!formState.inputValidities.userId && (
-              <Text>Please enter valid user id.</Text>
+            {!isUserIdValid.flag && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
+              </View>
             )}
             <TextField
+              onEndEditing={confirmPasswordHandler}
+              isSubmitted={isSubmitted}
+              password={formState.inputValues.confirmPassword}
+              initiallyValid={false}
+              id="password"
+              required
+              onInputChange={inputChangeHandler}
+              errorText="Please enter valid password."
               secureTextEntry={true}
-              value={formState.inputValues.password}
-              onChangeText={inputChangeHandler.bind(this, "password")}
               label={
                 <Text>
                   Password
@@ -172,9 +204,15 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              onEndEditing={confirmPasswordHandler}
+              isSubmitted={isSubmitted}
+              password={formState.inputValues.password}
+              initiallyValid={false}
+              id="confirmPassword"
+              required
+              onInputChange={inputChangeHandler}
+              errorText="Please enter valid confirm password."
               secureTextEntry={true}
-              value={formState.inputValues.confirmPassword}
-              onChangeText={inputChangeHandler.bind(this, "confirmPassword")}
               label={
                 <Text>
                   Confirm Password
@@ -185,9 +223,20 @@ const UserRegistrationScreen = (props) => {
                 <Icon name="md-lock-closed-outline" size={25} color="black" />
               }
             />
+            {!cnfPwdCheck && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>
+                  Confirm password does not match!
+                </Text>
+              </View>
+            )}
             <TextField
-              value={formState.inputValues.ownerName}
-              onChangeText={inputChangeHandler.bind(this, "ownerName")}
+              isSubmitted={isSubmitted}
+              initiallyValid={false}
+              id="ownerName"
+              required
+              onInputChange={inputChangeHandler}
+              errorText="Please enter valid owner / contact name."
               label={
                 <Text>
                   Name Of Contact/Owner
@@ -207,10 +256,16 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              isSubmitted={isSubmitted}
+              initiallyValid={false}
+              id="mobileNumber"
+              min={999999999}
+              max={10000000000}
+              required
+              onInputChange={inputChangeHandler}
+              errorText="Please enter valid mobile number."
               maxLength={10}
               keyboardType="phone-pad"
-              value={formState.inputValues.mobileNumber}
-              onChangeText={inputChangeHandler.bind(this, "mobileNumber")}
               label={
                 <Text>
                   Mobile Number<Text style={styles.required}>*</Text>
@@ -229,9 +284,13 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              isSubmitted={isSubmitted}
+              initiallyValid={true}
+              id="emailAddress"
+              email
+              onInputChange={inputChangeHandler}
+              errorText="Please enter valid email address."
               keyboardType="email-address"
-              value={formState.inputValues.emailAddress}
-              onChangeText={inputChangeHandler.bind(this, "emailAddress")}
               label="E-Mail Address"
               leadingIcon={
                 <Icon
@@ -247,10 +306,14 @@ const UserRegistrationScreen = (props) => {
             />
             <View style={styles.tAndCContainer}>
               <View
-                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
               >
                 <View style={styles.checkboxContainer}>
-                  <CheckBox value={isSelected} onValueChange={setSelection} />
+                  <CheckBox value={isChecked} onValueChange={setChecked} />
                 </View>
                 <Text style={styles.msg}>I Have Read And Agree To The</Text>
               </View>
@@ -321,9 +384,24 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     height: 20,
     width: 20,
+  },
+  errorText: {
+    fontFamily: "open-sans",
+    color: Colors.danger,
+    fontSize: 13,
+  },
+  errorContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    width: "80%",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 5,
   },
 });
 
