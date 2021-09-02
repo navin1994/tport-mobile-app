@@ -3,6 +3,7 @@ import React, {
   useState,
   useReducer,
   useCallback,
+  useEffect,
 } from "react";
 import {
   View,
@@ -15,13 +16,16 @@ import {
   Platform,
   CheckBox,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
 
 import HeaderLeft from "../../shared/components/HeaderLeft";
 import BackgroundImage from "../../shared/UI/BackgroundImage";
 import TextField from "../../shared/components/TextField";
 import RaisedButton from "../../shared/components/RaisedButton";
+import * as authActions from "../../store/action/auth";
 import Colors from "../../shared/constants/Colors";
 
 const window = Dimensions.get("window");
@@ -52,6 +56,69 @@ const formReducer = (state, action) => {
 };
 
 const UserRegistrationScreen = (props) => {
+  const [error, setError] = useState();
+  const [isChecked, setChecked] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [cnfPwdCheck, setCnfPwdCheck] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUserIdAvailable, setUserIdAvailable] = useState(false);
+  const [isUserIdValid, setIsUserIdValid] = useState({
+    flag: true,
+    errorMsg: "",
+  });
+  const { navigation } = props;
+  let Icon = Ionicons;
+  let TouchableCmp = TouchableOpacity;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("An Error Occurred", error, [{ text: "Okay" }]);
+    }
+  }, [error]);
+
+  const checkUserIdHandler = async () => {
+    const loginId = formState.inputValues.userId;
+    if (loginId.indexOf(" ") >= 0) {
+      setIsUserIdValid({
+        flag: false,
+        errorMsg: "User Id should not contain the space",
+      });
+      setUserIdAvailable(false);
+      return;
+    }
+    setError(null);
+    setIsLoading(true);
+    try {
+      const resData = await dispatch(authActions.checkUserId(loginId));
+
+      if (resData.Result === "ERR") {
+        setIsUserIdValid({
+          flag: false,
+          errorMsg:
+            "User ID invalid / already exists, please try another user id.",
+        });
+        setUserIdAvailable(false);
+      } else if (resData.Result === "OK") {
+        setIsUserIdValid({
+          flag: true,
+          errorMsg: "",
+        });
+        setUserIdAvailable(true);
+      } else {
+        setIsUserIdValid({
+          flag: false,
+          errorMsg: resData.Msg,
+        });
+        setUserIdAvailable(false);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+
+    setIsLoading(false);
+  };
+
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
       userId: "",
@@ -72,20 +139,9 @@ const UserRegistrationScreen = (props) => {
     formIsValid: false,
   });
 
-  const [isChecked, setChecked] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [cnfPwdCheck, setCnfPwdCheck] = useState(true);
-  const [isUserIdValid, setIsUserIdValid] = useState({
-    flag: true,
-    errorMsg: "",
-  });
-  const { navigation } = props;
-  let Icon = Ionicons;
-  let TouchableCmp = TouchableOpacity;
-
   const confirmPasswordHandler = () => {
-    const formControl = formState.inputValues;
-    if (formControl.password === formControl.confirmPassword) {
+    const formvalues = formState.inputValues;
+    if (formvalues.password === formvalues.confirmPassword) {
       setCnfPwdCheck(true);
       return;
     }
@@ -106,7 +162,7 @@ const UserRegistrationScreen = (props) => {
 
   const formSubmitHandler = () => {
     setIsSubmitted(true);
-    if (!formState.formIsValid || !cnfPwdCheck) {
+    if (!formState.formIsValid || !cnfPwdCheck || !isUserIdAvailable) {
       Alert.alert("Wrong Input", "Please check the errors in the form.", [
         { text: "Okay" },
       ]);
@@ -162,6 +218,7 @@ const UserRegistrationScreen = (props) => {
               </Text>
             </View>
             <TextField
+              onEndEditing={checkUserIdHandler}
               isSubmitted={isSubmitted}
               initiallyValid={false}
               id="userId"
@@ -178,9 +235,29 @@ const UserRegistrationScreen = (props) => {
                 <Icon name="person-outline" size={25} color="black" />
               }
             />
+            {isLoading && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.checkUId}>
+                  Checking user id availability...
+                </Text>
+                <ActivityIndicator size="small" color="black" />
+              </View>
+            )}
             {!isUserIdValid.flag && (
               <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
+              </View>
+            )}
+            {isUserIdAvailable && (
+              <View style={styles.errorContainer}>
+                <Text
+                  style={
+                    (styles.errorText,
+                    { color: Colors.success, fontFamily: "open-sans-bold" })
+                  }
+                >
+                  User Id is available
+                </Text>
               </View>
             )}
             <TextField
@@ -337,8 +414,6 @@ const UserRegistrationScreen = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
   },
   container: {
     flexDirection: "column",
@@ -403,6 +478,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
+  },
+  checkUId: {
+    fontFamily: "open-sans-bold",
+    color: "black",
+    fontSize: 14,
   },
 });
 

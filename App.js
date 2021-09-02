@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet, StatusBar } from "react-native";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
+import ReduxThunk from "redux-thunk";
 
 import TportNavigator from "./navigation/TportNavigator";
+import authReducer from "./store/reducer/auth";
+
+const rootReducer = combineReducers({
+  auth: authReducer,
+});
+
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -28,12 +38,14 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <StatusBar hidden={false} />
-      <View style={styles.body}>
-        <TportNavigator />
-      </View>
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={styles.screen}>
+        <StatusBar hidden={false} />
+        <View style={styles.body}>
+          <TportNavigator />
+        </View>
+      </SafeAreaView>
+    </Provider>
   );
 }
 
