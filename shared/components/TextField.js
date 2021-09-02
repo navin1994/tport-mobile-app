@@ -53,6 +53,9 @@ const TextField = (props) => {
     ) {
       isValid = false;
     }
+    if (props.mobileNumber && isNaN(text)) {
+      isValid = false;
+    }
     if (props.secureTextEntry && text !== props.password) {
       isValid = false;
     }

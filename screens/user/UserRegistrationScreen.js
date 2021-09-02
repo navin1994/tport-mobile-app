@@ -256,6 +256,7 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              mobileNumber
               isSubmitted={isSubmitted}
               initiallyValid={false}
               id="mobileNumber"
@@ -265,7 +266,7 @@ const UserRegistrationScreen = (props) => {
               onInputChange={inputChangeHandler}
               errorText="Please enter valid mobile number."
               maxLength={10}
-              keyboardType="phone-pad"
+              keyboardType="numeric"
               label={
                 <Text>
                   Mobile Number<Text style={styles.required}>*</Text>
