@@ -79,6 +79,14 @@ const UserRegistrationScreen = (props) => {
 
   const checkUserIdHandler = async () => {
     const loginId = formState.inputValues.userId;
+    if (loginId.length === 0) {
+      setIsUserIdValid({
+        flag: true,
+        errorMsg: "",
+      });
+      setUserIdAvailable(false);
+      return;
+    }
     if (loginId.indexOf(" ") >= 0) {
       setIsUserIdValid({
         flag: false,
