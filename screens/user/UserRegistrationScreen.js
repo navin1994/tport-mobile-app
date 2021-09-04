@@ -31,31 +31,63 @@ import Colors from "../../shared/constants/Colors";
 const window = Dimensions.get("window");
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
+const RESET_FORM = "RESET_FORM";
+
+const initialFormState = {
+  inputValues: {
+    userId: "",
+    password: "",
+    confirmPassword: "",
+    ownerName: "",
+    mobileNumber: "",
+    emailAddress: "",
+  },
+  inputValidities: {
+    userId: false,
+    password: false,
+    confirmPassword: false,
+    ownerName: false,
+    mobileNumber: false,
+    emailAddress: true,
+  },
+  formIsValid: false,
+};
 
 const formReducer = (state, action) => {
-  if (action.type === FORM_INPUT_UPDATE) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value,
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid,
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-    }
-    return {
-      inputValues: updatedValues,
-      inputValidities: updatedValidities,
-      formIsValid: updatedFormIsValid,
-    };
+  switch (action.type) {
+    case FORM_INPUT_UPDATE:
+      const updatedValues = {
+        ...state.inputValues,
+        [action.input]: action.value,
+      };
+      const updatedValidities = {
+        ...state.inputValidities,
+        [action.input]: action.isValid,
+      };
+      let updatedFormIsValid = true;
+      for (const key in updatedValidities) {
+        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+      }
+      return {
+        inputValues: updatedValues,
+        inputValidities: updatedValidities,
+        formIsValid: updatedFormIsValid,
+      };
+
+    case RESET_FORM:
+      return initialFormState;
+
+    default:
+      return state;
   }
-  return state;
 };
 
 const UserRegistrationScreen = (props) => {
+  const [formState, dispatchFormState] = useReducer(
+    formReducer,
+    initialFormState
+  );
+  const [isSubLoader, setIsSubLoader] = useState(false);
   const [error, setError] = useState();
   const [isChecked, setChecked] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -113,12 +145,6 @@ const UserRegistrationScreen = (props) => {
           errorMsg: "",
         });
         setUserIdAvailable(true);
-      } else {
-        setIsUserIdValid({
-          flag: false,
-          errorMsg: resData.Msg,
-        });
-        setUserIdAvailable(false);
       }
     } catch (err) {
       setError(err.message);
@@ -126,26 +152,6 @@ const UserRegistrationScreen = (props) => {
 
     setIsLoading(false);
   };
-
-  const [formState, dispatchFormState] = useReducer(formReducer, {
-    inputValues: {
-      userId: "",
-      password: "",
-      confirmPassword: "",
-      ownerName: "",
-      mobileNumber: "",
-      emailAddress: "",
-    },
-    inputValidities: {
-      userId: false,
-      password: false,
-      confirmPassword: false,
-      ownerName: false,
-      mobileNumber: false,
-      emailAddress: true,
-    },
-    formIsValid: false,
-  });
 
   const confirmPasswordHandler = () => {
     const formvalues = formState.inputValues;
@@ -168,7 +174,7 @@ const UserRegistrationScreen = (props) => {
     [dispatchFormState]
   );
 
-  const formSubmitHandler = () => {
+  const formSubmitHandler = async () => {
     setIsSubmitted(true);
     if (!formState.formIsValid || !cnfPwdCheck || !isUserIdAvailable) {
       Alert.alert("Wrong Input", "Please check the errors in the form.", [
@@ -182,8 +188,32 @@ const UserRegistrationScreen = (props) => {
       ]);
       return;
     }
-
-    console.log("Form is submitted==> ", formState.inputValues);
+    setError(null);
+    setIsSubLoader(true);
+    try {
+      const resData = await dispatch(
+        authActions.userRegistration({
+          ...formState.inputValues,
+          termsCondition: isChecked,
+        })
+      );
+      if (resData.Result === "ERR") {
+        setIsSubLoader(false);
+        Alert.alert("Error", resData.Msg, [{ text: "Okay" }]);
+        return;
+      } else if (resData.Result === "OK") {
+        // setIsSubLoader(false);
+        // dispatchFormState({ type: RESET_FORM });
+        // setChecked(false);
+        // setIsSubmitted(false);
+        // setUserIdAvailable(false);
+        navigation.goBack();
+        Alert.alert("Registered", resData.Msg, [{ text: "Okay" }]);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsSubLoader(false);
   };
 
   if (Platform.OS === "android" && Platform.Version >= 21) {
@@ -214,11 +244,20 @@ const UserRegistrationScreen = (props) => {
 
   return (
     <BackgroundImage>
+      {isSubLoader && (
+        <View style={styles.indicatorBackground}>
+          <ActivityIndicator size="large" color="black" />
+          <Text style={styles.checkUId}>Processing user registration</Text>
+        </View>
+      )}
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
-        <View style={styles.screen}>
+        <View
+          style={styles.screen}
+          pointerEvents={isSubLoader ? "none" : "auto"}
+        >
           <View style={styles.container}>
             <View style={styles.msgContainer}>
               <Text style={styles.msg}>
@@ -271,7 +310,6 @@ const UserRegistrationScreen = (props) => {
             <TextField
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
-              password={formState.inputValues.confirmPassword}
               initiallyValid={false}
               id="password"
               required
@@ -291,7 +329,6 @@ const UserRegistrationScreen = (props) => {
             <TextField
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
-              password={formState.inputValues.password}
               initiallyValid={false}
               id="confirmPassword"
               required
@@ -491,6 +528,19 @@ const styles = StyleSheet.create({
     fontFamily: "open-sans-bold",
     color: "black",
     fontSize: 14,
+  },
+
+  indicatorBackground: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    padding: 20,
+    backgroundColor: "#fff",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 100,
   },
 });
 

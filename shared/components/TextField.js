@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer } from "react";
 import { StyleSheet, View, Text, TextInput } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -33,12 +33,6 @@ const TextField = (props) => {
 
   const { onInputChange, id, isSubmitted, errorText } = props;
 
-  // useEffect(() => {
-  //   if (inputState.touched) {
-  //     onInputChange(id, inputState.value, inputState.isValid);
-  //   }
-  // }, [inputState, onInputChange, id]);
-
   const textChangeHandler = (text) => {
     const emailRegex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -54,9 +48,6 @@ const TextField = (props) => {
       isValid = false;
     }
     if (props.mobileNumber && isNaN(text)) {
-      isValid = false;
-    }
-    if (props.secureTextEntry && text !== props.password) {
       isValid = false;
     }
     if (props.min != null && +text < props.min) {
