@@ -8,7 +8,7 @@ import Card from "../UI/Card";
 const window = Dimensions.get("window");
 
 const AuthScreenContainer = (props) => {
-  const { navigation } = props;
+  const { navigation, preventBackground } = props;
 
   // useLayoutEffect(() => {
   //   navigation.setOptions({
@@ -22,7 +22,10 @@ const AuthScreenContainer = (props) => {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
-        <View style={styles.screen}>
+        <View
+          style={styles.screen}
+          pointerEvents={preventBackground ? "none" : "auto"}
+        >
           <CircularImage
             style={{ ...styles.logo, ...props.logoStyle }}
             imageURL={require("../../assets/images/logo.jpg")}

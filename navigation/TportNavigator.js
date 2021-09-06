@@ -8,6 +8,8 @@ import LoginScreen from "../screens/auth/login/LoginScreen";
 import ForgotPasswordScreen from "../screens/auth/forgot_password/ForgotPasswordScreen";
 import TransporterRegistrationScreen from "../screens/transporter/TransporterRegistrationScreen";
 import UserRegistrationScreen from "../screens/user/UserRegistrationScreen";
+import UserDashboardScreen from "../screens/user/UserDashboardScreen";
+import TransporterDashboardScreen from "../screens/transporter/TransporterDashboardScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +45,16 @@ const TportNavigation = () => {
             options={{ title: "Transporter Registration" }}
           />
           <Stack.Screen name="UserReg" component={UserRegistrationScreen} />
+          <Stack.Screen
+            name="transpHome"
+            component={TransporterDashboardScreen}
+            options={{ title: "Transporter Dashboard" }}
+          />
+          <Stack.Screen
+            name="userHome"
+            component={UserDashboardScreen}
+            options={{ title: "User Dashboard" }}
+          />
         </Stack.Group>
         <Stack.Group>
           <Stack.Screen

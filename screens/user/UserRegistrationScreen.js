@@ -21,6 +21,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 
+import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import HeaderLeft from "../../shared/components/HeaderLeft";
 import BackgroundImage from "../../shared/UI/BackgroundImage";
 import TextField from "../../shared/components/TextField";
@@ -244,12 +245,7 @@ const UserRegistrationScreen = (props) => {
 
   return (
     <BackgroundImage>
-      {isSubLoader && (
-        <View style={styles.indicatorBackground}>
-          <ActivityIndicator size="large" color="black" />
-          <Text style={styles.checkUId}>Processing user registration</Text>
-        </View>
-      )}
+      {isSubLoader && <ProgressIndicator msg="Processing user registration" />}
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -528,19 +524,6 @@ const styles = StyleSheet.create({
     fontFamily: "open-sans-bold",
     color: "black",
     fontSize: 14,
-  },
-
-  indicatorBackground: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    padding: 20,
-    backgroundColor: "#fff",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 100,
   },
 });
 
