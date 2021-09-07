@@ -33,6 +33,7 @@ import {
 } from "../../shared/Functions/Validators";
 import {
   FORM_INPUT_UPDATE,
+  RESET_FORM,
   formReducer,
 } from "../../shared/Functions/FormReducer";
 
@@ -145,11 +146,14 @@ const UserRegistrationScreen = (props) => {
         Alert.alert("Error", resData.Msg, [{ text: "Okay" }]);
         return;
       } else if (resData.Result === "OK") {
-        // setIsSubLoader(false);
-        // dispatchFormState({ type: RESET_FORM });
-        // setChecked(false);
-        // setIsSubmitted(false);
-        // setUserIdAvailable(false);
+        setIsSubLoader(false);
+        setChecked(false);
+        setIsSubmitted(false);
+        setIsUserIdValid(userIdValObj);
+        dispatchFormState({
+          type: RESET_FORM,
+          initialFormState: initialFormState,
+        });
         navigation.goBack();
         Alert.alert("Registered", resData.Msg, [{ text: "Okay" }]);
       }
@@ -199,6 +203,7 @@ const UserRegistrationScreen = (props) => {
               </Text>
             </View>
             <TextField
+              value={formState.inputValues.userId}
               onEndEditing={checkUserIdHandler}
               isSubmitted={isSubmitted}
               initiallyValid={false}
@@ -242,6 +247,7 @@ const UserRegistrationScreen = (props) => {
               </View>
             )}
             <TextField
+              value={formState.inputValues.password}
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
               initiallyValid={false}
@@ -261,6 +267,7 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              value={formState.inputValues.confirmPassword}
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
               initiallyValid={false}
@@ -287,6 +294,7 @@ const UserRegistrationScreen = (props) => {
               </View>
             )}
             <TextField
+              value={formState.inputValues.ownerName}
               isSubmitted={isSubmitted}
               initiallyValid={false}
               id="ownerName"
@@ -312,6 +320,7 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              value={formState.inputValues.mobileNumber}
               mobileNumber
               isSubmitted={isSubmitted}
               initiallyValid={false}
@@ -341,6 +350,7 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              value={formState.inputValues.emailAddress}
               isSubmitted={isSubmitted}
               initiallyValid={true}
               id="emailAddress"

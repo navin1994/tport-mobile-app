@@ -11,7 +11,6 @@ const inputReducer = (state, action) => {
     case INPUT_CHANGE:
       return {
         ...state,
-        value: action.value,
         isValid: action.isValid,
       };
     case INPUT_BLUR:
@@ -26,7 +25,6 @@ const inputReducer = (state, action) => {
 
 const TextField = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: "",
     isValid: props.initiallyValid,
     touched: false,
   });
@@ -59,7 +57,8 @@ const TextField = (props) => {
     if (props.minLength != null && text.length < props.minLength) {
       isValid = false;
     }
-    dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
+    onInputChange(id, text, isValid);
+    dispatch({ type: INPUT_CHANGE, isValid: isValid });
   };
 
   // const lostFocusHandler = () => {
@@ -80,9 +79,9 @@ const TextField = (props) => {
         <TextInput
           {...props}
           style={{ ...styles.input, ...props.fontSize }}
-          value={inputState.value}
           onChangeText={textChangeHandler}
-          onBlur={() => onInputChange(id, inputState.value, inputState.isValid)}
+          // value={inputState.value}
+          // onBlur={() => onInputChange(id, inputState.value, inputState.isValid)}
         />
         {props.trailingIcon}
       </View>

@@ -21,6 +21,7 @@ import * as authActions from "../../../store/action/auth";
 import {
   formReducer,
   FORM_INPUT_UPDATE,
+  RESET_FORM,
 } from "../../../shared/Functions/FormReducer";
 
 const initialFormState = {
@@ -82,6 +83,10 @@ const LoginScreen = (props) => {
       const formData = formState.inputValues;
       const result = await dispatch(authActions.login(formData));
       setIsSubLoader(false);
+      dispatchFormState({
+        type: RESET_FORM,
+        initialFormState: initialFormState,
+      });
       result.Record.usrtyp === "T"
         ? navigation.navigate("transpHome")
         : navigation.navigate("userHome");
@@ -105,6 +110,7 @@ const LoginScreen = (props) => {
         <Text style={styles.title}>LOGIN</Text>
       </View>
       <TextField
+        value={formState.inputValues.userId}
         isSubmitted={isSubmitted}
         initiallyValid={false}
         id="userId"
@@ -115,6 +121,7 @@ const LoginScreen = (props) => {
         leadingIcon={<Icon name="person-outline" size={25} color="black" />}
       />
       <TextField
+        value={formState.inputValues.password}
         isSubmitted={isSubmitted}
         initiallyValid={false}
         id="password"

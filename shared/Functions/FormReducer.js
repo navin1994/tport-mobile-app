@@ -23,7 +23,7 @@ export const formReducer = (state, action) => {
       };
 
     case RESET_FORM:
-      return initialFormState;
+      return action.initialFormState;
 
     default:
       return state;
