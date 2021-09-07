@@ -18,8 +18,10 @@ import RaisedButton from "../../../shared/components/RaisedButton";
 import TextButton from "../../../shared/components/TextButton";
 import Colors from "../../../shared/constants/Colors";
 import * as authActions from "../../../store/action/auth";
-
-const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
+import {
+  formReducer,
+  FORM_INPUT_UPDATE,
+} from "../../../shared/Functions/FormReducer";
 
 const initialFormState = {
   inputValues: {
@@ -31,35 +33,6 @@ const initialFormState = {
     password: false,
   },
   formIsValid: false,
-};
-
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case FORM_INPUT_UPDATE:
-      const updatedValues = {
-        ...state.inputValues,
-        [action.input]: action.value,
-      };
-      const updatedValidities = {
-        ...state.inputValidities,
-        [action.input]: action.isValid,
-      };
-      let updatedFormIsValid = true;
-      for (const key in updatedValidities) {
-        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-      }
-      return {
-        inputValues: updatedValues,
-        inputValidities: updatedValidities,
-        formIsValid: updatedFormIsValid,
-      };
-
-    case RESET_FORM:
-      return initialFormState;
-
-    default:
-      return state;
-  }
 };
 
 const LoginScreen = (props) => {

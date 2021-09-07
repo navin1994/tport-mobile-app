@@ -11,8 +11,6 @@ import {
   Dimensions,
   ScrollView,
   Text,
-  TouchableOpacity,
-  TouchableNativeFeedback,
   Platform,
   CheckBox,
   Alert,
@@ -28,11 +26,17 @@ import TextField from "../../shared/components/TextField";
 import RaisedButton from "../../shared/components/RaisedButton";
 import * as authActions from "../../store/action/auth";
 import Colors from "../../shared/constants/Colors";
+import TAndCContainer from "../../shared/UI/TAndCContainer";
+import {
+  userIdValidator,
+  userIdValObj,
+} from "../../shared/Functions/Validators";
+import {
+  FORM_INPUT_UPDATE,
+  formReducer,
+} from "../../shared/Functions/FormReducer";
 
 const window = Dimensions.get("window");
-
-const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
-const RESET_FORM = "RESET_FORM";
 
 const initialFormState = {
   inputValues: {
@@ -54,35 +58,6 @@ const initialFormState = {
   formIsValid: false,
 };
 
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case FORM_INPUT_UPDATE:
-      const updatedValues = {
-        ...state.inputValues,
-        [action.input]: action.value,
-      };
-      const updatedValidities = {
-        ...state.inputValidities,
-        [action.input]: action.isValid,
-      };
-      let updatedFormIsValid = true;
-      for (const key in updatedValidities) {
-        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-      }
-      return {
-        inputValues: updatedValues,
-        inputValidities: updatedValidities,
-        formIsValid: updatedFormIsValid,
-      };
-
-    case RESET_FORM:
-      return initialFormState;
-
-    default:
-      return state;
-  }
-};
-
 const UserRegistrationScreen = (props) => {
   const [formState, dispatchFormState] = useReducer(
     formReducer,
@@ -94,14 +69,9 @@ const UserRegistrationScreen = (props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [cnfPwdCheck, setCnfPwdCheck] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUserIdAvailable, setUserIdAvailable] = useState(false);
-  const [isUserIdValid, setIsUserIdValid] = useState({
-    flag: true,
-    errorMsg: "",
-  });
+  const [isUserIdValid, setIsUserIdValid] = useState(userIdValObj);
   const { navigation } = props;
   let Icon = Ionicons;
-  let TouchableCmp = TouchableOpacity;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -111,47 +81,19 @@ const UserRegistrationScreen = (props) => {
   }, [error]);
 
   const checkUserIdHandler = async () => {
-    const loginId = formState.inputValues.userId;
-    if (loginId.length === 0) {
-      setIsUserIdValid({
-        flag: true,
-        errorMsg: "",
-      });
-      setUserIdAvailable(false);
-      return;
-    }
-    if (loginId.indexOf(" ") >= 0) {
-      setIsUserIdValid({
-        flag: false,
-        errorMsg: "User Id should not contain the space",
-      });
-      setUserIdAvailable(false);
-      return;
-    }
     setError(null);
-    setIsLoading(true);
     try {
-      const resData = await dispatch(authActions.checkUserId(loginId));
-
-      if (resData.Result === "ERR") {
-        setIsUserIdValid({
-          flag: false,
-          errorMsg:
-            "User ID invalid / already exists, please try another user id.",
-        });
-        setUserIdAvailable(false);
-      } else if (resData.Result === "OK") {
-        setIsUserIdValid({
-          flag: true,
-          errorMsg: "",
-        });
-        setUserIdAvailable(true);
-      }
+      setIsLoading(true);
+      const result = await userIdValidator(
+        formState.inputValues.userId,
+        dispatch
+      );
+      setIsLoading(false);
+      setIsUserIdValid(result);
     } catch (err) {
+      setIsLoading(false);
       setError(err.message);
     }
-
-    setIsLoading(false);
   };
 
   const confirmPasswordHandler = () => {
@@ -177,7 +119,7 @@ const UserRegistrationScreen = (props) => {
 
   const formSubmitHandler = async () => {
     setIsSubmitted(true);
-    if (!formState.formIsValid || !cnfPwdCheck || !isUserIdAvailable) {
+    if (!formState.formIsValid || !cnfPwdCheck || !isUserIdValid.avlFlag) {
       Alert.alert("Wrong Input", "Please check the errors in the form.", [
         { text: "Okay" },
       ]);
@@ -212,14 +154,10 @@ const UserRegistrationScreen = (props) => {
         Alert.alert("Registered", resData.Msg, [{ text: "Okay" }]);
       }
     } catch (err) {
+      setIsSubLoader(false);
       setError(err.message);
     }
-    setIsSubLoader(false);
   };
-
-  if (Platform.OS === "android" && Platform.Version >= 21) {
-    TouchableCmp = TouchableNativeFeedback;
-  }
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -291,7 +229,7 @@ const UserRegistrationScreen = (props) => {
                 <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
               </View>
             )}
-            {isUserIdAvailable && (
+            {isUserIdValid.avlFlag && (
               <View style={styles.errorContainer}>
                 <Text
                   style={
@@ -423,23 +361,12 @@ const UserRegistrationScreen = (props) => {
                 />
               }
             />
-            <View style={styles.tAndCContainer}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <View style={styles.checkboxContainer}>
-                  <CheckBox value={isChecked} onValueChange={setChecked} />
-                </View>
-                <Text style={styles.msg}>I Have Read And Agree To The</Text>
-              </View>
-              <TouchableCmp onPress={() => navigation.navigate("TAndCModal")}>
-                <Text style={styles.clickableText}>Terms Of Service.</Text>
-              </TouchableCmp>
-            </View>
+            <TAndCContainer
+              navigation={navigation}
+              value={isChecked}
+              onValueChange={setChecked}
+            />
+
             <RaisedButton
               onPress={formSubmitHandler}
               style={styles.saveBtn}
@@ -470,40 +397,13 @@ const styles = StyleSheet.create({
     width: window.width * 0.9,
     height: 50,
   },
-  msg: {
-    fontFamily: "open-sans",
-    color: "white",
-  },
+
   saveBtn: {
     margin: 20,
     backgroundColor: Colors.success,
   },
   required: {
     color: "red",
-  },
-  tAndCContainer: {
-    marginVertical: 20,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "black",
-    width: window.width * 0.9,
-    padding: 5,
-    opacity: 0.7,
-  },
-  clickableText: {
-    fontFamily: "open-sans",
-    color: "yellow",
-  },
-  checkboxContainer: {
-    marginHorizontal: 10,
-    alignSelf: "center",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    height: 20,
-    width: 20,
   },
   errorText: {
     fontFamily: "open-sans",
@@ -524,6 +424,10 @@ const styles = StyleSheet.create({
     fontFamily: "open-sans-bold",
     color: "black",
     fontSize: 14,
+  },
+  msg: {
+    fontFamily: "open-sans",
+    color: "white",
   },
 });
 

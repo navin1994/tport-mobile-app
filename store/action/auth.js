@@ -70,7 +70,6 @@ export const login = (loginData) => {
     if (result.Result === "NOTOK") {
       throw new Error(result.Msg);
     }
-    console.log("result ==>", result);
     dispatch({
       type: LOGIN,
       docflag: result.Record.docflag,
