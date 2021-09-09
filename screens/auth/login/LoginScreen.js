@@ -87,6 +87,7 @@ const LoginScreen = (props) => {
         type: RESET_FORM,
         initialFormState: initialFormState,
       });
+
       result.Record.usrtyp === "T"
         ? navigation.navigate("transpHome")
         : navigation.navigate("userHome");
