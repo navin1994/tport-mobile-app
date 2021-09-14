@@ -16,6 +16,9 @@ import {
   Dimensions,
   FlatList,
   LogBox,
+  TouchableOpacity,
+  TouchableNativeFeedback,
+  Platform,
 } from "react-native";
 import {
   Ionicons,
@@ -24,6 +27,8 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Moment from "moment";
 
 import DropdownSelect from "../../shared/components/DropdownSelect";
 import SwitchTab from "../../shared/UI/SwitchTab";
@@ -68,6 +73,12 @@ const initialFormState = {
 };
 
 const TransporterRegistrationScreen = (props) => {
+  let TouchableCmp = TouchableOpacity;
+  const [dateValue, setDateValue] = useState(new Date());
+  const [currentDateField, setDateField] = useState("");
+  const [minDate, setMinDate] = useState(null);
+  const [maxDate, setMaxDate] = useState(null);
+  const [showDatePkr, setShowDatePkr] = useState(false);
   const Icon = Ionicons;
   const dispatch = useDispatch();
   const [formType, setFormType] = useState(1);
@@ -130,6 +141,10 @@ const TransporterRegistrationScreen = (props) => {
       insurance_exp_date: "26-11-2021",
     },
   ];
+
+  if (Platform.OS === "android" && Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
 
   useEffect(() => {
     if (error) {
@@ -198,6 +213,24 @@ const TransporterRegistrationScreen = (props) => {
     });
   }, [navigation]);
 
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePkr(false);
+    setMinDate(null);
+    setMaxDate(null);
+    setDateField("");
+    if (event.type === "dismissed") {
+      return;
+    }
+    console.log("selectedDate=> ", Moment(selectedDate).format("YYYY-MM-DD"));
+  };
+
+  const openDatePicker = (currentField, minDate, maxDate) => {
+    setShowDatePkr(true);
+    setDateField(currentField);
+    setMinDate(minDate);
+    setMaxDate(maxDate);
+  };
+
   return (
     <BackgroundImage>
       {isSubLoader && <ProgressIndicator msg="Registering Transporter" />}
@@ -211,7 +244,18 @@ const TransporterRegistrationScreen = (props) => {
         >
           <View style={styles.container}>
             <SwitchTab onFormChange={formTypeHandler} formType={formType} />
-
+            {showDatePkr && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={dateValue}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeDate}
+                maximumDate={minDate}
+                minimumDate={maxDate}
+              />
+            )}
             <View
               style={{
                 ...styles.separator,
@@ -673,6 +717,7 @@ const TransporterRegistrationScreen = (props) => {
                   initiallyValid={false}
                   required
                   // id="emailAddress"
+                  placeholder="YYYY-MM-DD"
                   onInputChange={inputChangeHandler}
                   errorText="Please enter valid registration date."
                   label={
@@ -681,6 +726,15 @@ const TransporterRegistrationScreen = (props) => {
                     </Text>
                   }
                   style={{ width: "90%" }}
+                  trailingIcon={
+                    <TouchableCmp
+                      onPress={() => {
+                        openDatePicker("");
+                      }}
+                    >
+                      <Icon name="calendar-outline" size={25} color="black" />
+                    </TouchableCmp>
+                  }
                 />
 
                 <RaisedButton
@@ -718,12 +772,12 @@ const TransporterRegistrationScreen = (props) => {
                   }
                   style={{ width: "90%" }}
                 />
-
                 <TextField
                   // value={formState.inputValues.emailAddress}
                   isSubmitted={isSubmitted}
                   initiallyValid={false}
                   required
+                  placeholder="YYYY-MM-DD"
                   // id="emailAddress"
                   onInputChange={inputChangeHandler}
                   errorText="Please enter valid insurance expiry date."
@@ -734,6 +788,15 @@ const TransporterRegistrationScreen = (props) => {
                     </Text>
                   }
                   style={{ width: "90%" }}
+                  trailingIcon={
+                    <TouchableCmp
+                      onPress={() => {
+                        openDatePicker("");
+                      }}
+                    >
+                      <Icon name="calendar-outline" size={25} color="black" />
+                    </TouchableCmp>
+                  }
                 />
                 <RaisedButton
                   style={styles.fileUploadBtn}
@@ -746,6 +809,7 @@ const TransporterRegistrationScreen = (props) => {
                   initiallyValid={false}
                   required
                   // id="emailAddress"
+                  placeholder="YYYY-MM-DD"
                   onInputChange={inputChangeHandler}
                   errorText="Please enter valid fitness certificate date."
                   label={
@@ -755,6 +819,15 @@ const TransporterRegistrationScreen = (props) => {
                     </Text>
                   }
                   style={{ width: "90%" }}
+                  trailingIcon={
+                    <TouchableCmp
+                      onPress={() => {
+                        openDatePicker("");
+                      }}
+                    >
+                      <Icon name="calendar-outline" size={25} color="black" />
+                    </TouchableCmp>
+                  }
                 />
                 <RaisedButton
                   style={styles.fileUploadBtn}
@@ -766,10 +839,20 @@ const TransporterRegistrationScreen = (props) => {
                   isSubmitted={isSubmitted}
                   initiallyValid={false}
                   // id="emailAddress"
+                  placeholder="YYYY-MM-DD"
                   onInputChange={inputChangeHandler}
                   errorText="Please enter valid PUC expiry date."
                   label="PUC Expiry Date"
                   style={{ width: "90%" }}
+                  trailingIcon={
+                    <TouchableCmp
+                      onPress={() => {
+                        openDatePicker("");
+                      }}
+                    >
+                      <Icon name="calendar-outline" size={25} color="black" />
+                    </TouchableCmp>
+                  }
                 />
                 <RaisedButton
                   style={styles.fileUploadBtn}
