@@ -10,6 +10,8 @@ import {
   Dimensions,
 } from "react-native";
 
+import Colors from "../constants/Colors";
+
 const window = Dimensions.get("window");
 
 const TAndCContainer = (props) => {
@@ -45,10 +47,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: Colors.semiTransparentBlack,
     width: window.width * 0.9,
     padding: 5,
-    opacity: 0.7,
   },
   clickableText: {
     fontFamily: "open-sans",

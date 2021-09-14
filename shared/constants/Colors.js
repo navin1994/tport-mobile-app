@@ -11,4 +11,5 @@ export default {
   faded: "#f7f7f7",
   titleBackground: "red",
   transparent: "#ffffff00",
+  semiTransparentBlack: "rgba(0, 0, 0, 0.5)",
 };

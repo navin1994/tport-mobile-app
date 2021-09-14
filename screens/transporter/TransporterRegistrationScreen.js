@@ -14,6 +14,8 @@ import {
   ActivityIndicator,
   Image,
   Dimensions,
+  FlatList,
+  LogBox,
 } from "react-native";
 import {
   Ionicons,
@@ -23,12 +25,16 @@ import {
 } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 
+import DropdownSelect from "../../shared/components/DropdownSelect";
 import SwitchTab from "../../shared/UI/SwitchTab";
 import Colors from "../../shared/constants/Colors";
 import HeaderLeft from "../../shared/components/HeaderLeft";
 import BackgroundImage from "../../shared/UI/BackgroundImage";
 import TextField from "../../shared/components/TextField";
 import RaisedButton from "../../shared/components/RaisedButton";
+import VehicleDetailsTile from "../../shared/UI/VehicleDetailsTile";
+import TAndCContainer from "../../shared/UI/TAndCContainer";
+
 import {
   formReducer,
   FORM_INPUT_UPDATE,
@@ -79,11 +85,61 @@ const TransporterRegistrationScreen = (props) => {
   const [isUserIdValid, setIsUserIdValid] = useState(userIdValObj);
   const { navigation } = props;
 
+  const countries = [
+    "Egypt",
+    "Canada",
+    "Australia",
+    "Ireland",
+    "Egypt",
+    "Canada",
+    "Australia",
+    "Ireland",
+  ];
+
+  const fleetData = [
+    {
+      veh_no: "MH35 V0498",
+      veh_type: "TATA 407/EICHER 14FT (4 TON)",
+      reg_date: "01-04-2021",
+      chesis_no: 12464141,
+      insurance_no: 12464141,
+      insurance_exp_date: "26-11-2021",
+    },
+    {
+      veh_no: "MH35 V0499",
+      veh_type: "TATA 407/EICHER 14FT (4 TON)",
+      reg_date: "01-04-2021",
+      chesis_no: 12464141,
+      insurance_no: 12464141,
+      insurance_exp_date: "26-11-2021",
+    },
+    {
+      veh_no: "MH35 V0500",
+      veh_type: "TATA 407/EICHER 14FT (4 TON)",
+      reg_date: "01-04-2021",
+      chesis_no: 12464141,
+      insurance_no: 12464141,
+      insurance_exp_date: "26-11-2021",
+    },
+    {
+      veh_no: "MH35 V0501",
+      veh_type: "TATA 407/EICHER 14FT (4 TON)",
+      reg_date: "01-04-2021",
+      chesis_no: 12464141,
+      insurance_no: 12464141,
+      insurance_exp_date: "26-11-2021",
+    },
+  ];
+
   useEffect(() => {
     if (error) {
       Alert.alert("An Error Occurred", error, [{ text: "Okay" }]);
     }
   }, [error]);
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
 
   const formTypeHandler = (formNumber) => {
     setFormType(formNumber);
@@ -576,6 +632,191 @@ const TransporterRegistrationScreen = (props) => {
               onPress={() => {}}
             />
             <View style={styles.separator}></View>
+            <View>
+              <View style={styles.FleetFormContainer}>
+                <Text style={styles.fleetFrmTtl}>Add Fleet Details</Text>
+                <DropdownSelect
+                  data={countries}
+                  onSelect={(selectedItem, index) => {
+                    console.log(selectedItem, index);
+                  }}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    return item;
+                  }}
+                />
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  required
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid vehicle number."
+                  label={
+                    <Text>
+                      Vehicle Number<Text style={styles.required}>*</Text>
+                    </Text>
+                  }
+                  style={{ width: "90%" }}
+                />
+                <RaisedButton
+                  style={styles.fileUploadBtn}
+                  title="Vehicle Photos"
+                  onPress={() => {}}
+                />
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  required
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid registration date."
+                  label={
+                    <Text>
+                      Registration Date<Text style={styles.required}>*</Text>
+                    </Text>
+                  }
+                  style={{ width: "90%" }}
+                />
+
+                <RaisedButton
+                  style={styles.fileUploadBtn}
+                  title="Registration Doc"
+                  onPress={() => {}}
+                />
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  required
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid chesis number."
+                  label={
+                    <Text>
+                      Chesis Number<Text style={styles.required}>*</Text>
+                    </Text>
+                  }
+                  style={{ width: "90%" }}
+                />
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  required
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid insurance number."
+                  label={
+                    <Text>
+                      Insurance Number<Text style={styles.required}>*</Text>
+                    </Text>
+                  }
+                  style={{ width: "90%" }}
+                />
+
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  required
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid insurance expiry date."
+                  label={
+                    <Text>
+                      Insurance Expiry Date
+                      <Text style={styles.required}>*</Text>
+                    </Text>
+                  }
+                  style={{ width: "90%" }}
+                />
+                <RaisedButton
+                  style={styles.fileUploadBtn}
+                  title="Insurance Doc"
+                  onPress={() => {}}
+                />
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  required
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid fitness certificate date."
+                  label={
+                    <Text>
+                      Fitness Certificate Expiry Date
+                      <Text style={styles.required}>*</Text>
+                    </Text>
+                  }
+                  style={{ width: "90%" }}
+                />
+                <RaisedButton
+                  style={styles.fileUploadBtn}
+                  title="Fitness Doc"
+                  onPress={() => {}}
+                />
+                <TextField
+                  // value={formState.inputValues.emailAddress}
+                  isSubmitted={isSubmitted}
+                  initiallyValid={false}
+                  // id="emailAddress"
+                  onInputChange={inputChangeHandler}
+                  errorText="Please enter valid PUC expiry date."
+                  label="PUC Expiry Date"
+                  style={{ width: "90%" }}
+                />
+                <RaisedButton
+                  style={styles.fileUploadBtn}
+                  title="PUC Doc"
+                  onPress={() => {}}
+                />
+                <RaisedButton
+                  style={styles.addFleetBtn}
+                  title="Add Fleet"
+                  onPress={() => {}}
+                  leadingIcon={
+                    <MaterialCommunityIcons
+                      name="plus-circle-outline"
+                      size={25}
+                      color="#fff"
+                    />
+                  }
+                />
+              </View>
+            </View>
+            <View style={styles.vehListContainer}>
+              <FlatList
+                nestedScrollEnabled
+                data={fleetData}
+                keyExtractor={(item) => item.veh_no}
+                renderItem={(itemData) => (
+                  <VehicleDetailsTile
+                    vehicleNo={itemData.item.veh_no}
+                    vehType={itemData.item.veh_type}
+                    regDate={itemData.item.reg_date}
+                    chesisNo={itemData.item.chesis_no}
+                    insuranceNo={itemData.item.insurance_no}
+                    insuranceExpDate={itemData.item.insurance_exp_date}
+                  />
+                )}
+              />
+            </View>
+            <TAndCContainer
+              navigation={navigation}
+              value={isChecked}
+              onValueChange={setChecked}
+            />
+            <RaisedButton
+              title="SUBMIT"
+              style={styles.submitBtn}
+              onPress={() => {}}
+            />
           </View>
         </View>
       </ScrollView>
@@ -633,6 +874,41 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: Colors.danger,
     marginVertical: 10,
+  },
+  FleetFormContainer: {
+    alignItems: "center",
+    width: window.width * 0.9,
+    backgroundColor: Colors.semiTransparentBlack,
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 5,
+    borderRadius: 8,
+    padding: 10,
+  },
+  fleetFrmTtl: {
+    color: "#fff",
+    fontFamily: "open-sans-bold",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  addFleetBtn: {
+    paddingVertical: 5,
+    marginVertical: 10,
+    width: "40%",
+    marginBottom: 0,
+    backgroundColor: "#343A40",
+  },
+  vehListContainer: {
+    marginVertical: 10,
+    height: window.height * 0.6,
+    borderWidth: 1,
+    paddingHorizontal: 2,
+    borderRadius: 8,
+  },
+  submitBtn: {
+    margin: 40,
+    backgroundColor: Colors.danger,
   },
 });
 
