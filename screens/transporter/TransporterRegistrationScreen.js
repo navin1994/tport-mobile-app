@@ -26,7 +26,7 @@ import {
   MaterialIcons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Moment from "moment";
 
@@ -39,6 +39,9 @@ import TextField from "../../shared/components/TextField";
 import RaisedButton from "../../shared/components/RaisedButton";
 import VehicleDetailsTile from "../../shared/UI/VehicleDetailsTile";
 import TAndCContainer from "../../shared/UI/TAndCContainer";
+import ImageDocPicker from "../../shared/components/ImageDocPicker";
+import * as authActions from "../../store/action/auth";
+import * as fleetActions from "../../store/action/fleet";
 
 import {
   formReducer,
@@ -54,93 +57,139 @@ const window = Dimensions.get("window");
 
 const initialFormState = {
   inputValues: {
-    userId: "",
-    password: "",
-    confirmPassword: "",
-    ownerName: "",
-    mobileNumber: "",
-    emailAddress: "",
+    seq: 1,
+    ownrnme: "", //
+    ownrmobile: "", //
+    ownremail: "", //
+    ownraddr: "", //
+    ownrpincd: "", //
+    ownrpandoc: "",
+    ownridno: "", //
+    ownrpanno: "", //
+    ownradhardoc: "",
+    loginid: "", //
+    password: "", //
+    cnfpassword: "", //
+    companyname: "", //
+    companyregno: "", //
+    comapnypanno: "", //
+    compincode: "", // not in UI
+    companyaddress: "", //
+    companygstno: "", //
+    companyregdoc: "",
+    companypandoc: "", //
+    companygstdoc: "",
+    evgstnid: "", //
+    vehclst: [],
   },
   inputValidities: {
-    userId: false,
+    seq: true,
+    ownrnme: false,
+    ownrmobile: false,
+    ownremail: false,
+    ownraddr: false,
+    ownrpincd: false,
+    ownrpandoc: false,
+    ownridno: false,
+    ownrpanno: false,
+    ownradhardoc: false,
+    loginid: false,
     password: false,
-    confirmPassword: false,
-    ownerName: false,
-    mobileNumber: false,
-    emailAddress: true,
+    cnfpassword: false,
+    companyname: true,
+    companyregno: true,
+    comapnypanno: true,
+    compincode: true, // not in UI
+    companyaddress: true,
+    companygstno: true,
+    companyregdoc: true,
+    companypandoc: true,
+    companygstdoc: true,
+    evgstnid: true,
+    vehclst: false,
+  },
+  formIsValid: false,
+};
+
+const vehInitFormState = {
+  inputValues: {
+    vtypid: "",
+    vtypnm: "",
+    vehno: "",
+    vehregdte: "",
+    vehinsexpdte: "",
+    vehinsuno: "",
+    vehchesino: "",
+    vehphoto: "",
+    vehregfle: "",
+    vehinsurancedoc: "",
+    vehfitcetexpdte: "",
+    vehfitcetphoto: "",
+    vehpucexpdte: "",
+    vehpucphoto: [],
+  },
+  inputValidities: {
+    vtypid: false,
+    vtypnm: false,
+    vehno: false,
+    vehregdte: false,
+    vehinsexpdte: false,
+    vehinsuno: false,
+    vehchesino: false,
+    vehphoto: false,
+    vehregfle: false,
+    vehinsurancedoc: false,
+    vehfitcetexpdte: false,
+    vehfitcetphoto: false,
+    vehpucexpdte: true,
+    vehpucphoto: true,
   },
   formIsValid: false,
 };
 
 const TransporterRegistrationScreen = (props) => {
-  let TouchableCmp = TouchableOpacity;
+  const [showImagePicker, setImagePicker] = useState(false);
   const [dateValue, setDateValue] = useState(new Date());
   const [currentDateField, setDateField] = useState("");
   const [minDate, setMinDate] = useState(null);
   const [maxDate, setMaxDate] = useState(null);
   const [showDatePkr, setShowDatePkr] = useState(false);
-  const Icon = Ionicons;
   const dispatch = useDispatch();
   const [formType, setFormType] = useState(1);
-  const [formState, dispatchFormState] = useReducer(
-    formReducer,
-    initialFormState
-  );
-  const [currentPosition, setCurrentPosition] = useState(0);
   const [isSubLoader, setIsSubLoader] = useState(false);
   const [error, setError] = useState();
   const [isChecked, setChecked] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFleetSubmit, setIsFleetSubmit] = useState(false);
   const [cnfPwdCheck, setCnfPwdCheck] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isUserIdValid, setIsUserIdValid] = useState(userIdValObj);
+  const [vehTypes, setVehTypes] = useState([]);
+  let TouchableCmp = TouchableOpacity;
+  const Icon = Ionicons;
   const { navigation } = props;
-
-  const countries = [
-    "Egypt",
-    "Canada",
-    "Australia",
-    "Ireland",
-    "Egypt",
-    "Canada",
-    "Australia",
-    "Ireland",
-  ];
-
-  const fleetData = [
-    {
-      veh_no: "MH35 V0498",
-      veh_type: "TATA 407/EICHER 14FT (4 TON)",
-      reg_date: "01-04-2021",
-      chesis_no: 12464141,
-      insurance_no: 12464141,
-      insurance_exp_date: "26-11-2021",
-    },
-    {
-      veh_no: "MH35 V0499",
-      veh_type: "TATA 407/EICHER 14FT (4 TON)",
-      reg_date: "01-04-2021",
-      chesis_no: 12464141,
-      insurance_no: 12464141,
-      insurance_exp_date: "26-11-2021",
-    },
-    {
-      veh_no: "MH35 V0500",
-      veh_type: "TATA 407/EICHER 14FT (4 TON)",
-      reg_date: "01-04-2021",
-      chesis_no: 12464141,
-      insurance_no: 12464141,
-      insurance_exp_date: "26-11-2021",
-    },
-    {
-      veh_no: "MH35 V0501",
-      veh_type: "TATA 407/EICHER 14FT (4 TON)",
-      reg_date: "01-04-2021",
-      chesis_no: 12464141,
-      insurance_no: 12464141,
-      insurance_exp_date: "26-11-2021",
-    },
-  ];
+  const [formState, dispatchFormState] = useReducer(
+    formReducer,
+    initialFormState
+  );
+  const [vehFormState, dispatchVehFormState] = useReducer(
+    formReducer,
+    vehInitFormState
+  );
+  const addedFleets = useSelector((state) => {
+    const transformedItems = [];
+    for (const key in state.fleets.fleets) {
+      transformedItems.push({
+        veh_no: state.fleets.fleets[key].vehno,
+        veh_type: state.fleets.fleets[key].vtypnm,
+        reg_date: state.fleets.fleets[key].vehregdte,
+        chesis_no: state.fleets.fleets[key].vehchesino,
+        insurance_no: state.fleets.fleets[key].vehinsuno,
+        insurance_exp_date: state.fleets.fleets[key].vehinsexpdte,
+      });
+    }
+    return transformedItems;
+  });
 
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
@@ -152,11 +201,43 @@ const TransporterRegistrationScreen = (props) => {
     }
   }, [error]);
 
+  const getVehicleType = async () => {
+    setError(null);
+    try {
+      const resData = await dispatch(authActions.getVehicleTypes());
+      if (resData.Result === "ERR") {
+        Alert.alert("Error", resData.Msg, [{ text: "Okay" }]);
+        return;
+      } else if (resData.Result === "OK") {
+        setVehTypes(resData.Records);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   useEffect(() => {
+    getVehicleType();
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
   }, []);
 
+  const onCloseModal = useCallback(() => {
+    setImagePicker(false);
+  }, [showImagePicker]);
+
   const formTypeHandler = (formNumber) => {
+    const formData = formState.inputValues;
+    if (formNumber === 1) {
+      inputChangeHandler("companyname", formData.companyname, true);
+      inputChangeHandler("companyregno", formData.companyregno, true);
+      inputChangeHandler("comapnypanno", formData.comapnypanno, true);
+      inputChangeHandler("companyaddress", formData.companyaddress, true);
+      inputChangeHandler("companygstno", formData.companygstno, true);
+      inputChangeHandler("companyregdoc", formData.companyregdoc, true);
+      inputChangeHandler("companypandoc", formData.companypandoc, true);
+      inputChangeHandler("companygstdoc", formData.companygstdoc, true);
+      inputChangeHandler("evgstnid", formData.evgstnid, true);
+    }
     setFormType(formNumber);
   };
 
@@ -165,7 +246,7 @@ const TransporterRegistrationScreen = (props) => {
     try {
       setIsLoading(true);
       const result = await userIdValidator(
-        formState.inputValues.userId,
+        formState.inputValues.loginid,
         dispatch
       );
       setIsLoading(false);
@@ -178,7 +259,7 @@ const TransporterRegistrationScreen = (props) => {
 
   const confirmPasswordHandler = () => {
     const formvalues = formState.inputValues;
-    if (formvalues.password === formvalues.confirmPassword) {
+    if (formvalues.password === formvalues.cnfpassword) {
       setCnfPwdCheck(true);
       return;
     }
@@ -195,6 +276,18 @@ const TransporterRegistrationScreen = (props) => {
       });
     },
     [dispatchFormState]
+  );
+
+  const vehInputChangeHandler = useCallback(
+    (identifier, inputValue, inputValidity) => {
+      dispatchVehFormState({
+        type: FORM_INPUT_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: identifier,
+      });
+    },
+    [dispatchVehFormState]
   );
 
   useLayoutEffect(() => {
@@ -217,18 +310,36 @@ const TransporterRegistrationScreen = (props) => {
     setShowDatePkr(false);
     setMinDate(null);
     setMaxDate(null);
-    setDateField("");
     if (event.type === "dismissed") {
+      setDateField("");
       return;
     }
-    console.log("selectedDate=> ", Moment(selectedDate).format("YYYY-MM-DD"));
+    vehInputChangeHandler(
+      currentDateField,
+      Moment(selectedDate).format("YYYY-MM-DD"),
+      true
+    );
+    setDateField("");
+    // console.log("selectedDate=> ", Moment(selectedDate).format("YYYY-MM-DD"));
   };
 
-  const openDatePicker = (currentField, minDate, maxDate) => {
+  const openDatePicker = (data) => {
     setShowDatePkr(true);
-    setDateField(currentField);
-    setMinDate(minDate);
-    setMaxDate(maxDate);
+    setDateField(data.currentField);
+    setMinDate(data.minDate);
+    setMaxDate(data.maxDate);
+  };
+
+  const onSubmitRegistrationForm = () => {
+    setIsSubmitted(true);
+  };
+  const onSubmitFleetForm = () => {
+    dispatch(fleetActions.addFleet(vehFormState.inputValues));
+    dispatchVehFormState({
+      type: RESET_FORM,
+      initialFormState: vehInitFormState,
+    });
+    setIsFleetSubmit(true);
   };
 
   return (
@@ -256,6 +367,10 @@ const TransporterRegistrationScreen = (props) => {
                 minimumDate={maxDate}
               />
             )}
+            <ImageDocPicker
+              visible={showImagePicker}
+              closeModal={onCloseModal}
+            />
             <View
               style={{
                 ...styles.separator,
@@ -263,11 +378,12 @@ const TransporterRegistrationScreen = (props) => {
               }}
             ></View>
             <TextField
+              formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              // value={formState.inputValues.userId}
+              value={formState.inputValues.companyname}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              // id="userId"
+              id="companyname"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid company name."
@@ -282,11 +398,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
+              formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              // value={formState.inputValues.userId}
+              value={formState.inputValues.companyregno}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              // id="userId"
+              id="companyregno"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid registration number."
@@ -310,14 +427,17 @@ const TransporterRegistrationScreen = (props) => {
                 display: formType === 1 ? "none" : "flex",
               }}
               title="Registration Doc"
-              onPress={() => {}}
+              onPress={() => {
+                setImagePicker(true);
+              }}
             />
             <TextField
+              formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              // value={formState.inputValues.userId}
+              value={formState.inputValues.companypandoc}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              // id="userId"
+              id="companypandoc"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid company PAN."
@@ -337,14 +457,17 @@ const TransporterRegistrationScreen = (props) => {
                 display: formType === 1 ? "none" : "flex",
               }}
               title="PAN Doc"
-              onPress={() => {}}
+              onPress={() => {
+                setImagePicker(true);
+              }}
             />
             <TextField
+              formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              // value={formState.inputValues.userId}
+              value={formState.inputValues.companyaddress}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              // id="userId"
+              id="companyaddress"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid registered address."
@@ -359,11 +482,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
+              formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              // value={formState.inputValues.userId}
+              value={formState.inputValues.companygstno}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              // id="userId"
+              id="companygstno"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid GSTIN number."
@@ -387,14 +511,17 @@ const TransporterRegistrationScreen = (props) => {
                 display: formType === 1 ? "none" : "flex",
               }}
               title="Upload GSTIN"
-              onPress={() => {}}
+              onPress={() => {
+                setImagePicker(true);
+              }}
             />
             <TextField
+              formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              // value={formState.inputValues.userId}
+              value={formState.inputValues.evgstnid}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              // id="userId"
+              id="evgstnid"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid e-way GSTIN number."
@@ -409,11 +536,12 @@ const TransporterRegistrationScreen = (props) => {
             />
             <View style={styles.separator}></View>
             <TextField
-              value={formState.inputValues.userId}
+              formType={formType}
+              value={formState.inputValues.loginid}
               onEndEditing={checkUserIdHandler}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              id="userId"
+              id="loginid"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid user id."
@@ -453,6 +581,7 @@ const TransporterRegistrationScreen = (props) => {
               </View>
             )}
             <TextField
+              formType={formType}
               value={formState.inputValues.password}
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
@@ -473,11 +602,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
-              value={formState.inputValues.confirmPassword}
+              formType={formType}
+              value={formState.inputValues.cnfpassword}
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              id="confirmPassword"
+              id="cnfpassword"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid confirm password."
@@ -501,10 +631,11 @@ const TransporterRegistrationScreen = (props) => {
             )}
             <View style={styles.separator}></View>
             <TextField
-              value={formState.inputValues.ownerName}
+              formType={formType}
+              value={formState.inputValues.ownrnme}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              id="ownerName"
+              id="ownrnme"
               required
               onInputChange={inputChangeHandler}
               errorText="Please enter valid owner / contact name."
@@ -527,11 +658,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
-              value={formState.inputValues.mobileNumber}
+              formType={formType}
+              value={formState.inputValues.ownrmobile}
               mobileNumber
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              id="mobileNumber"
+              id="ownrmobile"
               min={999999999}
               max={10000000000}
               required
@@ -557,10 +689,11 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
-              value={formState.inputValues.emailAddress}
+              formType={formType}
+              value={formState.inputValues.ownremail}
               isSubmitted={isSubmitted}
               initiallyValid={true}
-              id="emailAddress"
+              id="ownremail"
               required
               email
               onInputChange={inputChangeHandler}
@@ -584,11 +717,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
-              // value={formState.inputValues.emailAddress}
+              formType={formType}
+              value={formState.inputValues.ownrpincd}
               isSubmitted={isSubmitted}
               initiallyValid={false}
               required
-              // id="emailAddress"
+              id="ownrpincd"
               onInputChange={inputChangeHandler}
               errorText="Please enter valid area pin code."
               maxLength={6}
@@ -607,11 +741,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
-              // value={formState.inputValues.emailAddress}
+              formType={formType}
+              value={formState.inputValues.ownraddr}
               isSubmitted={isSubmitted}
               initiallyValid={false}
               required
-              // id="emailAddress"
+              id="ownraddr"
               onInputChange={inputChangeHandler}
               errorText="Please enter valid address details."
               label={
@@ -632,11 +767,12 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <TextField
-              // value={formState.inputValues.emailAddress}
+              formType={formType}
+              value={formState.inputValues.ownridno}
               isSubmitted={isSubmitted}
               initiallyValid={false}
               required
-              // id="emailAddress"
+              id="ownridno"
               onInputChange={inputChangeHandler}
               errorText="Please enter valid id proof/ Aadhar."
               label={
@@ -651,14 +787,17 @@ const TransporterRegistrationScreen = (props) => {
             <RaisedButton
               style={styles.fileUploadBtn}
               title="Upload ID Proof"
-              onPress={() => {}}
+              onPress={() => {
+                setImagePicker(true);
+              }}
             />
             <TextField
-              // value={formState.inputValues.emailAddress}
+              formType={formType}
+              value={formState.inputValues.ownrpanno}
               isSubmitted={isSubmitted}
               initiallyValid={false}
               required
-              // id="emailAddress"
+              id="ownrpanno"
               onInputChange={inputChangeHandler}
               errorText="Please enter valid PAN number."
               label={
@@ -673,31 +812,44 @@ const TransporterRegistrationScreen = (props) => {
             <RaisedButton
               style={styles.fileUploadBtn}
               title="PAN Doc"
-              onPress={() => {}}
+              onPress={() => {
+                setImagePicker(true);
+              }}
             />
             <View style={styles.separator}></View>
             <View>
               <View style={styles.FleetFormContainer}>
                 <Text style={styles.fleetFrmTtl}>Add Fleet Details</Text>
                 <DropdownSelect
-                  data={countries}
+                  data={vehTypes}
+                  defaultButtonText="Select Vehicle Type*"
                   onSelect={(selectedItem, index) => {
-                    console.log(selectedItem, index);
+                    vehInputChangeHandler("vtypid", selectedItem.id, true);
+                    vehInputChangeHandler("vtypnm", selectedItem.text, true);
                   }}
                   buttonTextAfterSelection={(selectedItem, index) => {
-                    return selectedItem;
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem.text;
                   }}
                   rowTextForSelection={(item, index) => {
-                    return item;
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item.text;
                   }}
                 />
+                {!vehFormState.inputValidities.vtypnm && (
+                  <Text style={styles.errorText}>
+                    Please select vehicle type
+                  </Text>
+                )}
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehno}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
                   required
-                  // id="emailAddress"
-                  onInputChange={inputChangeHandler}
+                  id="vehno"
+                  onInputChange={vehInputChangeHandler}
                   errorText="Please enter valid vehicle number."
                   label={
                     <Text>
@@ -709,16 +861,19 @@ const TransporterRegistrationScreen = (props) => {
                 <RaisedButton
                   style={styles.fileUploadBtn}
                   title="Vehicle Photos"
-                  onPress={() => {}}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}
                 />
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehregdte}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
                   required
-                  // id="emailAddress"
+                  id="vehregdte"
                   placeholder="YYYY-MM-DD"
-                  onInputChange={inputChangeHandler}
+                  onInputChange={vehInputChangeHandler}
+                  editable={false}
                   errorText="Please enter valid registration date."
                   label={
                     <Text>
@@ -729,7 +884,10 @@ const TransporterRegistrationScreen = (props) => {
                   trailingIcon={
                     <TouchableCmp
                       onPress={() => {
-                        openDatePicker("");
+                        openDatePicker({
+                          currentField: "vehregdte",
+                          minDate: new Date(),
+                        });
                       }}
                     >
                       <Icon name="calendar-outline" size={25} color="black" />
@@ -740,15 +898,17 @@ const TransporterRegistrationScreen = (props) => {
                 <RaisedButton
                   style={styles.fileUploadBtn}
                   title="Registration Doc"
-                  onPress={() => {}}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}
                 />
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehchesino}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
                   required
-                  // id="emailAddress"
-                  onInputChange={inputChangeHandler}
+                  id="vehchesino"
+                  onInputChange={vehInputChangeHandler}
                   errorText="Please enter valid chesis number."
                   label={
                     <Text>
@@ -758,12 +918,12 @@ const TransporterRegistrationScreen = (props) => {
                   style={{ width: "90%" }}
                 />
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehinsuno}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
                   required
-                  // id="emailAddress"
-                  onInputChange={inputChangeHandler}
+                  id="vehinsuno"
+                  onInputChange={vehInputChangeHandler}
                   errorText="Please enter valid insurance number."
                   label={
                     <Text>
@@ -773,13 +933,14 @@ const TransporterRegistrationScreen = (props) => {
                   style={{ width: "90%" }}
                 />
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehinsexpdte}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
                   required
                   placeholder="YYYY-MM-DD"
-                  // id="emailAddress"
-                  onInputChange={inputChangeHandler}
+                  id="vehinsexpdte"
+                  onInputChange={vehInputChangeHandler}
+                  editable={false}
                   errorText="Please enter valid insurance expiry date."
                   label={
                     <Text>
@@ -791,7 +952,15 @@ const TransporterRegistrationScreen = (props) => {
                   trailingIcon={
                     <TouchableCmp
                       onPress={() => {
-                        openDatePicker("");
+                        openDatePicker({
+                          currentField: "vehinsexpdte",
+                          maxDate: new Date(),
+                          get minDate() {
+                            const nextDate = new Date();
+                            nextDate.setDate(nextDate.getDate() + 730);
+                            return nextDate;
+                          },
+                        });
                       }}
                     >
                       <Icon name="calendar-outline" size={25} color="black" />
@@ -801,16 +970,19 @@ const TransporterRegistrationScreen = (props) => {
                 <RaisedButton
                   style={styles.fileUploadBtn}
                   title="Insurance Doc"
-                  onPress={() => {}}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}
                 />
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehfitcetexpdte}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
                   required
-                  // id="emailAddress"
+                  id="vehfitcetexpdte"
                   placeholder="YYYY-MM-DD"
-                  onInputChange={inputChangeHandler}
+                  onInputChange={vehInputChangeHandler}
+                  editable={false}
                   errorText="Please enter valid fitness certificate date."
                   label={
                     <Text>
@@ -822,7 +994,10 @@ const TransporterRegistrationScreen = (props) => {
                   trailingIcon={
                     <TouchableCmp
                       onPress={() => {
-                        openDatePicker("");
+                        openDatePicker({
+                          currentField: "vehfitcetexpdte",
+                          maxDate: new Date(),
+                        });
                       }}
                     >
                       <Icon name="calendar-outline" size={25} color="black" />
@@ -832,22 +1007,28 @@ const TransporterRegistrationScreen = (props) => {
                 <RaisedButton
                   style={styles.fileUploadBtn}
                   title="Fitness Doc"
-                  onPress={() => {}}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}
                 />
                 <TextField
-                  // value={formState.inputValues.emailAddress}
-                  isSubmitted={isSubmitted}
+                  value={vehFormState.inputValues.vehpucexpdte}
+                  isSubmitted={isFleetSubmit}
                   initiallyValid={false}
-                  // id="emailAddress"
+                  id="vehpucexpdte"
                   placeholder="YYYY-MM-DD"
-                  onInputChange={inputChangeHandler}
+                  onInputChange={vehInputChangeHandler}
+                  editable={false}
                   errorText="Please enter valid PUC expiry date."
                   label="PUC Expiry Date"
                   style={{ width: "90%" }}
                   trailingIcon={
                     <TouchableCmp
                       onPress={() => {
-                        openDatePicker("");
+                        openDatePicker({
+                          currentField: "vehpucexpdte",
+                          maxDate: new Date(),
+                        });
                       }}
                     >
                       <Icon name="calendar-outline" size={25} color="black" />
@@ -857,12 +1038,14 @@ const TransporterRegistrationScreen = (props) => {
                 <RaisedButton
                   style={styles.fileUploadBtn}
                   title="PUC Doc"
-                  onPress={() => {}}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}
                 />
                 <RaisedButton
                   style={styles.addFleetBtn}
                   title="Add Fleet"
-                  onPress={() => {}}
+                  onPress={onSubmitFleetForm}
                   leadingIcon={
                     <MaterialCommunityIcons
                       name="plus-circle-outline"
@@ -876,7 +1059,7 @@ const TransporterRegistrationScreen = (props) => {
             <View style={styles.vehListContainer}>
               <FlatList
                 nestedScrollEnabled
-                data={fleetData}
+                data={addedFleets}
                 keyExtractor={(item) => item.veh_no}
                 renderItem={(itemData) => (
                   <VehicleDetailsTile
@@ -886,6 +1069,23 @@ const TransporterRegistrationScreen = (props) => {
                     chesisNo={itemData.item.chesis_no}
                     insuranceNo={itemData.item.insurance_no}
                     insuranceExpDate={itemData.item.insurance_exp_date}
+                    onRemove={() => {
+                      return Alert.alert(
+                        "Are your sure?",
+                        `Are you sure you want to remove this fleet of vehicle number ${itemData.item.veh_no} ?`,
+                        [
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              dispatch(
+                                fleetActions.removeFleet(itemData.item.veh_no)
+                              );
+                            },
+                          },
+                          { text: "No" },
+                        ]
+                      );
+                    }}
                   />
                 )}
               />
@@ -898,7 +1098,7 @@ const TransporterRegistrationScreen = (props) => {
             <RaisedButton
               title="SUBMIT"
               style={styles.submitBtn}
-              onPress={() => {}}
+              onPress={onSubmitRegistrationForm}
             />
           </View>
         </View>
@@ -984,7 +1184,8 @@ const styles = StyleSheet.create({
   },
   vehListContainer: {
     marginVertical: 10,
-    height: window.height * 0.6,
+    minHeight: window.height * 0.3,
+    maxHeight: window.height * 0.6,
     borderWidth: 1,
     paddingHorizontal: 2,
     borderRadius: 8,

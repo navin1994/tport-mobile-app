@@ -7,6 +7,7 @@ const requestedUrl = {
   CHECK_USER_ID: "checkloginid",
   USER_REGISTRATION: "customerRegstr",
   LOGIN: "loginaction",
+  GETVEHTYPE: "getvtyp",
 };
 
 export const checkUserId = (userId) => {
@@ -82,6 +83,26 @@ export const login = (loginData) => {
       usrnme: result.Record.usrnme,
       usrtyp: result.Record.usrtyp,
     });
+    return await result;
+  };
+};
+
+export const getVehicleTypes = () => {
+  return async (dispatch) => {
+    const response = await fetch(api + requestedUrl.GETVEHTYPE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while getting vehicle types.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
     return await result;
   };
 };

@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import { StyleSheet, View, Text, TextInput } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -24,12 +24,17 @@ const inputReducer = (state, action) => {
 };
 
 const TextField = (props) => {
+  const { onInputChange, id, isSubmitted, errorText, formType } = props;
   const [inputState, dispatch] = useReducer(inputReducer, {
     isValid: props.initiallyValid,
     touched: false,
   });
 
-  const { onInputChange, id, isSubmitted, errorText } = props;
+  useEffect(() => {
+    if (formType === 2) {
+      textChangeHandler(props.value.toString());
+    }
+  }, [formType]);
 
   const textChangeHandler = (text) => {
     const emailRegex =
@@ -80,8 +85,6 @@ const TextField = (props) => {
           {...props}
           style={{ ...styles.input, ...props.fontSize }}
           onChangeText={textChangeHandler}
-          // value={inputState.value}
-          // onBlur={() => onInputChange(id, inputState.value, inputState.isValid)}
         />
         {props.trailingIcon}
       </View>

@@ -8,9 +8,11 @@ import ReduxThunk from "redux-thunk";
 
 import TportNavigator from "./navigation/TportNavigator";
 import authReducer from "./store/reducer/auth";
+import fleetReducer from "./store/reducer/fleet";
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  fleets: fleetReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

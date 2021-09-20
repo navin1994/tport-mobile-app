@@ -42,7 +42,7 @@ const VehicleDetailsTile = (props) => {
         <View style={styles.separator}></View>
         <TextButton
           title="Remove"
-          onPress={() => {}}
+          onPress={props.onRemove}
           style={styles.textBtn}
           titleStyle={styles.titleStyle}
         />
