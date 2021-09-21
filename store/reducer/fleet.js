@@ -1,4 +1,4 @@
-import { ADD_FLEET, REMOVE_FLEET } from "../action/fleet";
+import { ADD_FLEET, REMOVE_FLEET, RESET_FLEET } from "../action/fleet";
 import Fleet from "../../shared/models/fleet";
 
 const initialState = {
@@ -40,6 +40,10 @@ export default (state = initialState, action) => {
       return {
         ...state,
         fleets: updatedFleets,
+      };
+    case RESET_FLEET:
+      return {
+        fleets: {},
       };
 
     default:

@@ -389,20 +389,19 @@ const TransporterRegistrationScreen = (props) => {
       const resData = await dispatch(
         authActions.transporterRegistration(formState.inputValues)
       );
-      if (resData.Result === "OK") {
-        setIsSubLoader(false);
-        setChecked(false);
-        setIsSubmitted(false);
-        setIsUserIdValid(userIdValObj);
-        dispatchFormState({
-          type: RESET_FORM,
-          initialFormState: initialFormState,
-        });
-        navigation.goBack();
-        Alert.alert("Registered", resData.Msg, [{ text: "Okay" }]);
-        setIsSubLoader(false);
-        setIsSubmitted(false);
-      }
+      dispatch(fleetActions.resetFleet());
+      setIsSubLoader(false);
+      setChecked(false);
+      setIsSubmitted(false);
+      setIsUserIdValid(userIdValObj);
+      dispatchFormState({
+        type: RESET_FORM,
+        initialFormState: initialFormState,
+      });
+      navigation.goBack();
+      Alert.alert("Registered", resData.Msg, [{ text: "Okay" }]);
+      setIsSubLoader(false);
+      setIsSubmitted(false);
     } catch (err) {
       setIsSubLoader(false);
       setError(err.message);
