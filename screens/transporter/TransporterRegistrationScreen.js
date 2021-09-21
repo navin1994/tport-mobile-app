@@ -1335,40 +1335,49 @@ const TransporterRegistrationScreen = (props) => {
                 />
               </View>
             </View>
-            <View style={styles.vehListContainer}>
-              <FlatList
-                nestedScrollEnabled
-                data={addedFleets}
-                keyExtractor={(item) => item.veh_no}
-                renderItem={(itemData) => (
-                  <VehicleDetailsTile
-                    vehicleNo={itemData.item.veh_no}
-                    vehType={itemData.item.veh_type}
-                    regDate={itemData.item.reg_date}
-                    chesisNo={itemData.item.chesis_no}
-                    insuranceNo={itemData.item.insurance_no}
-                    insuranceExpDate={itemData.item.insurance_exp_date}
-                    onRemove={() => {
-                      return Alert.alert(
-                        "Are your sure?",
-                        `Are you sure you want to remove this fleet of vehicle number ${itemData.item.veh_no} ?`,
-                        [
-                          {
-                            text: "Yes",
-                            onPress: () => {
-                              dispatch(
-                                fleetActions.removeFleet(itemData.item.veh_no)
-                              );
+            {addedFleets.length === 0 && !vehInitFormState.formIsValid && (
+              <Text
+                style={{ ...styles.errorText, fontSize: 16, color: "yellow" }}
+              >
+                Please add fleet Details
+              </Text>
+            )}
+            {addedFleets.length > 0 && (
+              <View style={styles.vehListContainer}>
+                <FlatList
+                  nestedScrollEnabled
+                  data={addedFleets}
+                  keyExtractor={(item) => item.veh_no}
+                  renderItem={(itemData) => (
+                    <VehicleDetailsTile
+                      vehicleNo={itemData.item.veh_no}
+                      vehType={itemData.item.veh_type}
+                      regDate={itemData.item.reg_date}
+                      chesisNo={itemData.item.chesis_no}
+                      insuranceNo={itemData.item.insurance_no}
+                      insuranceExpDate={itemData.item.insurance_exp_date}
+                      onRemove={() => {
+                        return Alert.alert(
+                          "Are your sure?",
+                          `Are you sure you want to remove this fleet of vehicle number ${itemData.item.veh_no} ?`,
+                          [
+                            {
+                              text: "Yes",
+                              onPress: () => {
+                                dispatch(
+                                  fleetActions.removeFleet(itemData.item.veh_no)
+                                );
+                              },
                             },
-                          },
-                          { text: "No" },
-                        ]
-                      );
-                    }}
-                  />
-                )}
-              />
-            </View>
+                            { text: "No" },
+                          ]
+                        );
+                      }}
+                    />
+                  )}
+                />
+              </View>
+            )}
             <TAndCContainer
               navigation={navigation}
               value={isChecked}

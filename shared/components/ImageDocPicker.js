@@ -9,10 +9,13 @@ import {
   Platform,
   TouchableOpacity,
   TouchableNativeFeedback,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
+import * as FileSystem from "expo-file-system";
+import * as DocumentPicker from "expo-document-picker";
 
 import Colors from "../constants/Colors";
 import TextButton from "./TextButton";
@@ -22,6 +25,7 @@ import PreviewImageTray from "../UI/PreviewImageTray";
 const window = Dimensions.get("window");
 const CAMERA = "CAMERA";
 const IMAGE = "IMAGE";
+const DOCUMENT = "DOCUMENT";
 
 const ImageDocPicker = (props) => {
   const {
@@ -34,6 +38,7 @@ const ImageDocPicker = (props) => {
     vehInputChangeHandler,
   } = props;
   const [showModal, setShowModal] = useState(visible);
+  const [imageList, updateImageList] = useState([]);
   const scaleValue = useRef(new Animated.Value(0)).current;
   let TouchableCmp = TouchableOpacity;
 
@@ -70,11 +75,30 @@ const ImageDocPicker = (props) => {
     setShowModal(visible);
   }, [visible]);
 
+  const getFileInfo = async (fileUri) => {
+    let fileInfo = await FileSystem.getInfoAsync(fileUri);
+    return fileInfo;
+  };
+
+  const fileCompressor = async (fileInfo) => {
+    console.log(fileInfo.size);
+    if (fileInfo.size <= 1000000) {
+      return fileInfo;
+    }
+    const fileComp = await ImageManipulator.manipulateAsync(fileInfo.uri, [], {
+      compress: 0.1,
+      base64: true,
+    });
+    const modifiedFile = await getFileInfo(fileComp.uri);
+    return fileCompressor(modifiedFile);
+  };
+
   const pickImage = async (pickerType) => {
     let result;
+    let finalData = "";
     if (pickerType === IMAGE) {
       result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
     }
 
@@ -82,13 +106,76 @@ const ImageDocPicker = (props) => {
       result = await ImagePicker.launchCameraAsync();
     }
 
-    console.log(result);
-    if (!result.cancelled) {
+    if (pickerType === DOCUMENT) {
+      result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+      });
+    }
+
+    if (result.type === "success") {
+      if (result.size > 1000000) {
+        Alert.alert("Error", "Upload PDF file size should be less than 1 MB.", [
+          { text: "Okay" },
+        ]);
+        return;
+      }
+      // getting error while converting pdf file to base 64
+      // finalData = await FileSystem.readAsStringAsync(result.uri, {
+      //   encoding: "base64",
+      // });
+    }
+
+    if (result.cancelled === false) {
+      const fileData = await getFileInfo(result.uri);
+      const compressedFile = await fileCompressor(fileData);
+      if (isMultiple) {
+        updateImageList([
+          ...imageList,
+          { id: imageList.length + 1, imgUri: compressedFile.uri },
+        ]);
+        return;
+      }
+      finalData = await FileSystem.readAsStringAsync(compressedFile.uri, {
+        encoding: "base64",
+      });
+    }
+    updateControls(finalData);
+  };
+
+  const closeModalWindow = () => {
+    setTimeout(() => closeModal(), 200);
+    Animated.timing(scaleValue, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    updateImageList([]);
+  };
+
+  const onSaveImages = async () => {
+    const conBase64Data = [];
+    if (imageList.length !== 0) {
+      conBase64Data = await Promise.all(
+        imageList.map((img) => {
+          const conImg = FileSystem.readAsStringAsync(img.imgUri, {
+            encoding: "base64",
+          });
+          return conImg;
+        })
+      );
+    }
+
+    updateControls(conBase64Data);
+    closeModalWindow();
+  };
+
+  const updateControls = (fileData) => {
+    if (fileData !== "") {
       if (formNumber === 1) {
-        inputchangeHandler(id, result.uri, true);
+        inputchangeHandler(id, fileData, true);
       }
       if (formNumber === 2) {
-        vehInputChangeHandler(id, result.uri, true);
+        vehInputChangeHandler(id, fileData, true);
       }
       closeModalWindow();
     } else {
@@ -100,14 +187,9 @@ const ImageDocPicker = (props) => {
       }
     }
   };
-
-  const closeModalWindow = () => {
-    setTimeout(() => closeModal(), 200);
-    Animated.timing(scaleValue, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+  const onRemoveImage = (imgId) => {
+    const updatedImageList = imageList.filter((item) => item.id !== imgId);
+    updateImageList(updatedImageList);
   };
 
   return (
@@ -140,12 +222,11 @@ const ImageDocPicker = (props) => {
                   pickImage(CAMERA);
                 }}
               />
-              {isMultiple && <PreviewImageTray />}
             </View>
             <View style={styles.optionContainer}>
               <TextButton
                 style={styles.TextBtnStyle}
-                title="Choose from Gallery"
+                title="Choose from Image Gallery"
                 leadingIcon={
                   <Ionicons
                     name="image-outline"
@@ -157,11 +238,43 @@ const ImageDocPicker = (props) => {
                   pickImage(IMAGE);
                 }}
               />
-              {isMultiple && <PreviewImageTray />}
             </View>
-            {/* <View style={styles.saveBtn}>
-              <RaisedButton title="Save" onPress={() => {}} />
+            {/* <View style={styles.optionContainer}>
+              <TextButton
+                style={styles.TextBtnStyle}
+                title="Choose document"
+                leadingIcon={
+                  <Ionicons
+                    name="document-text-outline"
+                    size={30}
+                    color={Colors.primary}
+                  />
+                }
+                onPress={() => {
+                  pickImage(DOCUMENT);
+                }}
+              />
+              {isMultiple && <PreviewImageTray />}
             </View> */}
+            <View
+              style={{
+                display: isMultiple && imageList.length != 0 ? "flex" : "none",
+              }}
+            >
+              <PreviewImageTray
+                images={imageList}
+                onRemoveImg={onRemoveImage}
+              />
+            </View>
+
+            <View
+              style={{
+                ...styles.saveBtn,
+                display: isMultiple ? "flex" : "none",
+              }}
+            >
+              <RaisedButton title="Save" onPress={onSaveImages} />
+            </View>
           </ScrollView>
         </Animated.View>
       </View>
