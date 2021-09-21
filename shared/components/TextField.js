@@ -88,7 +88,7 @@ const TextField = (props) => {
         />
         {props.trailingIcon}
       </View>
-      {!inputState.isValid && isSubmitted && (
+      {!inputState.isValid && isSubmitted && errorText && (
         <Text style={styles.errorText}>{errorText}</Text>
       )}
     </View>

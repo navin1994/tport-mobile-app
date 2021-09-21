@@ -58,28 +58,28 @@ const window = Dimensions.get("window");
 const initialFormState = {
   inputValues: {
     seq: 1,
-    ownrnme: "", //
-    ownrmobile: "", //
-    ownremail: "", //
-    ownraddr: "", //
-    ownrpincd: "", //
+    ownrnme: "",
+    ownrmobile: "",
+    ownremail: "",
+    ownraddr: "",
+    ownrpincd: "",
     ownrpandoc: "",
-    ownridno: "", //
-    ownrpanno: "", //
+    ownridno: "",
+    ownrpanno: "",
     ownradhardoc: "",
-    loginid: "", //
-    password: "", //
-    cnfpassword: "", //
-    companyname: "", //
-    companyregno: "", //
-    comapnypanno: "", //
+    loginid: "",
+    password: "",
+    cnfpassword: "",
+    companyname: "",
+    companyregno: "",
+    comapnypanno: "",
     compincode: "", // not in UI
-    companyaddress: "", //
-    companygstno: "", //
+    companyaddress: "",
+    companygstno: "",
     companyregdoc: "",
-    companypandoc: "", //
+    companypandoc: "",
     companygstdoc: "",
-    evgstnid: "", //
+    evgstnid: "",
     vehclst: [],
   },
   inputValidities: {
@@ -120,13 +120,13 @@ const vehInitFormState = {
     vehinsexpdte: "",
     vehinsuno: "",
     vehchesino: "",
-    vehphoto: "",
+    vehphoto: [],
     vehregfle: "",
     vehinsurancedoc: "",
     vehfitcetexpdte: "",
     vehfitcetphoto: "",
     vehpucexpdte: "",
-    vehpucphoto: [],
+    vehpucphoto: "",
   },
   inputValidities: {
     vtypid: false,
@@ -149,12 +149,12 @@ const vehInitFormState = {
 
 const TransporterRegistrationScreen = (props) => {
   const [showImagePicker, setImagePicker] = useState(false);
+  const [isMultiSelection, setIsMultiSelection] = useState(false);
   const [dateValue, setDateValue] = useState(new Date());
   const [currentDateField, setDateField] = useState("");
   const [minDate, setMinDate] = useState(null);
   const [maxDate, setMaxDate] = useState(null);
   const [showDatePkr, setShowDatePkr] = useState(false);
-  const dispatch = useDispatch();
   const [formType, setFormType] = useState(1);
   const [isSubLoader, setIsSubLoader] = useState(false);
   const [error, setError] = useState();
@@ -165,6 +165,9 @@ const TransporterRegistrationScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUserIdValid, setIsUserIdValid] = useState(userIdValObj);
   const [vehTypes, setVehTypes] = useState([]);
+  const [currentPicker, setCurrentPicker] = useState();
+  const [formNo, setFormNo] = useState(1);
+  const dispatch = useDispatch();
   let TouchableCmp = TouchableOpacity;
   const Icon = Ionicons;
   const { navigation } = props;
@@ -227,6 +230,7 @@ const TransporterRegistrationScreen = (props) => {
 
   const formTypeHandler = (formNumber) => {
     const formData = formState.inputValues;
+    setFormType(formNumber);
     if (formNumber === 1) {
       inputChangeHandler("companyname", formData.companyname, true);
       inputChangeHandler("companyregno", formData.companyregno, true);
@@ -238,7 +242,17 @@ const TransporterRegistrationScreen = (props) => {
       inputChangeHandler("companygstdoc", formData.companygstdoc, true);
       inputChangeHandler("evgstnid", formData.evgstnid, true);
     }
-    setFormType(formNumber);
+    if (formNumber === 2) {
+      if (formData.companyregdoc === "" || formData.companyregdoc == null) {
+        inputChangeHandler("companyregdoc", formData.companyregdoc, false);
+      }
+      if (formData.companypandoc === "" || formData.companypandoc == null) {
+        inputChangeHandler("companypandoc", formData.companypandoc, false);
+      }
+      if (formData.companygstdoc === "" || formData.companygstdoc == null) {
+        inputChangeHandler("companygstdoc", formData.companygstdoc, false);
+      }
+    }
   };
 
   const checkUserIdHandler = async () => {
@@ -268,6 +282,7 @@ const TransporterRegistrationScreen = (props) => {
 
   const inputChangeHandler = useCallback(
     (identifier, inputValue, inputValidity) => {
+      // console.log(`${identifier} : ${inputValue}`);
       dispatchFormState({
         type: FORM_INPUT_UPDATE,
         value: inputValue,
@@ -280,6 +295,19 @@ const TransporterRegistrationScreen = (props) => {
 
   const vehInputChangeHandler = useCallback(
     (identifier, inputValue, inputValidity) => {
+      if (
+        identifier === "vehpucexpdte" &&
+        (vehInitFormState.inputValues.vehpucphoto === "" ||
+          vehInitFormState.inputValues.vehpucphoto == null)
+      ) {
+        dispatchVehFormState({
+          type: FORM_INPUT_UPDATE,
+          value: "",
+          isValid: false,
+          input: "vehpucphoto",
+        });
+      }
+      // console.log(`${identifier} : ${inputValue}`);
       dispatchVehFormState({
         type: FORM_INPUT_UPDATE,
         value: inputValue,
@@ -331,7 +359,9 @@ const TransporterRegistrationScreen = (props) => {
   };
 
   const onSubmitRegistrationForm = () => {
+    formTypeHandler(formType);
     setIsSubmitted(true);
+    console.log(formState.inputValidities);
   };
   const onSubmitFleetForm = () => {
     dispatch(fleetActions.addFleet(vehFormState.inputValues));
@@ -368,7 +398,12 @@ const TransporterRegistrationScreen = (props) => {
               />
             )}
             <ImageDocPicker
+              formNumber={formNo}
+              inputchangeHandler={inputChangeHandler}
+              vehInputChangeHandler={vehInputChangeHandler}
               visible={showImagePicker}
+              isMultiple={isMultiSelection}
+              id={currentPicker}
               closeModal={onCloseModal}
             />
             <View
@@ -386,7 +421,6 @@ const TransporterRegistrationScreen = (props) => {
               id="companyname"
               required
               onInputChange={inputChangeHandler}
-              errorText="Please enter valid company name."
               label={
                 <Text>
                   Company Name
@@ -397,6 +431,20 @@ const TransporterRegistrationScreen = (props) => {
                 <FontAwesome name="building-o" size={25} color="black" />
               }
             />
+            {!formState.inputValidities.companyname &&
+              isSubmitted &&
+              formType === 2 && (
+                <View
+                  style={{
+                    ...styles.errorContainer,
+                    display: formType === 1 ? "none" : "flex",
+                  }}
+                >
+                  <Text style={styles.errorText}>
+                    Please enter valid company name.
+                  </Text>
+                </View>
+              )}
             <TextField
               formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
@@ -406,7 +454,6 @@ const TransporterRegistrationScreen = (props) => {
               id="companyregno"
               required
               onInputChange={inputChangeHandler}
-              errorText="Please enter valid registration number."
               label={
                 <Text>
                   Registration Number
@@ -421,26 +468,53 @@ const TransporterRegistrationScreen = (props) => {
                 />
               }
             />
+            {!formState.inputValidities.companyregno &&
+              isSubmitted &&
+              formType === 2 && (
+                <View
+                  style={{
+                    ...styles.errorContainer,
+                    display: formType === 1 ? "none" : "flex",
+                  }}
+                >
+                  <Text style={styles.errorText}>
+                    Please enter valid registration number.
+                  </Text>
+                </View>
+              )}
             <RaisedButton
               style={{
                 ...styles.fileUploadBtn,
                 display: formType === 1 ? "none" : "flex",
+                backgroundColor:
+                  formState.inputValues.companyregdoc === ""
+                    ? Colors.primary
+                    : Colors.success,
               }}
               title="Registration Doc"
               onPress={() => {
+                setFormNo(1);
+                setCurrentPicker("companyregdoc");
+                setIsMultiSelection(false);
                 setImagePicker(true);
               }}
             />
+            {!formState.inputValidities.companyregdoc &&
+              isSubmitted &&
+              formType === 2 && (
+                <Text style={styles.errorText}>
+                  Please upload registration document
+                </Text>
+              )}
             <TextField
               formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
-              value={formState.inputValues.companypandoc}
+              value={formState.inputValues.comapnypanno}
               isSubmitted={isSubmitted}
               initiallyValid={false}
-              id="companypandoc"
+              id="comapnypanno"
               required
               onInputChange={inputChangeHandler}
-              errorText="Please enter valid company PAN."
               label={
                 <Text>
                   Company PAN
@@ -451,16 +525,44 @@ const TransporterRegistrationScreen = (props) => {
                 <FontAwesome name="vcard-o" size={25} color="black" />
               }
             />
+            {!formState.inputValidities.comapnypanno &&
+              isSubmitted &&
+              formType === 2 && (
+                <View
+                  style={{
+                    ...styles.errorContainer,
+                    display: formType === 1 ? "none" : "flex",
+                  }}
+                >
+                  <Text style={styles.errorText}>
+                    Please enter valid company PAN.
+                  </Text>
+                </View>
+              )}
             <RaisedButton
               style={{
                 ...styles.fileUploadBtn,
                 display: formType === 1 ? "none" : "flex",
+                backgroundColor:
+                  formState.inputValues.companypandoc === ""
+                    ? Colors.primary
+                    : Colors.success,
               }}
               title="PAN Doc"
               onPress={() => {
+                setFormNo(1);
+                setCurrentPicker("companypandoc");
+                setIsMultiSelection(false);
                 setImagePicker(true);
               }}
             />
+            {!formState.inputValidities.companypandoc &&
+              isSubmitted &&
+              formType === 2 && (
+                <Text style={styles.errorText}>
+                  Please upload company PAN document
+                </Text>
+              )}
             <TextField
               formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
@@ -470,7 +572,6 @@ const TransporterRegistrationScreen = (props) => {
               id="companyaddress"
               required
               onInputChange={inputChangeHandler}
-              errorText="Please enter valid registered address."
               label={
                 <Text>
                   Registered Address
@@ -481,6 +582,20 @@ const TransporterRegistrationScreen = (props) => {
                 <FontAwesome name="vcard-o" size={25} color="black" />
               }
             />
+            {!formState.inputValidities.companyaddress &&
+              isSubmitted &&
+              formType === 2 && (
+                <View
+                  style={{
+                    ...styles.errorContainer,
+                    display: formType === 1 ? "none" : "flex",
+                  }}
+                >
+                  <Text style={styles.errorText}>
+                    Please enter valid registered address.
+                  </Text>
+                </View>
+              )}
             <TextField
               formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
@@ -490,7 +605,6 @@ const TransporterRegistrationScreen = (props) => {
               id="companygstno"
               required
               onInputChange={inputChangeHandler}
-              errorText="Please enter valid GSTIN number."
               label={
                 <Text>
                   Company GSTIN Number
@@ -505,16 +619,44 @@ const TransporterRegistrationScreen = (props) => {
                 />
               }
             />
+            {!formState.inputValidities.companygstno &&
+              isSubmitted &&
+              formType === 2 && (
+                <View
+                  style={{
+                    ...styles.errorContainer,
+                    display: formType === 1 ? "none" : "flex",
+                  }}
+                >
+                  <Text style={styles.errorText}>
+                    Please enter valid GSTIN number.
+                  </Text>
+                </View>
+              )}
             <RaisedButton
               style={{
                 ...styles.fileUploadBtn,
                 display: formType === 1 ? "none" : "flex",
+                backgroundColor:
+                  formState.inputValues.companygstdoc === ""
+                    ? Colors.primary
+                    : Colors.success,
               }}
               title="Upload GSTIN"
               onPress={() => {
+                setFormNo(1);
+                setCurrentPicker("companygstdoc");
+                setIsMultiSelection(false);
                 setImagePicker(true);
               }}
             />
+            {!formState.inputValidities.companygstdoc &&
+              isSubmitted &&
+              formType === 2 && (
+                <Text style={styles.errorText}>
+                  Please upload company GSTIN document
+                </Text>
+              )}
             <TextField
               formType={formType}
               style={{ display: formType === 1 ? "none" : "flex" }}
@@ -522,9 +664,7 @@ const TransporterRegistrationScreen = (props) => {
               isSubmitted={isSubmitted}
               initiallyValid={false}
               id="evgstnid"
-              required
               onInputChange={inputChangeHandler}
-              errorText="Please enter valid e-way GSTIN number."
               label="E-Way GSTIN Number"
               leadingIcon={
                 <MaterialCommunityIcons
@@ -534,6 +674,20 @@ const TransporterRegistrationScreen = (props) => {
                 />
               }
             />
+            {!formState.inputValidities.evgstnid &&
+              isSubmitted &&
+              formType === 2 && (
+                <View
+                  style={{
+                    ...styles.errorContainer,
+                    display: formType === 1 ? "none" : "flex",
+                  }}
+                >
+                  <Text style={styles.errorText}>
+                    Please enter valid e-way GSTIN number.
+                  </Text>
+                </View>
+              )}
             <View style={styles.separator}></View>
             <TextField
               formType={formType}
@@ -785,12 +939,26 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <RaisedButton
-              style={styles.fileUploadBtn}
+              style={{
+                ...styles.fileUploadBtn,
+                backgroundColor:
+                  formState.inputValues.ownradhardoc === ""
+                    ? Colors.primary
+                    : Colors.success,
+              }}
               title="Upload ID Proof"
               onPress={() => {
+                setFormNo(1);
+                setCurrentPicker("ownradhardoc");
+                setIsMultiSelection(false);
                 setImagePicker(true);
               }}
             />
+            {!formState.inputValidities.ownradhardoc && isSubmitted && (
+              <Text style={styles.errorText}>
+                Please upload aadhar document
+              </Text>
+            )}
             <TextField
               formType={formType}
               value={formState.inputValues.ownrpanno}
@@ -810,12 +978,24 @@ const TransporterRegistrationScreen = (props) => {
               }
             />
             <RaisedButton
-              style={styles.fileUploadBtn}
+              style={{
+                ...styles.fileUploadBtn,
+                backgroundColor:
+                  formState.inputValues.ownrpandoc === ""
+                    ? Colors.primary
+                    : Colors.success,
+              }}
               title="PAN Doc"
               onPress={() => {
+                setFormNo(1);
+                setCurrentPicker("ownrpandoc");
+                setIsMultiSelection(false);
                 setImagePicker(true);
               }}
             />
+            {!formState.inputValidities.ownrpandoc && isSubmitted && (
+              <Text style={styles.errorText}>Please upload PAN document</Text>
+            )}
             <View style={styles.separator}></View>
             <View>
               <View style={styles.FleetFormContainer}>
@@ -838,10 +1018,12 @@ const TransporterRegistrationScreen = (props) => {
                     return item.text;
                   }}
                 />
-                {!vehFormState.inputValidities.vtypnm && (
-                  <Text style={styles.errorText}>
-                    Please select vehicle type
-                  </Text>
+                {!vehFormState.inputValidities.vtypnm && isFleetSubmit && (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      Please select vehicle type
+                    </Text>
+                  </View>
                 )}
                 <TextField
                   value={vehFormState.inputValues.vehno}
@@ -859,12 +1041,26 @@ const TransporterRegistrationScreen = (props) => {
                   style={{ width: "90%" }}
                 />
                 <RaisedButton
-                  style={styles.fileUploadBtn}
+                  style={{
+                    ...styles.fileUploadBtn,
+                    backgroundColor:
+                      vehFormState.inputValues.vehphoto.length === 0
+                        ? Colors.primary
+                        : Colors.success,
+                  }}
                   title="Vehicle Photos"
                   onPress={() => {
+                    setFormNo(2);
+                    setCurrentPicker("vehphoto");
+                    setIsMultiSelection(true);
                     setImagePicker(true);
                   }}
                 />
+                {!vehFormState.inputValidities.vehphoto && isFleetSubmit && (
+                  <Text style={styles.errorText}>
+                    Please upload vehicle photos
+                  </Text>
+                )}
                 <TextField
                   value={vehFormState.inputValues.vehregdte}
                   isSubmitted={isFleetSubmit}
@@ -874,7 +1070,6 @@ const TransporterRegistrationScreen = (props) => {
                   placeholder="YYYY-MM-DD"
                   onInputChange={vehInputChangeHandler}
                   editable={false}
-                  errorText="Please enter valid registration date."
                   label={
                     <Text>
                       Registration Date<Text style={styles.required}>*</Text>
@@ -894,14 +1089,35 @@ const TransporterRegistrationScreen = (props) => {
                     </TouchableCmp>
                   }
                 />
+                {!vehFormState.inputValidities.vehregdte && isFleetSubmit && (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      Please enter valid registration date.
+                    </Text>
+                  </View>
+                )}
 
                 <RaisedButton
-                  style={styles.fileUploadBtn}
+                  style={{
+                    ...styles.fileUploadBtn,
+                    backgroundColor:
+                      vehFormState.inputValues.vehregfle === ""
+                        ? Colors.primary
+                        : Colors.success,
+                  }}
                   title="Registration Doc"
                   onPress={() => {
+                    setFormNo(2);
+                    setCurrentPicker("vehregfle");
+                    setIsMultiSelection(false);
                     setImagePicker(true);
                   }}
                 />
+                {!vehFormState.inputValidities.vehregfle && isFleetSubmit && (
+                  <Text style={styles.errorText}>
+                    Please upload vehicle registration documents
+                  </Text>
+                )}
                 <TextField
                   value={vehFormState.inputValues.vehchesino}
                   isSubmitted={isFleetSubmit}
@@ -941,7 +1157,6 @@ const TransporterRegistrationScreen = (props) => {
                   id="vehinsexpdte"
                   onInputChange={vehInputChangeHandler}
                   editable={false}
-                  errorText="Please enter valid insurance expiry date."
                   label={
                     <Text>
                       Insurance Expiry Date
@@ -967,13 +1182,35 @@ const TransporterRegistrationScreen = (props) => {
                     </TouchableCmp>
                   }
                 />
+                {!vehFormState.inputValidities.vehinsexpdte && isFleetSubmit && (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      Please enter valid insurance expiry date.
+                    </Text>
+                  </View>
+                )}
                 <RaisedButton
-                  style={styles.fileUploadBtn}
+                  style={{
+                    ...styles.fileUploadBtn,
+                    backgroundColor:
+                      vehFormState.inputValues.vehinsurancedoc === ""
+                        ? Colors.primary
+                        : Colors.success,
+                  }}
                   title="Insurance Doc"
                   onPress={() => {
+                    setFormNo(2);
+                    setCurrentPicker("vehinsurancedoc");
+                    setIsMultiSelection(false);
                     setImagePicker(true);
                   }}
                 />
+                {!vehFormState.inputValidities.vehinsurancedoc &&
+                  isFleetSubmit && (
+                    <Text style={styles.errorText}>
+                      Please upload vehicle insurance documents
+                    </Text>
+                  )}
                 <TextField
                   value={vehFormState.inputValues.vehfitcetexpdte}
                   isSubmitted={isFleetSubmit}
@@ -983,7 +1220,6 @@ const TransporterRegistrationScreen = (props) => {
                   placeholder="YYYY-MM-DD"
                   onInputChange={vehInputChangeHandler}
                   editable={false}
-                  errorText="Please enter valid fitness certificate date."
                   label={
                     <Text>
                       Fitness Certificate Expiry Date
@@ -1004,13 +1240,36 @@ const TransporterRegistrationScreen = (props) => {
                     </TouchableCmp>
                   }
                 />
+                {!vehFormState.inputValidities.vehfitcetexpdte &&
+                  isFleetSubmit && (
+                    <View style={styles.errorContainer}>
+                      <Text style={styles.errorText}>
+                        Please enter valid fitness certificate date.
+                      </Text>
+                    </View>
+                  )}
                 <RaisedButton
-                  style={styles.fileUploadBtn}
+                  style={{
+                    ...styles.fileUploadBtn,
+                    backgroundColor:
+                      vehFormState.inputValues.vehfitcetphoto === ""
+                        ? Colors.primary
+                        : Colors.success,
+                  }}
                   title="Fitness Doc"
                   onPress={() => {
+                    setFormNo(2);
+                    setCurrentPicker("vehfitcetphoto");
+                    setIsMultiSelection(false);
                     setImagePicker(true);
                   }}
                 />
+                {!vehFormState.inputValidities.vehfitcetphoto &&
+                  isFleetSubmit && (
+                    <Text style={styles.errorText}>
+                      Please upload vehicle fitness documents
+                    </Text>
+                  )}
                 <TextField
                   value={vehFormState.inputValues.vehpucexpdte}
                   isSubmitted={isFleetSubmit}
@@ -1019,7 +1278,6 @@ const TransporterRegistrationScreen = (props) => {
                   placeholder="YYYY-MM-DD"
                   onInputChange={vehInputChangeHandler}
                   editable={false}
-                  errorText="Please enter valid PUC expiry date."
                   label="PUC Expiry Date"
                   style={{ width: "90%" }}
                   trailingIcon={
@@ -1035,13 +1293,34 @@ const TransporterRegistrationScreen = (props) => {
                     </TouchableCmp>
                   }
                 />
+                {!vehFormState.inputValidities.vehpucexpdte && isFleetSubmit && (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      Please enter valid PUC expiry date.
+                    </Text>
+                  </View>
+                )}
                 <RaisedButton
-                  style={styles.fileUploadBtn}
+                  style={{
+                    ...styles.fileUploadBtn,
+                    backgroundColor:
+                      vehFormState.inputValues.vehpucphoto === ""
+                        ? Colors.primary
+                        : Colors.success,
+                  }}
                   title="PUC Doc"
                   onPress={() => {
+                    setFormNo(2);
+                    setCurrentPicker("vehpucphoto");
+                    setIsMultiSelection(false);
                     setImagePicker(true);
                   }}
                 />
+                {!vehFormState.inputValidities.vehpucphoto && isFleetSubmit && (
+                  <Text style={styles.errorText}>
+                    Please upload vehicle PUC documents
+                  </Text>
+                )}
                 <RaisedButton
                   style={styles.addFleetBtn}
                   title="Add Fleet"

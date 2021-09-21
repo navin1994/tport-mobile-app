@@ -10,7 +10,9 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
 } from "react-native";
-import { Ionicons, MaterialIcons, AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 import Colors from "../constants/Colors";
 import TextButton from "./TextButton";
@@ -18,16 +20,44 @@ import RaisedButton from "./RaisedButton";
 import PreviewImageTray from "../UI/PreviewImageTray";
 
 const window = Dimensions.get("window");
+const CAMERA = "CAMERA";
+const IMAGE = "IMAGE";
 
-const ImageDocPicker = ({ visible, closeModal, isMultiple }) => {
+const ImageDocPicker = (props) => {
+  const {
+    visible,
+    closeModal,
+    isMultiple,
+    id,
+    formNumber,
+    inputchangeHandler,
+    vehInputChangeHandler,
+  } = props;
   const [showModal, setShowModal] = useState(visible);
   const scaleValue = useRef(new Animated.Value(0)).current;
-  const [image, setImage] = useState(null);
   let TouchableCmp = TouchableOpacity;
 
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
   }
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert(
+            "Sorry, we need camera roll permissions to make image picker work!"
+          );
+        }
+        const cameraPerm = await ImagePicker.requestCameraPermissionsAsync();
+        if (cameraPerm.status !== "granted") {
+          alert("Sorry, we need camera permissions to make image picker work!");
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -39,6 +69,37 @@ const ImageDocPicker = ({ visible, closeModal, isMultiple }) => {
     }
     setShowModal(visible);
   }, [visible]);
+
+  const pickImage = async (pickerType) => {
+    let result;
+    if (pickerType === IMAGE) {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+      });
+    }
+
+    if (pickerType === CAMERA) {
+      result = await ImagePicker.launchCameraAsync();
+    }
+
+    console.log(result);
+    if (!result.cancelled) {
+      if (formNumber === 1) {
+        inputchangeHandler(id, result.uri, true);
+      }
+      if (formNumber === 2) {
+        vehInputChangeHandler(id, result.uri, true);
+      }
+      closeModalWindow();
+    } else {
+      if (formNumber === 1) {
+        inputchangeHandler(id, "", false);
+      }
+      if (formNumber === 2) {
+        vehInputChangeHandler(id, "", false);
+      }
+    }
+  };
 
   const closeModalWindow = () => {
     setTimeout(() => closeModal(), 200);
@@ -75,9 +136,11 @@ const ImageDocPicker = ({ visible, closeModal, isMultiple }) => {
                     color={Colors.primary}
                   />
                 }
-                onPress={() => {}}
+                onPress={() => {
+                  pickImage(CAMERA);
+                }}
               />
-              <PreviewImageTray />
+              {isMultiple && <PreviewImageTray />}
             </View>
             <View style={styles.optionContainer}>
               <TextButton
@@ -90,13 +153,15 @@ const ImageDocPicker = ({ visible, closeModal, isMultiple }) => {
                     color={Colors.primary}
                   />
                 }
-                onPress={() => {}}
+                onPress={() => {
+                  pickImage(IMAGE);
+                }}
               />
-              <PreviewImageTray />
+              {isMultiple && <PreviewImageTray />}
             </View>
-            <View style={styles.saveBtn}>
+            {/* <View style={styles.saveBtn}>
               <RaisedButton title="Save" onPress={() => {}} />
-            </View>
+            </View> */}
           </ScrollView>
         </Animated.View>
       </View>
