@@ -81,7 +81,6 @@ const ImageDocPicker = (props) => {
   };
 
   const fileCompressor = async (fileInfo) => {
-    console.log(fileInfo.size);
     if (fileInfo.size <= 1000000) {
       return fileInfo;
     }
@@ -90,7 +89,7 @@ const ImageDocPicker = (props) => {
       base64: true,
     });
     const modifiedFile = await getFileInfo(fileComp.uri);
-    return fileCompressor(modifiedFile);
+    return await fileCompressor(modifiedFile);
   };
 
   const pickImage = async (pickerType) => {
@@ -153,7 +152,7 @@ const ImageDocPicker = (props) => {
   };
 
   const onSaveImages = async () => {
-    const conBase64Data = [];
+    let conBase64Data = [];
     if (imageList.length !== 0) {
       conBase64Data = await Promise.all(
         imageList.map((img) => {

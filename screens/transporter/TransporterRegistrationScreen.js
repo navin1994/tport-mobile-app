@@ -42,6 +42,7 @@ import TAndCContainer from "../../shared/UI/TAndCContainer";
 import ImageDocPicker from "../../shared/components/ImageDocPicker";
 import * as authActions from "../../store/action/auth";
 import * as fleetActions from "../../store/action/fleet";
+import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 
 import {
   formReducer,
@@ -183,12 +184,20 @@ const TransporterRegistrationScreen = (props) => {
     const transformedItems = [];
     for (const key in state.fleets.fleets) {
       transformedItems.push({
-        veh_no: state.fleets.fleets[key].vehno,
-        veh_type: state.fleets.fleets[key].vtypnm,
-        reg_date: state.fleets.fleets[key].vehregdte,
-        chesis_no: state.fleets.fleets[key].vehchesino,
-        insurance_no: state.fleets.fleets[key].vehinsuno,
-        insurance_exp_date: state.fleets.fleets[key].vehinsexpdte,
+        vtypid: state.fleets.fleets[key].vtypid,
+        vehphoto: state.fleets.fleets[key].vehphoto,
+        vehregfle: state.fleets.fleets[key].vehregfle,
+        vehinsurancedoc: state.fleets.fleets[key].vehinsurancedoc,
+        vehfitcetexpdte: state.fleets.fleets[key].vehfitcetexpdte,
+        vehfitcetphoto: state.fleets.fleets[key].vehfitcetphoto,
+        vehpucexpdte: state.fleets.fleets[key].vehpucexpdte,
+        vehpucphoto: state.fleets.fleets[key].vehpucphoto,
+        vehno: state.fleets.fleets[key].vehno,
+        vtypnm: state.fleets.fleets[key].vtypnm,
+        vehregdte: state.fleets.fleets[key].vehregdte,
+        vehchesino: state.fleets.fleets[key].vehchesino,
+        vehinsuno: state.fleets.fleets[key].vehinsuno,
+        vehinsexpdte: state.fleets.fleets[key].vehinsexpdte,
       });
     }
     return transformedItems;
@@ -358,18 +367,66 @@ const TransporterRegistrationScreen = (props) => {
     setMaxDate(data.maxDate);
   };
 
-  const onSubmitRegistrationForm = () => {
+  const onSubmitRegistrationForm = async () => {
     formTypeHandler(formType);
     setIsSubmitted(true);
-    console.log(formState.inputValidities);
+
+    if (!formState.formIsValid || !isUserIdValid.avlFlag || !cnfPwdCheck) {
+      Alert.alert("Wrong Input", "Please check the errors in the form.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    if (!isChecked) {
+      Alert.alert("Error", "Please accept the terms and conditions.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    setError(null);
+    setIsSubLoader(true);
+    try {
+      const resData = await dispatch(
+        authActions.transporterRegistration(formState.inputValues)
+      );
+      if (resData.Result === "OK") {
+        setIsSubLoader(false);
+        setChecked(false);
+        setIsSubmitted(false);
+        setIsUserIdValid(userIdValObj);
+        dispatchFormState({
+          type: RESET_FORM,
+          initialFormState: initialFormState,
+        });
+        navigation.goBack();
+        Alert.alert("Registered", resData.Msg, [{ text: "Okay" }]);
+        setIsSubLoader(false);
+        setIsSubmitted(false);
+      }
+    } catch (err) {
+      setIsSubLoader(false);
+      setError(err.message);
+    }
   };
+
   const onSubmitFleetForm = () => {
+    setIsFleetSubmit(true);
+    if (!vehFormState.formIsValid) {
+      return;
+    }
     dispatch(fleetActions.addFleet(vehFormState.inputValues));
     dispatchVehFormState({
       type: RESET_FORM,
       initialFormState: vehInitFormState,
     });
-    setIsFleetSubmit(true);
+
+    inputChangeHandler(
+      "vehclst",
+      [...formState.inputValues.vehclst, vehFormState.inputValues],
+      true
+    );
+
+    setIsFleetSubmit(false);
   };
 
   return (
@@ -1347,15 +1404,15 @@ const TransporterRegistrationScreen = (props) => {
                 <FlatList
                   nestedScrollEnabled
                   data={addedFleets}
-                  keyExtractor={(item) => item.veh_no}
+                  keyExtractor={(item) => item.vehno}
                   renderItem={(itemData) => (
                     <VehicleDetailsTile
-                      vehicleNo={itemData.item.veh_no}
-                      vehType={itemData.item.veh_type}
-                      regDate={itemData.item.reg_date}
-                      chesisNo={itemData.item.chesis_no}
-                      insuranceNo={itemData.item.insurance_no}
-                      insuranceExpDate={itemData.item.insurance_exp_date}
+                      vehicleNo={itemData.item.vehno}
+                      vehType={itemData.item.vtypnm}
+                      regDate={itemData.item.vehregdte}
+                      chesisNo={itemData.item.vehchesino}
+                      insuranceNo={itemData.item.vehinsuno}
+                      insuranceExpDate={itemData.item.vehinsexpdte}
                       onRemove={() => {
                         return Alert.alert(
                           "Are your sure?",
@@ -1365,7 +1422,19 @@ const TransporterRegistrationScreen = (props) => {
                               text: "Yes",
                               onPress: () => {
                                 dispatch(
-                                  fleetActions.removeFleet(itemData.item.veh_no)
+                                  fleetActions.removeFleet(itemData.item.vehno)
+                                );
+                                inputChangeHandler(
+                                  "vehclst",
+                                  [
+                                    ...formState.inputValues.vehclst.filter(
+                                      (item) =>
+                                        item.vehno != itemData.item.vehno
+                                    ),
+                                  ],
+                                  formState.inputValues.vehclst.length > 1
+                                    ? true
+                                    : false
                                 );
                               },
                             },
