@@ -82,11 +82,21 @@ const ImageDocPicker = (props) => {
 
   const fileCompressor = async (fileInfo) => {
     if (fileInfo.size <= 1000000) {
-      return fileInfo;
+      const fileComp = await ImageManipulator.manipulateAsync(
+        fileInfo.uri,
+        [],
+        { base64: true }
+      );
+      const extension = fileComp.uri.substring(
+        fileComp.uri.lastIndexOf(".") + 1
+      );
+      const prepend = "data:image/" + extension + ";base64,";
+      fileComp.base64 = prepend + fileComp.base64;
+      return fileComp;
     }
+
     const fileComp = await ImageManipulator.manipulateAsync(fileInfo.uri, [], {
       compress: 0.1,
-      base64: true,
     });
     const modifiedFile = await getFileInfo(fileComp.uri);
     return await fileCompressor(modifiedFile);
@@ -94,7 +104,7 @@ const ImageDocPicker = (props) => {
 
   const pickImage = async (pickerType) => {
     let result;
-    let finalData = "";
+    let compressedFile = "";
     if (pickerType === IMAGE) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -126,19 +136,29 @@ const ImageDocPicker = (props) => {
 
     if (result.cancelled === false) {
       const fileData = await getFileInfo(result.uri);
-      const compressedFile = await fileCompressor(fileData);
+      compressedFile = await fileCompressor(fileData);
       if (isMultiple) {
         updateImageList([
           ...imageList,
-          { id: imageList.length + 1, imgUri: compressedFile.uri },
+          {
+            id: Math.random(),
+            imgUri: compressedFile.uri,
+            base64: compressedFile.base64,
+          },
         ]);
         return;
       }
-      finalData = await FileSystem.readAsStringAsync(compressedFile.uri, {
-        encoding: "base64",
-      });
+      // finalData = await FileSystem.readAsStringAsync(compressedFile.uri, {
+      //   encoding: "base64",
+      // });
+      // const finalData = await ImageManipulator.manipulateAsync(
+      //   compressedFile.uri,
+      //   [],
+      //   { base64: true }
+      // );
     }
-    updateControls(finalData);
+
+    updateControls(compressedFile.base64);
   };
 
   const closeModalWindow = () => {
@@ -156,20 +176,20 @@ const ImageDocPicker = (props) => {
     if (imageList.length !== 0) {
       conBase64Data = await Promise.all(
         imageList.map((img) => {
-          const conImg = FileSystem.readAsStringAsync(img.imgUri, {
-            encoding: "base64",
-          });
-          return conImg;
+          return img.base64;
         })
       );
     }
-
-    updateControls(conBase64Data);
+    if (conBase64Data !== []) {
+      updateControls(conBase64Data);
+    } else {
+      updateControls([]);
+    }
     closeModalWindow();
   };
 
   const updateControls = (fileData) => {
-    if (fileData !== "") {
+    if (fileData !== "" && fileData.length !== 0) {
       if (formNumber === 1) {
         inputchangeHandler(id, fileData, true);
       }

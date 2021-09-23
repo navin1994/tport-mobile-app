@@ -6,7 +6,7 @@ export const LOGIN = "LOGIN";
 const requestedUrl = {
   CHECK_USER_ID: "checkloginid",
   USER_REGISTRATION: "customerRegstr",
-  TRANSPORTER_REISTRATION: "registration",
+  TRANSPORTER_REGISTRATION: "registration",
   LOGIN: "loginaction",
   GETVEHTYPE: "getvtyp",
 };
@@ -31,18 +31,18 @@ export const checkUserId = (userId) => {
 
 export const transporterRegistration = (transporterData) => {
   return async (dispatch) => {
-    const response = await fetch(api + requestedUrl.TRANSPORTER_REISTRATION, {
+    const response = await fetch(api + requestedUrl.TRANSPORTER_REGISTRATION, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(transporterData),
     });
+    const result = await response.json();
     if (!response.ok) {
       throw new Error("Something went wrong while transporter registration.");
     }
-    const result = await response.json();
-    if (result.Result === "NOTOK") {
+    if (result.Result === "ERR") {
       throw new Error(result.Msg);
     }
     return await result;

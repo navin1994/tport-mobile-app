@@ -26,7 +26,7 @@ const PreviewImageTray = (props) => {
         showsHorizontalScrollIndicator={false}
         nestedScrollEnabled
         data={images}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={(itemData) => (
           <View style={styles.imgThumbnail}>
             <Image
