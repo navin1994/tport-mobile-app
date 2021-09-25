@@ -102,7 +102,7 @@ const ImageDocPicker = (props) => {
     return await fileCompressor(modifiedFile);
   };
 
-  const pickImage = async (pickerType) => {
+  const picker = async (pickerType) => {
     let result;
     let compressedFile = "";
     if (pickerType === IMAGE) {
@@ -118,6 +118,9 @@ const ImageDocPicker = (props) => {
     if (pickerType === DOCUMENT) {
       result = await DocumentPicker.getDocumentAsync({
         type: "application/pdf",
+        // multiple: true, // Works in web only
+        // copyToCacheDirectory: true,
+        copyToCacheDirectory: true,
       });
     }
 
@@ -128,10 +131,10 @@ const ImageDocPicker = (props) => {
         ]);
         return;
       }
-      // getting error while converting pdf file to base 64
-      // finalData = await FileSystem.readAsStringAsync(result.uri, {
-      //   encoding: "base64",
-      // });
+      console.log(result);
+      compressedFile = await FileSystem.readAsStringAsync(result.uri, {
+        encoding: FileSystem.EncodingTypes.Base64,
+      });
     }
 
     if (result.cancelled === false) {
@@ -148,16 +151,7 @@ const ImageDocPicker = (props) => {
         ]);
         return;
       }
-      // finalData = await FileSystem.readAsStringAsync(compressedFile.uri, {
-      //   encoding: "base64",
-      // });
-      // const finalData = await ImageManipulator.manipulateAsync(
-      //   compressedFile.uri,
-      //   [],
-      //   { base64: true }
-      // );
     }
-
     updateControls(compressedFile.base64);
   };
 
@@ -238,7 +232,7 @@ const ImageDocPicker = (props) => {
                   />
                 }
                 onPress={() => {
-                  pickImage(CAMERA);
+                  picker(CAMERA);
                 }}
               />
             </View>
@@ -254,7 +248,7 @@ const ImageDocPicker = (props) => {
                   />
                 }
                 onPress={() => {
-                  pickImage(IMAGE);
+                  picker(IMAGE);
                 }}
               />
             </View>
@@ -270,10 +264,9 @@ const ImageDocPicker = (props) => {
                   />
                 }
                 onPress={() => {
-                  pickImage(DOCUMENT);
+                  picker(DOCUMENT);
                 }}
               />
-              {isMultiple && <PreviewImageTray />}
             </View> */}
             <View
               style={{
