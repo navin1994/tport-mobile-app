@@ -144,41 +144,34 @@ const AddedFleetsList = (props) => {
       style={styles.container}
       pointerEvents={isSubLoader ? "none" : "auto"}
     >
-      <View style={styles.loader}>
-        {isSubLoader && <ProgressIndicator msg="Registering Transporter" />}
-      </View>
-      <View style={styles.childContainer}>
-        {formState.inputValues.vehclst.length === 0 &&
-          addedFleets.length === 0 && (
-            <Text
-              style={{ ...styles.errorText, fontSize: 16, color: "yellow" }}
-            >
-              Please add fleet Details
-            </Text>
-          )}
-
-        {formState.inputValues.vehclst.length !== 0 &&
-          addedFleets.length !== 0 && (
-            <View style={styles.vehListContainer}>
-              <FlatList
-                nestedScrollEnabled
-                data={addedFleets}
-                keyExtractor={(item) => item.vehno}
-                renderItem={(itemData) => (
-                  <VehicleDetailsTile
-                    vehicleNo={itemData.item.vehno}
-                    vehType={itemData.item.vtypnm}
-                    regDate={itemData.item.vehregdte}
-                    chesisNo={itemData.item.vehchesino}
-                    insuranceNo={itemData.item.vehinsuno}
-                    insuranceExpDate={itemData.item.vehinsexpdte}
-                    onRemove={() => onRemoveFleet(itemData.item.vehno)}
-                  />
-                )}
+      {isSubLoader && <ProgressIndicator msg="Registering Transporter" />}
+      {formState.inputValues.vehclst.length === 0 &&
+        addedFleets.length === 0 && (
+          <Text style={{ ...styles.errorText, fontSize: 16, color: "yellow" }}>
+            Please add fleet Details
+          </Text>
+        )}
+      {formState.inputValues.vehclst.length !== 0 && addedFleets.length !== 0 && (
+        <View style={styles.vehListContainer}>
+          <FlatList
+            nestedScrollEnabled
+            data={addedFleets}
+            keyExtractor={(item) => item.vehno}
+            renderItem={(itemData) => (
+              <VehicleDetailsTile
+                vehicleNo={itemData.item.vehno}
+                vehType={itemData.item.vtypnm}
+                regDate={itemData.item.vehregdte}
+                chesisNo={itemData.item.vehchesino}
+                insuranceNo={itemData.item.vehinsuno}
+                insuranceExpDate={itemData.item.vehinsexpdte}
+                onRemove={() => onRemoveFleet(itemData.item.vehno)}
               />
-            </View>
-          )}
-
+            )}
+          />
+        </View>
+      )}
+      <View>
         <TAndCContainer
           navigation={navigation}
           value={isChecked}
@@ -189,8 +182,7 @@ const AddedFleetsList = (props) => {
           style={styles.submitBtn}
           onPress={onSubmitRegistrationForm}
         />
-      </View>
-      <View style={styles.preBtnContainer}>
+
         <RaisedButton
           title="Prev"
           style={styles.navBtn}
@@ -206,40 +198,39 @@ const AddedFleetsList = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // height: window.height,
+    height: window.height - 60,
+    width: window.width,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  childContainer: {
-    flex: 1,
+    // backgroundColor: "black",
   },
   vehListContainer: {
     marginVertical: 10,
     minHeight: window.height * 0.3,
     maxHeight: window.height * 0.6,
+    // width: window.width * 0.95,
     borderWidth: 1,
     paddingHorizontal: 2,
     borderRadius: 8,
   },
   submitBtn: {
-    margin: 40,
+    flex: null,
+    width: 240,
     backgroundColor: Colors.danger,
+    alignSelf: "center",
   },
   errorText: {
     fontFamily: "open-sans",
     color: Colors.danger,
     fontSize: 13,
   },
-  preBtnContainer: {
-    height: 70,
-  },
   navBtn: {
+    flex: null,
     backgroundColor: Colors.success,
     width: 150,
+    alignSelf: "center",
   },
-  loader: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
 
 export default AddedFleetsList;

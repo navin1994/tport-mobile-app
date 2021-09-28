@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 10,
   },
   tAndCContainer: {
     marginVertical: 20,
@@ -52,6 +53,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   clickableText: {
+    // marginTop: 10,
     fontFamily: "open-sans",
     color: "yellow",
   },

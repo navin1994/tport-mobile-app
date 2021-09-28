@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
 
 import AuthScreenContainer from "../../../shared/components/AuthScreenContainer";
 import ProgressIndicator from "../../../shared/UI/ProgressIndicator";
@@ -18,6 +19,7 @@ import RaisedButton from "../../../shared/components/RaisedButton";
 import TextButton from "../../../shared/components/TextButton";
 import Colors from "../../../shared/constants/Colors";
 import * as authActions from "../../../store/action/auth";
+import * as transporterActions from "../../../store/action/transporter";
 import {
   formReducer,
   FORM_INPUT_UPDATE,
@@ -50,6 +52,13 @@ const LoginScreen = (props) => {
   );
   const userType = useSelector((state) => state.auth.usrtyp);
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      dispatch(transporterActions.resetForm());
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     if (error) {
