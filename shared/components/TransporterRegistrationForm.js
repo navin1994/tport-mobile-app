@@ -113,18 +113,18 @@ const TransporterRegistrationForm = (props) => {
     const { next } = props;
     setIsSubmitted(true);
     formTypeHandler(formType);
+    if (!formState.formIsValid || !cnfPwdCheck) {
+      Alert.alert("Wrong Input", "Please check the errors in the form.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
     if (!isUserIdValid.avlFlag) {
       Alert.alert(
         "Wrong Input",
         "Please check that user id is available or not.",
         [{ text: "Okay" }]
       );
-      return;
-    }
-    if (!formState.formIsValid || !cnfPwdCheck) {
-      Alert.alert("Wrong Input", "Please check the errors in the form.", [
-        { text: "Okay" },
-      ]);
       return;
     }
     setIsSubmitted(false);
