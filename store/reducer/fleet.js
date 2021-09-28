@@ -2,7 +2,24 @@ import { ADD_FLEET, REMOVE_FLEET, RESET_FLEET } from "../action/fleet";
 import Fleet from "../../shared/models/fleet";
 
 const initialState = {
-  fleets: {},
+  fleets: {
+    // "MH35 V0498": {
+    //   vehphoto: "",
+    //   vehregfle: "",
+    //   vehinsurancedoc: "",
+    //   vehfitcetexpdte: "20/02/2003",
+    //   vehfitcetphoto: "",
+    //   vehpucexpdte: "20/02/2003",
+    //   vehpucphoto: "",
+    //   vehno: "MH35 V0498",
+    //   vtypnm: "Truck",
+    //   vehregdte: "20/02/2003",
+    //   vehchesino: "12568544",
+    //   vehinsuno: "545665652",
+    //   vehinsexpdte: "20/02/2003",
+    //   vtypid: 2,
+    // },
+  },
 };
 
 export default (state = initialState, action) => {

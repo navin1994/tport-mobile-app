@@ -28,15 +28,7 @@ const IMAGE = "IMAGE";
 const DOCUMENT = "DOCUMENT";
 
 const ImageDocPicker = (props) => {
-  const {
-    visible,
-    closeModal,
-    isMultiple,
-    id,
-    formNumber,
-    inputchangeHandler,
-    vehInputChangeHandler,
-  } = props;
+  const { visible, closeModal, isMultiple, id, inputchangeHandler } = props;
   const [showModal, setShowModal] = useState(visible);
   const [imageList, updateImageList] = useState([]);
   const scaleValue = useRef(new Animated.Value(0)).current;
@@ -104,7 +96,7 @@ const ImageDocPicker = (props) => {
 
   const picker = async (pickerType) => {
     let result;
-    let compressedFile = "";
+    let compressedFile;
     if (pickerType === IMAGE) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -131,7 +123,6 @@ const ImageDocPicker = (props) => {
         ]);
         return;
       }
-      console.log(result);
       compressedFile = await FileSystem.readAsStringAsync(result.uri, {
         encoding: FileSystem.EncodingTypes.Base64,
       });
@@ -152,7 +143,7 @@ const ImageDocPicker = (props) => {
         return;
       }
     }
-    updateControls(compressedFile.base64);
+    updateControls(compressedFile?.base64);
   };
 
   const closeModalWindow = () => {
@@ -166,7 +157,7 @@ const ImageDocPicker = (props) => {
   };
 
   const onSaveImages = async () => {
-    let conBase64Data = [];
+    let conBase64Data;
     if (imageList.length !== 0) {
       conBase64Data = await Promise.all(
         imageList.map((img) => {
@@ -174,32 +165,18 @@ const ImageDocPicker = (props) => {
         })
       );
     }
-    if (conBase64Data !== []) {
-      updateControls(conBase64Data);
-    } else {
-      updateControls([]);
-    }
-    closeModalWindow();
+    updateControls(conBase64Data);
   };
 
   const updateControls = (fileData) => {
-    if (fileData !== "" && fileData.length !== 0) {
-      if (formNumber === 1) {
-        inputchangeHandler(id, fileData, true);
-      }
-      if (formNumber === 2) {
-        vehInputChangeHandler(id, fileData, true);
-      }
+    if (fileData !== undefined) {
+      inputchangeHandler(id, fileData, true);
       closeModalWindow();
     } else {
-      if (formNumber === 1) {
-        inputchangeHandler(id, "", false);
-      }
-      if (formNumber === 2) {
-        vehInputChangeHandler(id, "", false);
-      }
+      inputchangeHandler(id, "", false);
     }
   };
+
   const onRemoveImage = (imgId) => {
     const updatedImageList = imageList.filter((item) => item.id !== imgId);
     updateImageList(updatedImageList);
