@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
   Platform,
+  BackHandler,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
 import AuthScreenContainer from "../../../shared/components/AuthScreenContainer";
@@ -50,9 +51,29 @@ const LoginScreen = (props) => {
     formReducer,
     initialFormState
   );
-  const userType = useSelector((state) => state.auth.usrtyp);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     if (isFocused) {
@@ -90,16 +111,12 @@ const LoginScreen = (props) => {
     setIsSubLoader(true);
     try {
       const formData = formState.inputValues;
-      const result = await dispatch(authActions.login(formData));
+      await dispatch(authActions.login(formData));
       setIsSubLoader(false);
       dispatchFormState({
         type: RESET_FORM,
         initialFormState: initialFormState,
       });
-
-      result.Record.usrtyp === "T"
-        ? navigation.navigate("transpHome")
-        : navigation.navigate("userHome");
     } catch (err) {
       setError(err.message);
       setIsSubLoader(false);

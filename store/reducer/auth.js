@@ -1,4 +1,4 @@
-import { LOGIN } from "../action/auth";
+import { LOGIN, LOGOUT } from "../action/auth";
 
 const initialState = {
   docflag: null,
@@ -26,6 +26,8 @@ export default (state = initialState, action) => {
         usrnme: action.usrnme,
         usrtyp: action.usrtyp,
       };
+    case LOGOUT:
+      return initialState;
     default:
       return state;
   }

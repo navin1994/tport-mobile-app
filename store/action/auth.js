@@ -2,6 +2,7 @@ import { environment } from "../../environment/environment";
 
 const api = environment.api;
 export const LOGIN = "LOGIN";
+export const LOGOUT = "LOGOUT";
 
 const requestedUrl = {
   CHECK_USER_ID: "checkloginid",
@@ -105,4 +106,8 @@ export const login = (loginData) => {
     });
     return await result;
   };
+};
+
+export const logout = () => {
+  return { type: LOGOUT };
 };
