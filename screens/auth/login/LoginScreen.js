@@ -55,33 +55,31 @@ const LoginScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (props.route.name !== "Login") {
-      return;
+    if (isFocused) {
+      dispatch(transporterActions.resetForm());
     }
-    const backAction = (event) => {
-      Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
+    const backAction = () => {
+      if (isFocused) {
+        Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel",
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true;
+      } else {
+        navigation.goBack();
+        return true;
+      }
     };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
 
     return () => backHandler.remove();
-  }, []);
-
-  useEffect(() => {
-    if (isFocused) {
-      dispatch(transporterActions.resetForm());
-    }
   }, [isFocused]);
 
   useEffect(() => {
@@ -114,12 +112,12 @@ const LoginScreen = (props) => {
     setIsSubLoader(true);
     try {
       const formData = formState.inputValues;
-      await dispatch(authActions.login(formData));
+      dispatch(authActions.login(formData));
       // setIsSubLoader(false);
-      dispatchFormState({
-        type: RESET_FORM,
-        initialFormState: initialFormState,
-      });
+      // dispatchFormState({
+      //   type: RESET_FORM,
+      //   initialFormState: initialFormState,
+      // });
     } catch (err) {
       setError(err.message);
       setIsSubLoader(false);

@@ -36,14 +36,19 @@ const UserNavigator = () => {
           options={{ title: "User Dashboard" }}
         />
         <Drawer.Screen
-          name="bidHistory"
-          component={BidHistoryScreen}
-          options={{ title: "Bid History" }}
+          name="userProfile"
+          component={UserProfileScreen}
+          options={{ title: "TPort Profile" }}
         />
         <Drawer.Screen
-          name="contrctHistory"
-          component={ContractHistoryScreen}
-          options={{ title: "Contract History" }}
+          name="userTport"
+          component={UserTportScreen}
+          options={{ title: "Register TPort" }}
+        />
+        <Drawer.Screen
+          name="userContracts"
+          component={UserContractsScreen}
+          options={{ title: "Open TPort" }}
         />
         <Drawer.Screen
           name="runningContracts"
@@ -51,20 +56,15 @@ const UserNavigator = () => {
           options={{ title: "Running Contracts" }}
         />
         <Drawer.Screen
-          name="userContracts"
-          component={UserContractsScreen}
-          options={{ title: "User Contracts" }}
+          name="contrctHistory"
+          component={ContractHistoryScreen}
+          options={{ title: "Contract History" }}
         />
-        <Drawer.Screen
-          name="userProfile"
-          component={UserProfileScreen}
-          options={{ title: "User Profile" }}
-        />
-        <Drawer.Screen
-          name="userTport"
-          component={UserTportScreen}
-          options={{ title: "User TPort" }}
-        />
+        {/* <Drawer.Screen
+          name="bidHistory"
+          component={BidHistoryScreen}
+          options={{ title: "Bid History" }}
+        /> */}
       </Drawer.Group>
     </Drawer.Navigator>
   );
