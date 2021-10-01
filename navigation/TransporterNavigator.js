@@ -20,7 +20,7 @@ const TransporterNavigator = () => {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      initialRouteName="transpHome"
+      initialRouteName="transpDashboard"
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.titleBackground,
@@ -34,7 +34,7 @@ const TransporterNavigator = () => {
     >
       <Drawer.Group>
         <Drawer.Screen
-          name="transpHome"
+          name="transpDashboard"
           component={TransporterDashboardScreen}
           options={{ title: "Transporter Dashboard" }}
         />

@@ -55,7 +55,10 @@ const LoginScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    const backAction = () => {
+    if (props.route.name !== "Login") {
+      return;
+    }
+    const backAction = (event) => {
       Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
         {
           text: "Cancel",
@@ -112,7 +115,7 @@ const LoginScreen = (props) => {
     try {
       const formData = formState.inputValues;
       await dispatch(authActions.login(formData));
-      setIsSubLoader(false);
+      // setIsSubLoader(false);
       dispatchFormState({
         type: RESET_FORM,
         initialFormState: initialFormState,

@@ -5,10 +5,12 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../../store/action/auth";
 
 const UserDashboardScreen = (props) => {
-  const { navigation } = props;
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (props.route.name !== "userDashboard") {
+      return;
+    }
     const backAction = () => {
       Alert.alert("Hold on!", "Are you sure you want to logout and go back?", [
         {
@@ -25,7 +27,6 @@ const UserDashboardScreen = (props) => {
       "hardwareBackPress",
       backAction
     );
-
     return () => backHandler.remove();
   }, []);
 

@@ -17,7 +17,7 @@ const UserNavigator = () => {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      initialRouteName="userHome"
+      initialRouteName="userDashboard"
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.titleBackground,
@@ -31,7 +31,7 @@ const UserNavigator = () => {
     >
       <Drawer.Group>
         <Drawer.Screen
-          name="userHome"
+          name="userDashboard"
           component={UserDashboardScreen}
           options={{ title: "User Dashboard" }}
         />
