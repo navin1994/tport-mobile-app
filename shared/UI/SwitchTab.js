@@ -32,8 +32,7 @@ export const SwitchTab = (props) => {
         <View
           style={{
             ...styles.leftTextCon,
-            backgroundColor:
-              formType === 1 ? Colors.success : Colors.primaryDark,
+            backgroundColor: formType === 1 ? Colors.success : "grey",
           }}
         >
           <Text style={styles.ownershipText}>Individual</Text>
@@ -43,8 +42,7 @@ export const SwitchTab = (props) => {
         <View
           style={{
             ...styles.rightTextCon,
-            backgroundColor:
-              formType === 2 ? Colors.success : Colors.primaryDark,
+            backgroundColor: formType === 2 ? Colors.success : "grey",
           }}
         >
           <Text style={styles.ownershipText}>Transport Company</Text>

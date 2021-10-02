@@ -6,6 +6,7 @@ import { useIsFocused } from "@react-navigation/native";
 import * as authActions from "../../store/action/auth";
 
 const TransporterDashboardScreen = (props) => {
+  const { navigation } = props;
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
