@@ -112,7 +112,7 @@ const LoginScreen = (props) => {
     setIsSubLoader(true);
     try {
       const formData = formState.inputValues;
-      dispatch(authActions.login(formData));
+      const result = await dispatch(authActions.login(formData));
       // setIsSubLoader(false);
       // dispatchFormState({
       //   type: RESET_FORM,
