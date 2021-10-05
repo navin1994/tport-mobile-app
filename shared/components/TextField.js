@@ -24,7 +24,8 @@ const inputReducer = (state, action) => {
 };
 
 const TextField = (props) => {
-  const { onInputChange, id, isSubmitted, errorText, formType } = props;
+  const { onInputChange, id, isSubmitted, errorText, formType, readonly } =
+    props;
   const [inputState, dispatch] = useReducer(inputReducer, {
     isValid: props.initiallyValid,
     touched: false,
@@ -74,18 +75,21 @@ const TextField = (props) => {
     <View>
       <View style={{ ...styles.inputContainer, ...props.style }}>
         <View
-          style={{ ...styles.LabelContainer, ...props.labelContainerStyle }}
+          style={{ ...styles.labelContainer, ...props.labelContainerStyle }}
         >
           <Text style={{ ...styles.label, ...props.labelStyle }}>
             {props.label}
           </Text>
         </View>
         {props.leadingIcon}
-        <TextInput
-          {...props}
-          style={{ ...styles.input, ...props.fontSize }}
-          onChangeText={textChangeHandler}
-        />
+        <View style={{ flex: 1 }} pointerEvents={readonly ? "none" : "auto"}>
+          <TextInput
+            {...props}
+            style={{ ...styles.input, ...props.fontSize }}
+            onChangeText={textChangeHandler}
+          />
+        </View>
+
         {props.trailingIcon}
       </View>
       {!inputState.isValid && isSubmitted && errorText && (
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "open-sans",
   },
-  LabelContainer: {
+  labelContainer: {
     position: "absolute",
     left: 20,
     top: -12,

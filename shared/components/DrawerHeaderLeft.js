@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const window = Dimensions.get("window");
 
-const HeaderLeft = (props) => {
+const DrawerHeaderLeft = (props) => {
   const navigation = useNavigation();
   let TouchableCmp = TouchableOpacity;
 
@@ -24,16 +24,12 @@ const HeaderLeft = (props) => {
     <View style={styles.headerLeft}>
       <TouchableCmp
         onPress={() => {
-          navigation.goBack();
+          navigation.toggleDrawer();
         }}
       >
         <Ionicons
-          name={
-            Platform.OS === "android"
-              ? "arrow-back-outline"
-              : "ios-chevron-back-outline"
-          }
-          size={25}
+          name={Platform.OS === "android" ? "md-menu-sharp" : "ios-menu-sharp"}
+          size={24}
           color="white"
         />
       </TouchableCmp>
@@ -45,11 +41,11 @@ const HeaderLeft = (props) => {
 
 const styles = StyleSheet.create({
   headerLeft: {
-    width: window.width * 0.2,
+    width: window.width * 0.3,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
   },
 });
 
-export default HeaderLeft;
+export default DrawerHeaderLeft;

@@ -28,7 +28,8 @@ const IMAGE = "IMAGE";
 const DOCUMENT = "DOCUMENT";
 
 const ImageDocPicker = (props) => {
-  const { visible, closeModal, isMultiple, id, inputchangeHandler } = props;
+  const { visible, closeModal, isMultiple, id, inputchangeHandler, required } =
+    props;
   const [showModal, setShowModal] = useState(visible);
   const [imageList, updateImageList] = useState([]);
   const scaleValue = useRef(new Animated.Value(0)).current;
@@ -173,7 +174,7 @@ const ImageDocPicker = (props) => {
       inputchangeHandler(id, fileData, true);
       closeModalWindow();
     } else {
-      inputchangeHandler(id, "", false);
+      inputchangeHandler(id, "", !required ? true : false);
     }
   };
 

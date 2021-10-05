@@ -24,6 +24,7 @@ import Colors from "../constants/Colors";
 import TextField from "./TextField";
 import RaisedButton from "./RaisedButton";
 import ImageDocPicker from "./ImageDocPicker";
+import Styles from "../styles/styles";
 import * as transporterActions from "../../store/action/transporter";
 import * as fleetActions from "../../store/action/fleet";
 
@@ -76,6 +77,7 @@ const FleetRegistrationForm = (props) => {
   const [maxDate, setMaxDate] = useState(null);
   const [error, setError] = useState();
   const [showDatePkr, setShowDatePkr] = useState(false);
+  const [reset, setReset] = useState(false);
   const [vehFormState, dispatchVehFormState] = useReducer(
     formReducer,
     vehInitFormState
@@ -186,6 +188,7 @@ const FleetRegistrationForm = (props) => {
       type: RESET_FORM,
       initialFormState: vehInitFormState,
     });
+    setReset(!reset);
     inputChangeHandler(
       "vehclst",
       [...formState.inputValues.vehclst, vehFormState.inputValues],
@@ -232,6 +235,7 @@ const FleetRegistrationForm = (props) => {
       <View style={styles.FleetFormContainer}>
         <Text style={styles.fleetFrmTtl}>Add Fleet Details</Text>
         <DropdownSelect
+          reset={reset}
           data={vehTypes}
           defaultButtonText="Select Vehicle Type*"
           onSelect={(selectedItem, index) => {
@@ -255,6 +259,8 @@ const FleetRegistrationForm = (props) => {
           </View>
         )}
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehno}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}
@@ -288,6 +294,8 @@ const FleetRegistrationForm = (props) => {
           <Text style={styles.errorText}>Please upload vehicle photos</Text>
         )}
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehregdte}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}
@@ -344,6 +352,8 @@ const FleetRegistrationForm = (props) => {
           </Text>
         )}
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehchesino}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}
@@ -359,6 +369,8 @@ const FleetRegistrationForm = (props) => {
           style={{ width: "90%" }}
         />
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehinsuno}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}
@@ -374,6 +386,8 @@ const FleetRegistrationForm = (props) => {
           style={{ width: "90%" }}
         />
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehinsexpdte}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}
@@ -435,6 +449,8 @@ const FleetRegistrationForm = (props) => {
           </Text>
         )}
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehfitcetexpdte}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}
@@ -491,6 +507,8 @@ const FleetRegistrationForm = (props) => {
           </Text>
         )}
         <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
           value={vehFormState.inputValues.vehpucexpdte}
           isSubmitted={isFleetSubmit}
           initiallyValid={false}

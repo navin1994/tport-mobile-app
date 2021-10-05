@@ -8,19 +8,14 @@ import Card from "../UI/Card";
 const window = Dimensions.get("window");
 
 const AuthScreenContainer = (props) => {
-  const { navigation, preventBackground } = props;
-
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerShown: false,
-  //   });
-  // }, [navigation]);
+  const { preventBackground } = props;
 
   return (
     <BackgroundImage>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View
           style={styles.screen}
@@ -43,7 +38,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: "column",
-    // justifyContent: "center",
     alignItems: "center",
   },
   logo: { marginTop: 40, margin: 30 },

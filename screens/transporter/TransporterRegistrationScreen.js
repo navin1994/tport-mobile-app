@@ -23,7 +23,6 @@ const TransporterRegistrationScreen = (props) => {
     navigation.setOptions({
       headerLeft: () => (
         <HeaderLeft
-          navigation={navigation}
           titleIcon={
             <Image
               source={require("../../assets/images/tempo.png")}

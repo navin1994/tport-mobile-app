@@ -12,7 +12,6 @@ import {
   ScrollView,
   Text,
   Platform,
-  CheckBox,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -27,6 +26,7 @@ import RaisedButton from "../../shared/components/RaisedButton";
 import * as authActions from "../../store/action/auth";
 import Colors from "../../shared/constants/Colors";
 import TAndCContainer from "../../shared/UI/TAndCContainer";
+import Styles from "../../shared/styles/styles";
 import {
   userIdValidator,
   userIdValObj,
@@ -168,7 +168,6 @@ const UserRegistrationScreen = (props) => {
       title: "User Registration",
       headerLeft: () => (
         <HeaderLeft
-          navigation={navigation}
           titleIcon={
             <Icon
               name={
@@ -203,6 +202,8 @@ const UserRegistrationScreen = (props) => {
               </Text>
             </View>
             <TextField
+              labelStyle={Styles.label}
+              labelContainerStyle={Styles.labelContainer}
               value={formState.inputValues.userId}
               onEndEditing={checkUserIdHandler}
               isSubmitted={isSubmitted}
@@ -247,6 +248,8 @@ const UserRegistrationScreen = (props) => {
               </View>
             )}
             <TextField
+              labelStyle={Styles.label}
+              labelContainerStyle={Styles.labelContainer}
               value={formState.inputValues.password}
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
@@ -267,6 +270,8 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              labelStyle={Styles.label}
+              labelContainerStyle={Styles.labelContainer}
               value={formState.inputValues.confirmPassword}
               onEndEditing={confirmPasswordHandler}
               isSubmitted={isSubmitted}
@@ -294,6 +299,8 @@ const UserRegistrationScreen = (props) => {
               </View>
             )}
             <TextField
+              labelStyle={Styles.label}
+              labelContainerStyle={Styles.labelContainer}
               value={formState.inputValues.ownerName}
               isSubmitted={isSubmitted}
               initiallyValid={false}
@@ -320,6 +327,8 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              labelStyle={Styles.label}
+              labelContainerStyle={Styles.labelContainer}
               value={formState.inputValues.mobileNumber}
               mobileNumber
               isSubmitted={isSubmitted}
@@ -350,6 +359,8 @@ const UserRegistrationScreen = (props) => {
               }
             />
             <TextField
+              labelStyle={Styles.label}
+              labelContainerStyle={Styles.labelContainer}
               value={formState.inputValues.emailAddress}
               isSubmitted={isSubmitted}
               initiallyValid={true}

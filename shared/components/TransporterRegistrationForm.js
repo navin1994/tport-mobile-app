@@ -21,6 +21,7 @@ import TextField from "./TextField";
 import RaisedButton from "./RaisedButton";
 import Colors from "../constants/Colors";
 import ImageDocPicker from "./ImageDocPicker";
+import Styles from "../styles/styles";
 import * as transporterActions from "../../store/action/transporter";
 
 const window = Dimensions.get("window");
@@ -152,6 +153,8 @@ const TransporterRegistrationForm = (props) => {
         }}
       ></View>
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         style={{ display: formType === 1 ? "none" : "flex" }}
         value={formState.inputValues.companyname}
@@ -180,6 +183,8 @@ const TransporterRegistrationForm = (props) => {
         </View>
       )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         style={{ display: formType === 1 ? "none" : "flex" }}
         value={formState.inputValues.companyregno}
@@ -235,6 +240,8 @@ const TransporterRegistrationForm = (props) => {
           </Text>
         )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         style={{ display: formType === 1 ? "none" : "flex" }}
         value={formState.inputValues.comapnypanno}
@@ -288,6 +295,8 @@ const TransporterRegistrationForm = (props) => {
           </Text>
         )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         style={{ display: formType === 1 ? "none" : "flex" }}
         value={formState.inputValues.companyaddress}
@@ -319,6 +328,8 @@ const TransporterRegistrationForm = (props) => {
           </View>
         )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         style={{ display: formType === 1 ? "none" : "flex" }}
         value={formState.inputValues.companygstno}
@@ -374,6 +385,8 @@ const TransporterRegistrationForm = (props) => {
           </Text>
         )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         style={{ display: formType === 1 ? "none" : "flex" }}
         value={formState.inputValues.evgstnid}
@@ -400,6 +413,8 @@ const TransporterRegistrationForm = (props) => {
       )}
       <View style={styles.separator}></View>
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.loginid}
         onEndEditing={checkUserIdHandler}
@@ -441,6 +456,8 @@ const TransporterRegistrationForm = (props) => {
         </View>
       )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.password}
         onEndEditing={confirmPasswordHandler}
@@ -462,6 +479,8 @@ const TransporterRegistrationForm = (props) => {
         }
       />
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.cnfpassword}
         onEndEditing={confirmPasswordHandler}
@@ -489,6 +508,8 @@ const TransporterRegistrationForm = (props) => {
       )}
       <View style={styles.separator}></View>
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownrnme}
         isSubmitted={isSubmitted}
@@ -516,6 +537,8 @@ const TransporterRegistrationForm = (props) => {
         }
       />
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownrmobile}
         mobileNumber
@@ -547,6 +570,8 @@ const TransporterRegistrationForm = (props) => {
         }
       />
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownremail}
         isSubmitted={isSubmitted}
@@ -573,6 +598,8 @@ const TransporterRegistrationForm = (props) => {
         }
       />
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownrpincd}
         isSubmitted={isSubmitted}
@@ -593,6 +620,8 @@ const TransporterRegistrationForm = (props) => {
         }
       />
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownraddr}
         isSubmitted={isSubmitted}
@@ -617,6 +646,8 @@ const TransporterRegistrationForm = (props) => {
         }
       />
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownridno}
         isSubmitted={isSubmitted}
@@ -652,6 +683,8 @@ const TransporterRegistrationForm = (props) => {
         <Text style={styles.errorText}>Please upload aadhar document</Text>
       )}
       <TextField
+        labelStyle={Styles.label}
+        labelContainerStyle={Styles.labelContainer}
         formType={formType}
         value={formState.inputValues.ownrpanno}
         isSubmitted={isSubmitted}

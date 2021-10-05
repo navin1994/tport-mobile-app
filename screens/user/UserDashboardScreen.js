@@ -31,7 +31,7 @@ const UserDashboardScreen = (props) => {
     {
       bgColor: Colors.infoDark,
       iconName: <SimpleLineIcons name="note" size={40} color="#fff" />,
-      title: "Running Contracts",
+      title: "Register TPort",
       onClick: () => {
         navigation.navigate("UserNavigator", {
           screen: "userTport",

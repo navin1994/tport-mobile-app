@@ -1,13 +1,28 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useRef, useEffect } from "react";
+import { View, StyleSheet, Text } from "react-native";
 import SelectDropdown from "react-native-select-dropdown";
 import { FontAwesome } from "@expo/vector-icons";
 
 const DropdownSelect = (props) => {
+  const { reset } = props;
+  const dropdownRef = useRef({});
+  useEffect(() => {
+    dropdownRef.current.reset();
+  }, [reset]);
   return (
     <View style={{ ...styles.container, ...props.style }}>
+      {props.label && (
+        <View
+          style={{ ...styles.labelContainer, ...props.labelContainerStyle }}
+        >
+          <Text style={{ ...styles.label, ...props.labelStyle }}>
+            {props.label}
+          </Text>
+        </View>
+      )}
       <SelectDropdown
         {...props}
+        ref={dropdownRef}
         buttonStyle={{ ...styles.dropdownBtnStyle, ...props.dropdownBtnStyle }}
         dropdownStyle={{
           ...styles.dropdownDropdownStyle,
@@ -53,6 +68,19 @@ const styles = StyleSheet.create({
     color: "#444",
     textAlign: "left",
     fontFamily: "open-sans",
+  },
+  label: {
+    color: "black",
+    fontSize: 14,
+    fontFamily: "open-sans",
+  },
+  labelContainer: {
+    position: "absolute",
+    left: 20,
+    top: -12,
+    backgroundColor: "#fff",
+    paddingHorizontal: 5,
+    borderRadius: 5,
   },
 });
 
