@@ -10,11 +10,13 @@ import TportNavigator from "./navigation/TportNavigator";
 import authReducer from "./store/reducer/auth";
 import fleetReducer from "./store/reducer/fleet";
 import transporterReducer from "./store/reducer/transporter";
+import contractReducers from "./store/reducer/contract";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   fleets: fleetReducer,
   transp: transporterReducer,
+  contract: contractReducers,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

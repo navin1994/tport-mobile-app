@@ -1,11 +1,13 @@
 import { environment } from "../../environment/environment";
 
 const api = environment.api;
+export const GET_CONTRACTS = "GET_CONTRACTS";
 
 const requestedUrl = {
   GET_LOCATIONS: "getLocations",
   GET_ESTIMATE: "searchEstimates",
   SAVE_CONTRACT: "saveTportContract",
+  GET_TPORT_CONTRACT: "getTportContract",
 };
 
 export const getLocations = (loctyp) => {
@@ -64,6 +66,35 @@ export const saveTPortContract = (data) => {
     if (result.Result === "NOTOK") {
       throw new Error(result.Msg);
     }
+    return await result;
+  };
+};
+
+export const getContracts = (limit, offset) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.GET_TPORT_CONTRACT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ limit: limit, offset: offset, usrid: userId }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while fetching contracts.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+
+    dispatch({
+      type: GET_CONTRACTS,
+      contracts: result.Records,
+      totalContracts: result.rscnt,
+      offset: offset,
+    });
+
     return await result;
   };
 };

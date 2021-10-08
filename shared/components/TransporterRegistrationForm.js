@@ -146,580 +146,596 @@ const TransporterRegistrationForm = (props) => {
         id={currentPicker}
         closeModal={onCloseModal}
       />
-      <View
-        style={{
-          ...styles.separator,
-          display: formType === 1 ? "none" : "flex",
-        }}
-      ></View>
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        style={{ display: formType === 1 ? "none" : "flex" }}
-        value={formState.inputValues.companyname}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.companyname}
-        id="companyname"
-        required
-        onInputChange={inputChangeHandler}
-        label={
-          <Text>
-            Company Name
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={<FontAwesome name="building-o" size={25} color="black" />}
-      />
+      <View style={styles.formContainer}>
+        <View
+          style={{
+            ...styles.separator,
+            display: formType === 1 ? "none" : "flex",
+          }}
+        ></View>
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          style={{ display: formType === 1 ? "none" : "flex" }}
+          value={formState.inputValues.companyname}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.companyname}
+          id="companyname"
+          required
+          onInputChange={inputChangeHandler}
+          label={
+            <Text>
+              Company Name
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <FontAwesome name="building-o" size={25} color="black" />
+          }
+        />
 
-      {!formState.inputValidities.companyname && isSubmitted && formType === 2 && (
-        <View
+        {!formState.inputValidities.companyname &&
+          isSubmitted &&
+          formType === 2 && (
+            <View
+              style={{
+                ...styles.errorContainer,
+                display: formType === 1 ? "none" : "flex",
+              }}
+            >
+              <Text style={styles.errorText}>
+                Please enter valid company name.
+              </Text>
+            </View>
+          )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          style={{ display: formType === 1 ? "none" : "flex" }}
+          value={formState.inputValues.companyregno}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.companyregno}
+          id="companyregno"
+          required
+          onInputChange={inputChangeHandler}
+          label={
+            <Text>
+              Registration Number
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <MaterialIcons name="app-registration" size={25} color="black" />
+          }
+        />
+        {!formState.inputValidities.companyregno &&
+          isSubmitted &&
+          formType === 2 && (
+            <View
+              style={{
+                ...styles.errorContainer,
+                display: formType === 1 ? "none" : "flex",
+              }}
+            >
+              <Text style={styles.errorText}>
+                Please enter valid registration number.
+              </Text>
+            </View>
+          )}
+        <RaisedButton
           style={{
-            ...styles.errorContainer,
+            ...styles.fileUploadBtn,
             display: formType === 1 ? "none" : "flex",
+            backgroundColor:
+              formState.inputValues.companyregdoc === ""
+                ? Colors.primary
+                : Colors.success,
           }}
-        >
-          <Text style={styles.errorText}>Please enter valid company name.</Text>
-        </View>
-      )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        style={{ display: formType === 1 ? "none" : "flex" }}
-        value={formState.inputValues.companyregno}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.companyregno}
-        id="companyregno"
-        required
-        onInputChange={inputChangeHandler}
-        label={
-          <Text>
-            Registration Number
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <MaterialIcons name="app-registration" size={25} color="black" />
-        }
-      />
-      {!formState.inputValidities.companyregno &&
-        isSubmitted &&
-        formType === 2 && (
-          <View
-            style={{
-              ...styles.errorContainer,
-              display: formType === 1 ? "none" : "flex",
-            }}
-          >
+          title="Registration Doc"
+          onPress={() => {
+            setCurrentPicker("companyregdoc");
+            setImagePicker(true);
+          }}
+        />
+        {!formState.inputValidities.companyregdoc &&
+          isSubmitted &&
+          formType === 2 && (
             <Text style={styles.errorText}>
-              Please enter valid registration number.
+              Please upload registration document
             </Text>
-          </View>
-        )}
-      <RaisedButton
-        style={{
-          ...styles.fileUploadBtn,
-          display: formType === 1 ? "none" : "flex",
-          backgroundColor:
-            formState.inputValues.companyregdoc === ""
-              ? Colors.primary
-              : Colors.success,
-        }}
-        title="Registration Doc"
-        onPress={() => {
-          setCurrentPicker("companyregdoc");
-          setImagePicker(true);
-        }}
-      />
-      {!formState.inputValidities.companyregdoc &&
-        isSubmitted &&
-        formType === 2 && (
-          <Text style={styles.errorText}>
-            Please upload registration document
-          </Text>
-        )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        style={{ display: formType === 1 ? "none" : "flex" }}
-        value={formState.inputValues.comapnypanno}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.comapnypanno}
-        id="comapnypanno"
-        required
-        onInputChange={inputChangeHandler}
-        label={
-          <Text>
-            Company PAN
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={<FontAwesome name="vcard-o" size={25} color="black" />}
-      />
-      {!formState.inputValidities.comapnypanno &&
-        isSubmitted &&
-        formType === 2 && (
-          <View
-            style={{
-              ...styles.errorContainer,
-              display: formType === 1 ? "none" : "flex",
-            }}
-          >
-            <Text style={styles.errorText}>
-              Please enter valid company PAN.
+          )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          style={{ display: formType === 1 ? "none" : "flex" }}
+          value={formState.inputValues.comapnypanno}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.comapnypanno}
+          id="comapnypanno"
+          required
+          onInputChange={inputChangeHandler}
+          label={
+            <Text>
+              Company PAN
+              <Text style={styles.required}>*</Text>
             </Text>
-          </View>
-        )}
-      <RaisedButton
-        style={{
-          ...styles.fileUploadBtn,
-          display: formType === 1 ? "none" : "flex",
-          backgroundColor:
-            formState.inputValues.companypandoc === ""
-              ? Colors.primary
-              : Colors.success,
-        }}
-        title="PAN Doc"
-        onPress={() => {
-          setCurrentPicker("companypandoc");
-          setImagePicker(true);
-        }}
-      />
-      {!formState.inputValidities.companypandoc &&
-        isSubmitted &&
-        formType === 2 && (
-          <Text style={styles.errorText}>
-            Please upload company PAN document
-          </Text>
-        )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        style={{ display: formType === 1 ? "none" : "flex" }}
-        value={formState.inputValues.companyaddress}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.companyaddress}
-        id="companyaddress"
-        required
-        onInputChange={inputChangeHandler}
-        label={
-          <Text>
-            Registered Address
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={<FontAwesome name="vcard-o" size={25} color="black" />}
-      />
-      {!formState.inputValidities.companyaddress &&
-        isSubmitted &&
-        formType === 2 && (
-          <View
-            style={{
-              ...styles.errorContainer,
-              display: formType === 1 ? "none" : "flex",
-            }}
-          >
-            <Text style={styles.errorText}>
-              Please enter valid registered address.
-            </Text>
-          </View>
-        )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        style={{ display: formType === 1 ? "none" : "flex" }}
-        value={formState.inputValues.companygstno}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.companygstno}
-        id="companygstno"
-        required
-        onInputChange={inputChangeHandler}
-        label={
-          <Text>
-            Company GSTIN Number
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <MaterialCommunityIcons name="numeric" size={25} color="black" />
-        }
-      />
-      {!formState.inputValidities.companygstno &&
-        isSubmitted &&
-        formType === 2 && (
-          <View
-            style={{
-              ...styles.errorContainer,
-              display: formType === 1 ? "none" : "flex",
-            }}
-          >
-            <Text style={styles.errorText}>
-              Please enter valid GSTIN number.
-            </Text>
-          </View>
-        )}
-      <RaisedButton
-        style={{
-          ...styles.fileUploadBtn,
-          display: formType === 1 ? "none" : "flex",
-          backgroundColor:
-            formState.inputValues.companygstdoc === ""
-              ? Colors.primary
-              : Colors.success,
-        }}
-        title="Upload GSTIN"
-        onPress={() => {
-          setCurrentPicker("companygstdoc");
-          setImagePicker(true);
-        }}
-      />
-      {!formState.inputValidities.companygstdoc &&
-        isSubmitted &&
-        formType === 2 && (
-          <Text style={styles.errorText}>
-            Please upload company GSTIN document
-          </Text>
-        )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        style={{ display: formType === 1 ? "none" : "flex" }}
-        value={formState.inputValues.evgstnid}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.evgstnid}
-        id="evgstnid"
-        onInputChange={inputChangeHandler}
-        label="E-Way GSTIN Number"
-        leadingIcon={
-          <MaterialCommunityIcons name="numeric" size={25} color="black" />
-        }
-      />
-      {!formState.inputValidities.evgstnid && isSubmitted && formType === 2 && (
-        <View
+          }
+          leadingIcon={<FontAwesome name="vcard-o" size={25} color="black" />}
+        />
+        {!formState.inputValidities.comapnypanno &&
+          isSubmitted &&
+          formType === 2 && (
+            <View
+              style={{
+                ...styles.errorContainer,
+                display: formType === 1 ? "none" : "flex",
+              }}
+            >
+              <Text style={styles.errorText}>
+                Please enter valid company PAN.
+              </Text>
+            </View>
+          )}
+        <RaisedButton
           style={{
-            ...styles.errorContainer,
+            ...styles.fileUploadBtn,
             display: formType === 1 ? "none" : "flex",
+            backgroundColor:
+              formState.inputValues.companypandoc === ""
+                ? Colors.primary
+                : Colors.success,
           }}
-        >
-          <Text style={styles.errorText}>
-            Please enter valid e-way GSTIN number.
-          </Text>
-        </View>
-      )}
-      <View style={styles.separator}></View>
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.loginid}
-        onEndEditing={checkUserIdHandler}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.loginid}
-        id="loginid"
-        required
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid user id."
-        label={
-          <Text>
-            User Id
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={<Icon name="person-outline" size={25} color="black" />}
-      />
-      {isLoading && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.checkUId}>Checking user id availability...</Text>
-          <ActivityIndicator size="small" color="black" />
-        </View>
-      )}
-      {!isUserIdValid.flag && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
-        </View>
-      )}
-      {isUserIdValid.avlFlag && (
-        <View style={styles.errorContainer}>
-          <Text
-            style={
-              (styles.errorText,
-              { color: Colors.success, fontFamily: "open-sans-bold" })
-            }
+          title="PAN Doc"
+          onPress={() => {
+            setCurrentPicker("companypandoc");
+            setImagePicker(true);
+          }}
+        />
+        {!formState.inputValidities.companypandoc &&
+          isSubmitted &&
+          formType === 2 && (
+            <Text style={styles.errorText}>
+              Please upload company PAN document
+            </Text>
+          )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          style={{ display: formType === 1 ? "none" : "flex" }}
+          value={formState.inputValues.companyaddress}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.companyaddress}
+          id="companyaddress"
+          required
+          onInputChange={inputChangeHandler}
+          label={
+            <Text>
+              Registered Address
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={<FontAwesome name="vcard-o" size={25} color="black" />}
+        />
+        {!formState.inputValidities.companyaddress &&
+          isSubmitted &&
+          formType === 2 && (
+            <View
+              style={{
+                ...styles.errorContainer,
+                display: formType === 1 ? "none" : "flex",
+              }}
+            >
+              <Text style={styles.errorText}>
+                Please enter valid registered address.
+              </Text>
+            </View>
+          )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          style={{ display: formType === 1 ? "none" : "flex" }}
+          value={formState.inputValues.companygstno}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.companygstno}
+          id="companygstno"
+          required
+          onInputChange={inputChangeHandler}
+          label={
+            <Text>
+              Company GSTIN Number
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <MaterialCommunityIcons name="numeric" size={25} color="black" />
+          }
+        />
+        {!formState.inputValidities.companygstno &&
+          isSubmitted &&
+          formType === 2 && (
+            <View
+              style={{
+                ...styles.errorContainer,
+                display: formType === 1 ? "none" : "flex",
+              }}
+            >
+              <Text style={styles.errorText}>
+                Please enter valid GSTIN number.
+              </Text>
+            </View>
+          )}
+        <RaisedButton
+          style={{
+            ...styles.fileUploadBtn,
+            display: formType === 1 ? "none" : "flex",
+            backgroundColor:
+              formState.inputValues.companygstdoc === ""
+                ? Colors.primary
+                : Colors.success,
+          }}
+          title="Upload GSTIN"
+          onPress={() => {
+            setCurrentPicker("companygstdoc");
+            setImagePicker(true);
+          }}
+        />
+        {!formState.inputValidities.companygstdoc &&
+          isSubmitted &&
+          formType === 2 && (
+            <Text style={styles.errorText}>
+              Please upload company GSTIN document
+            </Text>
+          )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          style={{ display: formType === 1 ? "none" : "flex" }}
+          value={formState.inputValues.evgstnid}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.evgstnid}
+          id="evgstnid"
+          onInputChange={inputChangeHandler}
+          label="E-Way GSTIN Number"
+          leadingIcon={
+            <MaterialCommunityIcons name="numeric" size={25} color="black" />
+          }
+        />
+        {!formState.inputValidities.evgstnid && isSubmitted && formType === 2 && (
+          <View
+            style={{
+              ...styles.errorContainer,
+              display: formType === 1 ? "none" : "flex",
+            }}
           >
-            User Id is available
-          </Text>
-        </View>
-      )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.password}
-        onEndEditing={confirmPasswordHandler}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.password}
-        id="password"
-        required
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid password."
-        secureTextEntry={true}
-        label={
-          <Text>
-            Password
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <Icon name="md-lock-closed-outline" size={25} color="black" />
-        }
-      />
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.cnfpassword}
-        onEndEditing={confirmPasswordHandler}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.cnfpassword}
-        id="cnfpassword"
-        required
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid confirm password."
-        secureTextEntry={true}
-        label={
-          <Text>
-            Confirm Password
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <Icon name="md-lock-closed-outline" size={25} color="black" />
-        }
-      />
-      {!cnfPwdCheck && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Confirm password does not match!</Text>
-        </View>
-      )}
-      <View style={styles.separator}></View>
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownrnme}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownrnme}
-        id="ownrnme"
-        required
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid owner / contact name."
-        label={
-          <Text>
-            Name Of Contact/Owner
-            <Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <Icon
-            name={
-              Platform.OS === "android"
-                ? "md-person-circle-outline"
-                : "ios-person-circle-outline"
-            }
-            size={25}
-            color="black"
-          />
-        }
-      />
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownrmobile}
-        mobileNumber
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownrmobile}
-        id="ownrmobile"
-        min={999999999}
-        max={10000000000}
-        required
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid mobile number."
-        maxLength={10}
-        keyboardType="numeric"
-        label={
-          <Text>
-            Mobile Number<Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <Icon
-            name={
-              Platform.OS === "android"
-                ? "md-phone-portrait-outline"
-                : "ios-phone-portrait-outline"
-            }
-            size={25}
-            color="black"
-          />
-        }
-      />
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownremail}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownremail}
-        id="ownremail"
-        required
-        email
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid email address."
-        keyboardType="email-address"
-        label={
-          <Text>
-            E-Mail Address<Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <Icon
-            name={
-              Platform.OS === "android" ? "md-mail-outline" : "ios-mail-outline"
-            }
-            size={25}
-            color="black"
-          />
-        }
-      />
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownrpincd}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownrpincd}
-        required
-        id="ownrpincd"
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid area pin code."
-        maxLength={6}
-        keyboardType="numeric"
-        label={
-          <Text>
-            Area Pin Code<Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <MaterialCommunityIcons name="numeric" size={25} color="black" />
-        }
-      />
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownraddr}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownraddr}
-        required
-        id="ownraddr"
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid address details."
-        label={
-          <Text>
-            Address Details<Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <Icon
-            name={
-              Platform.OS === "android" ? "md-home-outline" : "ios-home-outline"
-            }
-            size={25}
-            color="black"
-          />
-        }
-      />
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownridno}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownridno}
-        required
-        id="ownridno"
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid id proof/ Aadhar."
-        label={
-          <Text>
-            Id Proof/Aadhar<Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <FontAwesome name="address-card-o" size={25} color="black" />
-        }
-      />
-      <RaisedButton
-        style={{
-          ...styles.fileUploadBtn,
-          backgroundColor:
-            formState.inputValues.ownradhardoc === ""
-              ? Colors.primary
-              : Colors.success,
-        }}
-        title="Upload ID Proof"
-        onPress={() => {
-          setCurrentPicker("ownradhardoc");
-          setImagePicker(true);
-        }}
-      />
-      {!formState.inputValidities.ownradhardoc && isSubmitted && (
-        <Text style={styles.errorText}>Please upload aadhar document</Text>
-      )}
-      <TextField
-        labelStyle={Styles.label}
-        labelContainerStyle={Styles.labelContainer}
-        formType={formType}
-        value={formState.inputValues.ownrpanno}
-        isSubmitted={isSubmitted}
-        initiallyValid={formState.inputValidities.ownrpanno}
-        required
-        id="ownrpanno"
-        onInputChange={inputChangeHandler}
-        errorText="Please enter valid PAN number."
-        label={
-          <Text>
-            PAN Number<Text style={styles.required}>*</Text>
-          </Text>
-        }
-        leadingIcon={
-          <FontAwesome name="address-card-o" size={25} color="black" />
-        }
-      />
-      <RaisedButton
-        style={{
-          ...styles.fileUploadBtn,
-          backgroundColor:
-            formState.inputValues.ownrpandoc === ""
-              ? Colors.primary
-              : Colors.success,
-        }}
-        title="PAN Doc"
-        onPress={() => {
-          setCurrentPicker("ownrpandoc");
-          setImagePicker(true);
-        }}
-      />
-      {!formState.inputValidities.ownrpandoc && isSubmitted && (
-        <Text style={styles.errorText}>Please upload PAN document</Text>
-      )}
-      <View style={styles.separator}></View>
+            <Text style={styles.errorText}>
+              Please enter valid e-way GSTIN number.
+            </Text>
+          </View>
+        )}
+        <View style={styles.separator}></View>
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.loginid}
+          onEndEditing={checkUserIdHandler}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.loginid}
+          id="loginid"
+          required
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid user id."
+          label={
+            <Text>
+              User Id
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={<Icon name="person-outline" size={25} color="black" />}
+        />
+        {isLoading && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.checkUId}>
+              Checking user id availability...
+            </Text>
+            <ActivityIndicator size="small" color="black" />
+          </View>
+        )}
+        {!isUserIdValid.flag && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
+          </View>
+        )}
+        {isUserIdValid.avlFlag && (
+          <View style={styles.errorContainer}>
+            <Text
+              style={
+                (styles.errorText,
+                { color: Colors.success, fontFamily: "open-sans-bold" })
+              }
+            >
+              User Id is available
+            </Text>
+          </View>
+        )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.password}
+          onEndEditing={confirmPasswordHandler}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.password}
+          id="password"
+          required
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid password."
+          secureTextEntry={true}
+          label={
+            <Text>
+              Password
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <Icon name="md-lock-closed-outline" size={25} color="black" />
+          }
+        />
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.cnfpassword}
+          onEndEditing={confirmPasswordHandler}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.cnfpassword}
+          id="cnfpassword"
+          required
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid confirm password."
+          secureTextEntry={true}
+          label={
+            <Text>
+              Confirm Password
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <Icon name="md-lock-closed-outline" size={25} color="black" />
+          }
+        />
+        {!cnfPwdCheck && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>
+              Confirm password does not match!
+            </Text>
+          </View>
+        )}
+        <View style={styles.separator}></View>
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownrnme}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownrnme}
+          id="ownrnme"
+          required
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid owner / contact name."
+          label={
+            <Text>
+              Name Of Contact/Owner
+              <Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <Icon
+              name={
+                Platform.OS === "android"
+                  ? "md-person-circle-outline"
+                  : "ios-person-circle-outline"
+              }
+              size={25}
+              color="black"
+            />
+          }
+        />
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownrmobile}
+          mobileNumber
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownrmobile}
+          id="ownrmobile"
+          min={999999999}
+          max={10000000000}
+          required
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid mobile number."
+          maxLength={10}
+          keyboardType="numeric"
+          label={
+            <Text>
+              Mobile Number<Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <Icon
+              name={
+                Platform.OS === "android"
+                  ? "md-phone-portrait-outline"
+                  : "ios-phone-portrait-outline"
+              }
+              size={25}
+              color="black"
+            />
+          }
+        />
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownremail}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownremail}
+          id="ownremail"
+          required
+          email
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid email address."
+          keyboardType="email-address"
+          label={
+            <Text>
+              E-Mail Address<Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <Icon
+              name={
+                Platform.OS === "android"
+                  ? "md-mail-outline"
+                  : "ios-mail-outline"
+              }
+              size={25}
+              color="black"
+            />
+          }
+        />
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownrpincd}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownrpincd}
+          required
+          id="ownrpincd"
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid area pin code."
+          maxLength={6}
+          keyboardType="numeric"
+          label={
+            <Text>
+              Area Pin Code<Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <MaterialCommunityIcons name="numeric" size={25} color="black" />
+          }
+        />
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownraddr}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownraddr}
+          required
+          id="ownraddr"
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid address details."
+          label={
+            <Text>
+              Address Details<Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <Icon
+              name={
+                Platform.OS === "android"
+                  ? "md-home-outline"
+                  : "ios-home-outline"
+              }
+              size={25}
+              color="black"
+            />
+          }
+        />
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownridno}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownridno}
+          required
+          id="ownridno"
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid id proof/ Aadhar."
+          label={
+            <Text>
+              Id Proof/Aadhar<Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <FontAwesome name="address-card-o" size={25} color="black" />
+          }
+        />
+        <RaisedButton
+          style={{
+            ...styles.fileUploadBtn,
+            backgroundColor:
+              formState.inputValues.ownradhardoc === ""
+                ? Colors.primary
+                : Colors.success,
+          }}
+          title="Upload ID Proof"
+          onPress={() => {
+            setCurrentPicker("ownradhardoc");
+            setImagePicker(true);
+          }}
+        />
+        {!formState.inputValidities.ownradhardoc && isSubmitted && (
+          <Text style={styles.errorText}>Please upload aadhar document</Text>
+        )}
+        <TextField
+          labelStyle={Styles.label}
+          labelContainerStyle={Styles.labelContainer}
+          formType={formType}
+          value={formState.inputValues.ownrpanno}
+          isSubmitted={isSubmitted}
+          initiallyValid={formState.inputValidities.ownrpanno}
+          required
+          id="ownrpanno"
+          onInputChange={inputChangeHandler}
+          errorText="Please enter valid PAN number."
+          label={
+            <Text>
+              PAN Number<Text style={styles.required}>*</Text>
+            </Text>
+          }
+          leadingIcon={
+            <FontAwesome name="address-card-o" size={25} color="black" />
+          }
+        />
+        <RaisedButton
+          style={{
+            ...styles.fileUploadBtn,
+            backgroundColor:
+              formState.inputValues.ownrpandoc === ""
+                ? Colors.primary
+                : Colors.success,
+          }}
+          title="PAN Doc"
+          onPress={() => {
+            setCurrentPicker("ownrpandoc");
+            setImagePicker(true);
+          }}
+        />
+        {!formState.inputValidities.ownrpandoc && isSubmitted && (
+          <Text style={styles.errorText}>Please upload PAN document</Text>
+        )}
+        <View style={styles.separator}></View>
+      </View>
       <RaisedButton title="Next" style={styles.nextBtn} onPress={onNext} />
     </View>
   );
@@ -738,6 +754,14 @@ const styles = StyleSheet.create({
   },
   required: {
     color: "red",
+  },
+  formContainer: {
+    marginTop: 20,
+    alignItems: "center",
+    width: window.width * 0.9,
+    backgroundColor: Colors.semiTransparentBlack,
+    borderRadius: 8,
+    paddingVertical: 20,
   },
   errorContainer: {
     flex: 1,

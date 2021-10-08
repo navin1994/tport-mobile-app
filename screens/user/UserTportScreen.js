@@ -296,7 +296,7 @@ const UserTportScreen = (props) => {
       const result = await dispatch(contractActions.saveTPortContract(data));
       if (result.Result === "OK") {
         resetForm();
-        Alert.alert("Estimate", result.Msg, [{ text: "Okay" }]);
+        Alert.alert("Contract", result.Msg, [{ text: "Okay" }]);
       } else {
         setError(result.Msg);
       }
@@ -309,7 +309,7 @@ const UserTportScreen = (props) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "TPort Contract",
+      title: "TPORT CONTRACT",
       headerLeft: () => (
         <DrawerHeaderLeft
           titleIcon={

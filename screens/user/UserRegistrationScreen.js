@@ -201,187 +201,189 @@ const UserRegistrationScreen = (props) => {
                 Please register to add shipment in TPORT
               </Text>
             </View>
-            <TextField
-              labelStyle={Styles.label}
-              labelContainerStyle={Styles.labelContainer}
-              value={formState.inputValues.userId}
-              onEndEditing={checkUserIdHandler}
-              isSubmitted={isSubmitted}
-              initiallyValid={false}
-              id="userId"
-              required
-              onInputChange={inputChangeHandler}
-              errorText="Please enter valid user id."
-              label={
-                <Text>
-                  User Id
-                  <Text style={styles.required}>*</Text>
-                </Text>
-              }
-              leadingIcon={
-                <Icon name="person-outline" size={25} color="black" />
-              }
-            />
-            {isLoading && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.checkUId}>
-                  Checking user id availability...
-                </Text>
-                <ActivityIndicator size="small" color="black" />
-              </View>
-            )}
-            {!isUserIdValid.flag && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
-              </View>
-            )}
-            {isUserIdValid.avlFlag && (
-              <View style={styles.errorContainer}>
-                <Text
-                  style={
-                    (styles.errorText,
-                    { color: Colors.success, fontFamily: "open-sans-bold" })
-                  }
-                >
-                  User Id is available
-                </Text>
-              </View>
-            )}
-            <TextField
-              labelStyle={Styles.label}
-              labelContainerStyle={Styles.labelContainer}
-              value={formState.inputValues.password}
-              onEndEditing={confirmPasswordHandler}
-              isSubmitted={isSubmitted}
-              initiallyValid={false}
-              id="password"
-              required
-              onInputChange={inputChangeHandler}
-              errorText="Please enter valid password."
-              secureTextEntry={true}
-              label={
-                <Text>
-                  Password
-                  <Text style={styles.required}>*</Text>
-                </Text>
-              }
-              leadingIcon={
-                <Icon name="md-lock-closed-outline" size={25} color="black" />
-              }
-            />
-            <TextField
-              labelStyle={Styles.label}
-              labelContainerStyle={Styles.labelContainer}
-              value={formState.inputValues.confirmPassword}
-              onEndEditing={confirmPasswordHandler}
-              isSubmitted={isSubmitted}
-              initiallyValid={false}
-              id="confirmPassword"
-              required
-              onInputChange={inputChangeHandler}
-              errorText="Please enter valid confirm password."
-              secureTextEntry={true}
-              label={
-                <Text>
-                  Confirm Password
-                  <Text style={styles.required}>*</Text>
-                </Text>
-              }
-              leadingIcon={
-                <Icon name="md-lock-closed-outline" size={25} color="black" />
-              }
-            />
-            {!cnfPwdCheck && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>
-                  Confirm password does not match!
-                </Text>
-              </View>
-            )}
-            <TextField
-              labelStyle={Styles.label}
-              labelContainerStyle={Styles.labelContainer}
-              value={formState.inputValues.ownerName}
-              isSubmitted={isSubmitted}
-              initiallyValid={false}
-              id="ownerName"
-              required
-              onInputChange={inputChangeHandler}
-              errorText="Please enter valid owner / contact name."
-              label={
-                <Text>
-                  Name Of Contact/Owner
-                  <Text style={styles.required}>*</Text>
-                </Text>
-              }
-              leadingIcon={
-                <Icon
-                  name={
-                    Platform.OS === "android"
-                      ? "md-person-circle-outline"
-                      : "ios-person-circle-outline"
-                  }
-                  size={25}
-                  color="black"
-                />
-              }
-            />
-            <TextField
-              labelStyle={Styles.label}
-              labelContainerStyle={Styles.labelContainer}
-              value={formState.inputValues.mobileNumber}
-              mobileNumber
-              isSubmitted={isSubmitted}
-              initiallyValid={false}
-              id="mobileNumber"
-              min={999999999}
-              max={10000000000}
-              required
-              onInputChange={inputChangeHandler}
-              errorText="Please enter valid mobile number."
-              maxLength={10}
-              keyboardType="numeric"
-              label={
-                <Text>
-                  Mobile Number<Text style={styles.required}>*</Text>
-                </Text>
-              }
-              leadingIcon={
-                <Icon
-                  name={
-                    Platform.OS === "android"
-                      ? "md-phone-portrait-outline"
-                      : "ios-phone-portrait-outline"
-                  }
-                  size={25}
-                  color="black"
-                />
-              }
-            />
-            <TextField
-              labelStyle={Styles.label}
-              labelContainerStyle={Styles.labelContainer}
-              value={formState.inputValues.emailAddress}
-              isSubmitted={isSubmitted}
-              initiallyValid={true}
-              id="emailAddress"
-              email
-              onInputChange={inputChangeHandler}
-              errorText="Please enter valid email address."
-              keyboardType="email-address"
-              label="E-Mail Address"
-              leadingIcon={
-                <Icon
-                  name={
-                    Platform.OS === "android"
-                      ? "md-mail-outline"
-                      : "ios-mail-outline"
-                  }
-                  size={25}
-                  color="black"
-                />
-              }
-            />
+            <View style={styles.formContainer}>
+              <TextField
+                labelStyle={Styles.label}
+                labelContainerStyle={Styles.labelContainer}
+                value={formState.inputValues.userId}
+                onEndEditing={checkUserIdHandler}
+                isSubmitted={isSubmitted}
+                initiallyValid={false}
+                id="userId"
+                required
+                onInputChange={inputChangeHandler}
+                errorText="Please enter valid user id."
+                label={
+                  <Text>
+                    User Id
+                    <Text style={styles.required}>*</Text>
+                  </Text>
+                }
+                leadingIcon={
+                  <Icon name="person-outline" size={25} color="black" />
+                }
+              />
+              {isLoading && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.checkUId}>
+                    Checking user id availability...
+                  </Text>
+                  <ActivityIndicator size="small" color="black" />
+                </View>
+              )}
+              {!isUserIdValid.flag && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{isUserIdValid.errorMsg}</Text>
+                </View>
+              )}
+              {isUserIdValid.avlFlag && (
+                <View style={styles.errorContainer}>
+                  <Text
+                    style={
+                      (styles.errorText,
+                      { color: Colors.success, fontFamily: "open-sans-bold" })
+                    }
+                  >
+                    User Id is available
+                  </Text>
+                </View>
+              )}
+              <TextField
+                labelStyle={Styles.label}
+                labelContainerStyle={Styles.labelContainer}
+                value={formState.inputValues.password}
+                onEndEditing={confirmPasswordHandler}
+                isSubmitted={isSubmitted}
+                initiallyValid={false}
+                id="password"
+                required
+                onInputChange={inputChangeHandler}
+                errorText="Please enter valid password."
+                secureTextEntry={true}
+                label={
+                  <Text>
+                    Password
+                    <Text style={styles.required}>*</Text>
+                  </Text>
+                }
+                leadingIcon={
+                  <Icon name="md-lock-closed-outline" size={25} color="black" />
+                }
+              />
+              <TextField
+                labelStyle={Styles.label}
+                labelContainerStyle={Styles.labelContainer}
+                value={formState.inputValues.confirmPassword}
+                onEndEditing={confirmPasswordHandler}
+                isSubmitted={isSubmitted}
+                initiallyValid={false}
+                id="confirmPassword"
+                required
+                onInputChange={inputChangeHandler}
+                errorText="Please enter valid confirm password."
+                secureTextEntry={true}
+                label={
+                  <Text>
+                    Confirm Password
+                    <Text style={styles.required}>*</Text>
+                  </Text>
+                }
+                leadingIcon={
+                  <Icon name="md-lock-closed-outline" size={25} color="black" />
+                }
+              />
+              {!cnfPwdCheck && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>
+                    Confirm password does not match!
+                  </Text>
+                </View>
+              )}
+              <TextField
+                labelStyle={Styles.label}
+                labelContainerStyle={Styles.labelContainer}
+                value={formState.inputValues.ownerName}
+                isSubmitted={isSubmitted}
+                initiallyValid={false}
+                id="ownerName"
+                required
+                onInputChange={inputChangeHandler}
+                errorText="Please enter valid owner / contact name."
+                label={
+                  <Text>
+                    Name Of Contact/Owner
+                    <Text style={styles.required}>*</Text>
+                  </Text>
+                }
+                leadingIcon={
+                  <Icon
+                    name={
+                      Platform.OS === "android"
+                        ? "md-person-circle-outline"
+                        : "ios-person-circle-outline"
+                    }
+                    size={25}
+                    color="black"
+                  />
+                }
+              />
+              <TextField
+                labelStyle={Styles.label}
+                labelContainerStyle={Styles.labelContainer}
+                value={formState.inputValues.mobileNumber}
+                mobileNumber
+                isSubmitted={isSubmitted}
+                initiallyValid={false}
+                id="mobileNumber"
+                min={999999999}
+                max={10000000000}
+                required
+                onInputChange={inputChangeHandler}
+                errorText="Please enter valid mobile number."
+                maxLength={10}
+                keyboardType="numeric"
+                label={
+                  <Text>
+                    Mobile Number<Text style={styles.required}>*</Text>
+                  </Text>
+                }
+                leadingIcon={
+                  <Icon
+                    name={
+                      Platform.OS === "android"
+                        ? "md-phone-portrait-outline"
+                        : "ios-phone-portrait-outline"
+                    }
+                    size={25}
+                    color="black"
+                  />
+                }
+              />
+              <TextField
+                labelStyle={Styles.label}
+                labelContainerStyle={Styles.labelContainer}
+                value={formState.inputValues.emailAddress}
+                isSubmitted={isSubmitted}
+                initiallyValid={true}
+                id="emailAddress"
+                email
+                onInputChange={inputChangeHandler}
+                errorText="Please enter valid email address."
+                keyboardType="email-address"
+                label="E-Mail Address"
+                leadingIcon={
+                  <Icon
+                    name={
+                      Platform.OS === "android"
+                        ? "md-mail-outline"
+                        : "ios-mail-outline"
+                    }
+                    size={25}
+                    color="black"
+                  />
+                }
+              />
+            </View>
             <TAndCContainer
               navigation={navigation}
               value={isChecked}
@@ -409,6 +411,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: window.width,
+  },
+  formContainer: {
+    marginTop: 20,
+    alignItems: "center",
+    width: window.width * 0.9,
+    backgroundColor: Colors.semiTransparentBlack,
+    borderRadius: 8,
+    paddingVertical: 20,
   },
   msgContainer: {
     flexDirection: "row",

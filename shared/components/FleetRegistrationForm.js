@@ -303,7 +303,7 @@ const FleetRegistrationForm = (props) => {
           id="vehregdte"
           placeholder="YYYY-MM-DD"
           onInputChange={vehInputChangeHandler}
-          editable={false}
+          readonly={true}
           label={
             <Text>
               Registration Date<Text style={styles.required}>*</Text>
@@ -395,7 +395,7 @@ const FleetRegistrationForm = (props) => {
           placeholder="YYYY-MM-DD"
           id="vehinsexpdte"
           onInputChange={vehInputChangeHandler}
-          editable={false}
+          readonly={true}
           label={
             <Text>
               Insurance Expiry Date
@@ -458,7 +458,7 @@ const FleetRegistrationForm = (props) => {
           id="vehfitcetexpdte"
           placeholder="YYYY-MM-DD"
           onInputChange={vehInputChangeHandler}
-          editable={false}
+          readonly={true}
           label={
             <Text>
               Fitness Certificate Expiry Date
@@ -515,7 +515,7 @@ const FleetRegistrationForm = (props) => {
           id="vehpucexpdte"
           placeholder="YYYY-MM-DD"
           onInputChange={vehInputChangeHandler}
-          editable={false}
+          readonly={true}
           label="PUC Expiry Date"
           style={{ width: "90%" }}
           trailingIcon={
