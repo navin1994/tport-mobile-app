@@ -9,6 +9,7 @@ import {
   TouchableNativeFeedback,
   Platform,
   LogBox,
+  Keyboard,
 } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -42,6 +43,7 @@ const SearchableDropdown = (props) => {
     isSubmitted,
     reset,
     errorText,
+    required,
   } = props;
   const [inputState, dispatch] = useReducer(inputReducer, {
     isValid: props.initiallyValid,
@@ -93,13 +95,14 @@ const SearchableDropdown = (props) => {
 
   const blurHandler = () => {
     setShowList(false);
-    dispatch({ type: INPUT_CHANGE, isValid: valueExists() });
-    onInputChange(id, selectedItem.value, valueExists());
+    dispatch({ type: INPUT_CHANGE, isValid: !required ? true : valueExists() });
+    onInputChange(id, selectedItem.value, !required ? true : valueExists());
   };
 
   const onSelectHandler = (item) => {
     setShowList(false);
     setSelection({ text: item[displayKey], value: item });
+    Keyboard.dismiss();
   };
 
   return (
@@ -131,10 +134,10 @@ const SearchableDropdown = (props) => {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            style={{ flexGrow: 0 }}
             nestedScrollEnabled
+            style={{ flexGrow: 0, maxHeight: 200 }}
             data={items}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={(itemData) => (
               <TouchableCmp
                 onPress={() => {
@@ -202,7 +205,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   listContainer: {
-    maxHeight: 200,
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -215,7 +217,6 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   itemView: {
-    flex: 1,
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",

@@ -358,6 +358,7 @@ const UserTportScreen = (props) => {
             <View style={styles.formContainer}>
               <Text style={styles.fleetFrmTtl}>Add TPort New Contract</Text>
               <SearchableDropdown
+                required={true}
                 labelStyle={Styles.label}
                 labelContainerStyle={Styles.labelContainer}
                 errorText="Please enter valid pickup location."
@@ -375,6 +376,7 @@ const UserTportScreen = (props) => {
                 }
               />
               <SearchableDropdown
+                required={true}
                 labelStyle={Styles.label}
                 labelContainerStyle={Styles.labelContainer}
                 errorText="Please enter valid drop location."

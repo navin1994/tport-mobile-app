@@ -190,6 +190,7 @@ const UserRegistrationScreen = (props) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View
           style={styles.screen}

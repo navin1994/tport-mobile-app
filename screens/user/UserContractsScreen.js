@@ -1,28 +1,28 @@
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, {
+  useLayoutEffect,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
-  Text,
   View,
   StyleSheet,
   Image,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-  Platform,
   Dimensions,
   FlatList,
   Alert,
+  ScrollView,
+  LogBox,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
-import Colors from "../../shared/constants/Colors";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
-import RaisedButton from "../../shared/components/RaisedButton";
 import BackgroundImage from "../../shared/UI/BackgroundImage";
-import SearchableDropdown from "../../shared/components/SearchableDropdown";
 import * as contractActions from "../../store/action/contract";
 import ContractTile from "../../shared/UI/ContractTile";
+import SearchBox from "../../shared/components/SearchBox";
 
 const window = Dimensions.get("window");
 
@@ -33,6 +33,7 @@ const UserContractsScreen = (props) => {
   const [reset, setReset] = useState(false);
   const [error, setError] = useState();
   const [page, setPage] = useState(1);
+  const [isSearch, setSearch] = useState(false);
   const [offset, setOffset] = useState(limit * page - limit);
   const { navigation } = props;
   const dispatch = useDispatch();
@@ -43,21 +44,13 @@ const UserContractsScreen = (props) => {
     msg: "Loading...",
   });
 
-  let TouchableCmp = TouchableOpacity;
-
-  if (Platform.OS === "android" && Platform.Version >= 21) {
-    TouchableCmp = TouchableNativeFeedback;
-  }
-
   useEffect(() => {
-    // getLocations();
+    getLocations();
   }, []);
 
   useEffect(() => {
     if (isFocused) {
-      setPage(1);
-      setOffset(limit * page - limit);
-      getContracts();
+      getInitialData();
     }
   }, [isFocused]);
 
@@ -66,6 +59,24 @@ const UserContractsScreen = (props) => {
       Alert.alert("An Error Occurred", error, [{ text: "Okay" }]);
     }
   }, [error]);
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
+
+  const searchModeHandler = () => {
+    setSearch(false);
+    getInitialData();
+  };
+
+  const getInitialData = () => {
+    if (isSearch) {
+      return;
+    }
+    setPage(1);
+    setOffset(limit * page - limit);
+    getContracts();
+  };
 
   const getLocations = async () => {
     setError(null);
@@ -85,6 +96,9 @@ const UserContractsScreen = (props) => {
   };
 
   const fetchMore = () => {
+    if (isSearch) {
+      return;
+    }
     const totalRecords = data.totalContracts;
     const totalPages =
       parseInt(totalRecords / limit) +
@@ -97,11 +111,42 @@ const UserContractsScreen = (props) => {
   };
 
   const getContracts = async () => {
+    setSearch(false);
     setError(null);
     try {
       setIsLoading({ state: true, msg: "Getting Contracts..." });
       const result = await dispatch(
         contractActions.getContracts(limit, offset)
+      );
+      setIsLoading({ state: false, msg: "" });
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
+  const searchContracts = async ({ inputValues }) => {
+    setSearch(true);
+    if (
+      (inputValues.fromLocation.value === "" ||
+        inputValues.fromLocation.value === undefined) &&
+      (inputValues.toLocation.value === "" ||
+        inputValues.toLocation.value === undefined) &&
+      (inputValues.date === "" || inputValues.date === undefined)
+    ) {
+      Alert.alert("Error", "Please provide valid search inputs.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    const fromLoc = inputValues.fromLocation.id;
+    const toLoc = inputValues.toLocation.id;
+    const date = inputValues.date;
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "Searching Contracts..." });
+      const result = await dispatch(
+        contractActions.searchContracts(fromLoc, toLoc, date)
       );
       setIsLoading({ state: false, msg: "" });
     } catch (err) {
@@ -129,27 +174,39 @@ const UserContractsScreen = (props) => {
   return (
     <BackgroundImage>
       {isLoading.state && <ProgressIndicator msg={isLoading.msg} />}
-      <View
-        style={styles.screen}
-        pointerEvents={isLoading.state ? "none" : "auto"}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.listContainer}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            nestedScrollEnabled
-            data={data.contracts}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <ContractTile item={item} index={index} />
-            )}
-            bounces={true}
-            onEndReachedThreshold={0.9}
-            onEndReached={fetchMore}
-          />
+        <View
+          style={styles.screen}
+          pointerEvents={isLoading.state ? "none" : "auto"}
+        >
+          <View style={styles.searchContainer}>
+            <SearchBox
+              locations={locations}
+              onChangeSearchMode={searchModeHandler}
+              onSearchContracts={searchContracts}
+            />
+          </View>
+          <View style={styles.listContainer}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              nestedScrollEnabled
+              data={data.contracts}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => (
+                <ContractTile item={item} index={index} />
+              )}
+              bounces={true}
+              onEndReachedThreshold={0.9}
+              onEndReached={fetchMore}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </BackgroundImage>
   );
 };
@@ -166,6 +223,12 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: window.width * 0.95,
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 5,
   },
 });
 

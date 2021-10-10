@@ -8,6 +8,7 @@ const requestedUrl = {
   GET_ESTIMATE: "searchEstimates",
   SAVE_CONTRACT: "saveTportContract",
   GET_TPORT_CONTRACT: "getTportContract",
+  SEARCH_CONTRACTS: "getsearchContract",
 };
 
 export const getLocations = (loctyp) => {
@@ -93,6 +94,40 @@ export const getContracts = (limit, offset) => {
       contracts: result.Records,
       totalContracts: result.rscnt,
       offset: offset,
+    });
+
+    return await result;
+  };
+};
+
+export const searchContracts = (fromLocn, toLocn, pickupdate) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.SEARCH_CONTRACTS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fromLocn: fromLocn,
+        toLocn: toLocn,
+        pickupdate: pickupdate,
+        usrid: userId,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while searching contracts.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+
+    dispatch({
+      type: GET_CONTRACTS,
+      contracts: result.Records,
+      totalContracts: result.rscnt,
+      offset: 0,
     });
 
     return await result;

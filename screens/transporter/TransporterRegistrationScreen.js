@@ -39,6 +39,7 @@ const TransporterRegistrationScreen = (props) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.screen}>
           <View style={styles.container}>
