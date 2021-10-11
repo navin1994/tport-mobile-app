@@ -113,11 +113,6 @@ const LoginScreen = (props) => {
     try {
       const formData = formState.inputValues;
       const result = await dispatch(authActions.login(formData));
-      // setIsSubLoader(false);
-      // dispatchFormState({
-      //   type: RESET_FORM,
-      //   initialFormState: initialFormState,
-      // });
     } catch (err) {
       setError(err.message);
       setIsSubLoader(false);
@@ -205,7 +200,7 @@ const LoginScreen = (props) => {
 
 const styles = StyleSheet.create({
   titleView: {
-    margin: 10,
+    margin: 5,
   },
   title: {
     color: "red",

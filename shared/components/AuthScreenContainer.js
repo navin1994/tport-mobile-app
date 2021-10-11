@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView, Image } from "react-native";
 
 import BackgroundImage from "../UI/BackgroundImage";
 import CircularImage from "../UI/CircularImage";
@@ -21,11 +21,12 @@ const AuthScreenContainer = (props) => {
           style={styles.screen}
           pointerEvents={preventBackground ? "none" : "auto"}
         >
-          <CircularImage
-            style={{ ...styles.logo, ...props.logoStyle }}
-            imageURL={require("../../assets/images/logo.jpg")}
-          />
+          <View style={{ ...styles.halfCircle }}></View>
           <Card style={{ ...styles.container, ...props.style }}>
+            <Image
+              source={require("../../assets/images/logo.jpg")}
+              style={{ ...styles.image, ...props.imageStyle }}
+            />
             {props.children}
           </Card>
         </View>
@@ -40,12 +41,32 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
   },
-  logo: { marginTop: 40, margin: 30 },
+  halfCircle: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    overflow: "hidden",
+    // borderRadius: 200 / 2,
+    borderTopEndRadius: 200 / 2,
+    borderTopStartRadius: 200 / 2,
+    height: 75,
+    width: 150,
+    marginTop: 40,
+    shadowColor: "black",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 12,
+  },
   container: {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: window.width * 0.9,
+  },
+  image: {
+    resizeMode: "center",
+    height: 80,
   },
 });
 
