@@ -9,6 +9,7 @@ const requestedUrl = {
   SAVE_CONTRACT: "saveTportContract",
   GET_TPORT_CONTRACT: "getTportContract",
   SEARCH_CONTRACTS: "getsearchContract",
+  CANCEL_CONTRACT: "cancelcontract",
 };
 
 export const getLocations = (loctyp) => {
@@ -130,6 +131,31 @@ export const searchContracts = (fromLocn, toLocn, pickupdate) => {
       offset: 0,
     });
 
+    return await result;
+  };
+};
+
+export const cancelContract = (contractid, canclreson) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.CANCEL_CONTRACT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tid: userId,
+        contractid,
+        canclreson,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while cancelling the contracts.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
     return await result;
   };
 };

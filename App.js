@@ -11,12 +11,14 @@ import authReducer from "./store/reducer/auth";
 import fleetReducer from "./store/reducer/fleet";
 import transporterReducer from "./store/reducer/transporter";
 import contractReducers from "./store/reducer/contract";
+import bidingReducers from "./store/reducer/biding";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   fleets: fleetReducer,
   transp: transporterReducer,
   contract: contractReducers,
+  biding: bidingReducers,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

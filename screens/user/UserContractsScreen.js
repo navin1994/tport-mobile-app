@@ -1,9 +1,4 @@
-import React, {
-  useLayoutEffect,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -30,7 +25,6 @@ const limit = 30;
 
 const UserContractsScreen = (props) => {
   const [locations, setLocations] = useState([]);
-  const [reset, setReset] = useState(false);
   const [error, setError] = useState();
   const [page, setPage] = useState(1);
   const [isSearch, setSearch] = useState(false);

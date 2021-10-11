@@ -27,7 +27,10 @@ const ContractTile = (props) => {
         backgroundColor: (index + 1) % 2 == 0 ? Colors.info : Colors.warning,
       }}
     >
-      <TouchableCmp onPress={() => {}} useForeground>
+      <TouchableCmp
+        onPress={() => navigation.navigate("contractDtls", { contract: item })}
+        useForeground
+      >
         <View style={styles.innerContainer}>
           <View style={styles.rnAmtRow}>
             <View style={styles.rnAmtContainer}>

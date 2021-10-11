@@ -11,6 +11,7 @@ import TransporterRegistrationScreen from "../screens/transporter/TransporterReg
 import UserRegistrationScreen from "../screens/user/UserRegistrationScreen";
 import UserNavigator from "./UserNavigator";
 import TransporterNavigator from "./TransporterNavigator";
+import DetailedContractScreen from "../screens/modals/DetailedContractScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,7 +47,6 @@ const TportNavigation = () => {
                 component={LoginScreen}
                 options={{
                   headerShown: false,
-                  // animationTypeForReplace: state.isSignout ? "pop" : "push",
                 }}
               />
               <Stack.Screen
@@ -86,6 +86,13 @@ const TportNavigation = () => {
               name="TAndCModal"
               component={TAndCModalScreen}
               options={{ title: "T-Port(Transport Freight)" }}
+            />
+          )}
+          {loginInfo.isLoggedIn && (
+            <Stack.Screen
+              name="contractDtls"
+              component={DetailedContractScreen}
+              options={{ title: "Contract Details" }}
             />
           )}
         </Stack.Group>
