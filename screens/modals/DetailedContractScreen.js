@@ -23,6 +23,7 @@ import Card from "../../shared/UI/Card";
 import BidsModal from "../../shared/components/BidsModal";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import InputConfirmDialog from "../../shared/components/InputConfirmDialog";
+import RatingModal from "../../shared/components/RatingModal";
 import * as biddingActions from "../../store/action/biding";
 import * as contractActions from "../../store/action/contract";
 import ScreenNames from "../../shared/constants/ScreenNames";
@@ -34,11 +35,13 @@ const DetailedContractScreen = (props) => {
   const contract = route.params.contract;
   const screen = route.params.screen;
   const [error, setError] = useState();
+  const [message, setMessage] = useState();
   const [image, setImage] = useState({
     uri: contract.loadphoto !== null ? contract.loadphoto[0] : "",
   });
   const [showBids, setBids] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isConfirm, setConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState({
@@ -63,6 +66,10 @@ const DetailedContractScreen = (props) => {
   const onCloseModal = useCallback(() => {
     setBids(false);
   }, [setBids]);
+
+  const onCloseRatingModal = useCallback(() => {
+    setShowRatingModal(false);
+  }, [setShowRatingModal]);
 
   const onCloseCancelModal = useCallback(() => {
     setShowCancelModal(false);
@@ -92,6 +99,35 @@ const DetailedContractScreen = (props) => {
       const result = await dispatch(
         biddingActions.getBiddingHistory(contract.contractid)
       );
+      setIsLoading({ state: false, msg: "" });
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
+  const loadAccept = async (rating) => {
+    if (rating === 0) {
+      Alert.alert("Error", "Please provide ratings", [{ text: "Okay" }]);
+      return;
+    }
+
+    const data = {
+      contractid: contract.contractid,
+      rateting: rating,
+      toid: user.tid,
+      sts: "C",
+    };
+
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "Closing Contract..." });
+      const result = await dispatch(contractActions.loadAccept(data));
+      if (result.Result === "OK") {
+        setShowRatingModal(false);
+        navigation.goBack();
+        Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+      }
       setIsLoading({ state: false, msg: "" });
     } catch (err) {
       setIsLoading({ state: false, msg: "" });
@@ -134,6 +170,12 @@ const DetailedContractScreen = (props) => {
           style={styles.screen}
           pointerEvents={isLoading.state ? "none" : "auto"}
         >
+          <RatingModal
+            visible={showRatingModal}
+            closeModal={onCloseRatingModal}
+            message={message}
+            onRating={loadAccept}
+          />
           <BidsModal
             visible={showBids}
             closeModal={onCloseModal}
@@ -438,7 +480,10 @@ const DetailedContractScreen = (props) => {
                     {contract.sts === "Trip End" && (
                       <RaisedButton
                         title="LOAD ACCEPT"
-                        onPress={() => {}}
+                        onPress={() => {
+                          setMessage("Please Rate Transporter");
+                          setShowRatingModal(true);
+                        }}
                         style={{
                           flex: null,
                           height: 40,
@@ -554,6 +599,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+    flexWrap: "wrap",
   },
 });
 

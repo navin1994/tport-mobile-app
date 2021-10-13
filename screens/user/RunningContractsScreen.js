@@ -111,7 +111,6 @@ const RunningContractsScreen = (props) => {
       ]);
       return;
     }
-    console.log(inputValues);
     const fromLoc =
       inputValues.fromLocation.no + ", " + inputValues.fromLocation.txt;
     const toLoc = inputValues.toLocation.no + ", " + inputValues.toLocation.txt;

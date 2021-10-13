@@ -11,6 +11,8 @@ const requestedUrl = {
   SEARCH_CONTRACTS: "getsearchContract",
   CANCEL_CONTRACT: "cancelcontract",
   GET_ALLOTED_CONTRACTS: "allotedcontract",
+
+  LOAD_ACCEPT: "loadaccept",
 };
 
 export const getLocations = (loctyp) => {
@@ -218,5 +220,25 @@ export const searchRunningContracts = (fromLocn, toLocn, pickupdate) => {
     });
 
     return await searchedContracts;
+  };
+};
+
+export const loadAccept = (data) => {
+  return async (dispatch) => {
+    const response = await fetch(api + requestedUrl.LOAD_ACCEPT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while closing contracts.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
   };
 };
