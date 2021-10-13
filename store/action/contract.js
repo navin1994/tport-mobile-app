@@ -10,6 +10,7 @@ const requestedUrl = {
   GET_TPORT_CONTRACT: "getTportContract",
   SEARCH_CONTRACTS: "getsearchContract",
   CANCEL_CONTRACT: "cancelcontract",
+  GET_ALLOTED_CONTRACTS: "allotedcontract",
 };
 
 export const getLocations = (loctyp) => {
@@ -157,5 +158,65 @@ export const cancelContract = (contractid, canclreson) => {
       throw new Error(result.Msg);
     }
     return await result;
+  };
+};
+
+export const getAllotedContracts = () => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.GET_ALLOTED_CONTRACTS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userid: userId }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while fetching contracts.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+
+    dispatch({
+      type: GET_CONTRACTS,
+      contracts: result.Records,
+      totalContracts: 0,
+      offset: 0,
+    });
+
+    return await result;
+  };
+};
+
+export const searchRunningContracts = (fromLocn, toLocn, pickupdate) => {
+  return async (dispatch, getState) => {
+    const contracts = getState().contract.contracts;
+    const searchedContracts = await Promise.all(
+      contracts.filter((contract) => {
+        if (
+          (contract.trnsfrm.toLowerCase().includes(fromLocn.toLowerCase()) &&
+            fromLocn !== "") ||
+          (contract.trnsto.toLowerCase().includes(toLocn.toLowerCase()) &&
+            toLocn !== "") ||
+          (contract.pickupdate
+            .toLowerCase()
+            .includes(pickupdate.toLowerCase()) &&
+            pickupdate !== "")
+        ) {
+          return contract;
+        }
+      })
+    );
+
+    dispatch({
+      type: GET_CONTRACTS,
+      contracts: searchedContracts,
+      totalContracts: 0,
+      offset: 0,
+    });
+
+    return await searchedContracts;
   };
 };

@@ -10,9 +10,10 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 import Colors from "../constants/Colors";
+import ScreenNames from "../constants/ScreenNames";
 
 const ContractTile = (props) => {
-  const { item, index } = props;
+  const { item, index, screen } = props;
   const navigation = useNavigation();
   let TouchableCmp = TouchableOpacity;
 
@@ -28,7 +29,12 @@ const ContractTile = (props) => {
       }}
     >
       <TouchableCmp
-        onPress={() => navigation.navigate("contractDtls", { contract: item })}
+        onPress={() =>
+          navigation.navigate("contractDtls", {
+            contract: item,
+            screen,
+          })
+        }
         useForeground
       >
         <View style={styles.innerContainer}>
@@ -54,9 +60,16 @@ const ContractTile = (props) => {
             </Text>
             <Text style={styles.headTxt}>
               Load:{" "}
-              <Text style={styles.valueTxt}>
-                {item.weight + " " + item.weightype}
-              </Text>
+              {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                <Text style={styles.valueTxt}>
+                  {item.weight + " " + item.weightype}
+                </Text>
+              )}
+              {screen === ScreenNames.USER_RUNNING_CONTRACTS_SCREEN && (
+                <Text style={styles.valueTxt}>
+                  {item.loadWeight + " " + item.weightype}
+                </Text>
+              )}
             </Text>
           </View>
           <View style={styles.datesContainer}>

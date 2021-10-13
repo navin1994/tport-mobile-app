@@ -18,6 +18,7 @@ import BackgroundImage from "../../shared/UI/BackgroundImage";
 import * as contractActions from "../../store/action/contract";
 import ContractTile from "../../shared/UI/ContractTile";
 import SearchBox from "../../shared/components/SearchBox";
+import ScreenNames from "../../shared/constants/ScreenNames";
 
 const window = Dimensions.get("window");
 
@@ -192,7 +193,11 @@ const UserContractsScreen = (props) => {
               data={data.contracts}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => (
-                <ContractTile item={item} index={index} />
+                <ContractTile
+                  item={item}
+                  index={index}
+                  screen={ScreenNames.USER_CONTRACTS_SCREEN}
+                />
               )}
               bounces={true}
               onEndReachedThreshold={0.9}

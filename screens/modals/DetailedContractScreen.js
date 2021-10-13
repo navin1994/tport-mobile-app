@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
+import Moment from "moment";
 
 import Colors from "../../shared/constants/Colors";
 import RaisedButton from "../../shared/components/RaisedButton";
@@ -24,14 +25,18 @@ import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import InputConfirmDialog from "../../shared/components/InputConfirmDialog";
 import * as biddingActions from "../../store/action/biding";
 import * as contractActions from "../../store/action/contract";
+import ScreenNames from "../../shared/constants/ScreenNames";
 
 const window = Dimensions.get("window");
 
 const DetailedContractScreen = (props) => {
   const { navigation, route } = props;
   const contract = route.params.contract;
+  const screen = route.params.screen;
   const [error, setError] = useState();
-  const [image, setImage] = useState({ uri: contract.loadphoto[0] });
+  const [image, setImage] = useState({
+    uri: contract.loadphoto !== null ? contract.loadphoto[0] : "",
+  });
   const [showBids, setBids] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -146,37 +151,39 @@ const DetailedContractScreen = (props) => {
             confirmBtnText="Cancel Contract"
             errorText="Please enter valid cancellation reason."
           />
-          <View style={styles.imgContainer}>
-            <View style={styles.mainImg}>
-              <Image source={image} style={styles.img} />
+          {contract.loadphoto && (
+            <View style={styles.imgContainer}>
+              <View style={styles.mainImg}>
+                <Image source={image} style={styles.img} />
+              </View>
+              <View style={styles.imageTray}>
+                <FlatList
+                  style={styles.flatListStyle}
+                  bounces={true}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  nestedScrollEnabled
+                  data={contract.loadphoto}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={(itemData) => (
+                    <TouchableCmp
+                      useForeground
+                      onPress={() => {
+                        setImage({ uri: itemData.item });
+                      }}
+                    >
+                      <View style={styles.imgThumbnail}>
+                        <Image
+                          style={styles.image}
+                          source={{ uri: itemData.item }}
+                        />
+                      </View>
+                    </TouchableCmp>
+                  )}
+                />
+              </View>
             </View>
-            <View style={styles.imageTray}>
-              <FlatList
-                style={styles.flatListStyle}
-                bounces={true}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                nestedScrollEnabled
-                data={contract.loadphoto}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={(itemData) => (
-                  <TouchableCmp
-                    useForeground
-                    onPress={() => {
-                      setImage({ uri: itemData.item });
-                    }}
-                  >
-                    <View style={styles.imgThumbnail}>
-                      <Image
-                        style={styles.image}
-                        source={{ uri: itemData.item }}
-                      />
-                    </View>
-                  </TouchableCmp>
-                )}
-              />
-            </View>
-          </View>
+          )}
           <View style={styles.contractDetailsContainer}>
             <Card style={styles.card}>
               <Text style={styles.mainHead}>CONTRACT DETAILS</Text>
@@ -219,7 +226,12 @@ const DetailedContractScreen = (props) => {
                   size={20}
                   color={Colors.danger}
                 />
-                <Text style={styles.heading}>Running Amount: </Text>
+                {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                  <Text style={styles.heading}>Running Amount: </Text>
+                )}
+                {screen === ScreenNames.USER_RUNNING_CONTRACTS_SCREEN && (
+                  <Text style={styles.heading}>Bidding Amount: </Text>
+                )}
                 <Text style={styles.text}>
                   {contract.bidamt ? contract.bidamt : contract.totalprice}
                 </Text>
@@ -278,9 +290,16 @@ const DetailedContractScreen = (props) => {
                   color={Colors.danger}
                 />
                 <Text style={styles.heading}>Load: </Text>
-                <Text style={styles.text}>
-                  {contract.weight + " " + contract.weightype}
-                </Text>
+                {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                  <Text style={styles.text}>
+                    {contract.weight + " " + contract.weightype}
+                  </Text>
+                )}
+                {screen === ScreenNames.USER_RUNNING_CONTRACTS_SCREEN && (
+                  <Text style={styles.text}>
+                    {contract.loadWeight + " " + contract.weightype}
+                  </Text>
+                )}
               </View>
               <View style={styles.cntDtls}>
                 <Ionicons
@@ -296,6 +315,38 @@ const DetailedContractScreen = (props) => {
                 <Text style={styles.heading}>Load Type: </Text>
                 <Text style={styles.text}>{contract.loadtype}</Text>
               </View>
+              {contract.vehtyp && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Transport Type: </Text>
+                  <Text style={styles.text}>{contract.vehtyp}</Text>
+                </View>
+              )}
+              {contract.vehtyp && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Driver Name: </Text>
+                  <Text style={styles.text}>{contract.drivername}</Text>
+                </View>
+              )}
               <View style={styles.cntDtls}>
                 <Ionicons
                   style={{ marginRight: 5 }}
@@ -307,38 +358,94 @@ const DetailedContractScreen = (props) => {
                   size={20}
                   color={Colors.danger}
                 />
-                <Text style={styles.heading}>Transport Type: </Text>
-                <Text style={styles.text}>{contract.vehtyp}</Text>
+                <Text style={styles.heading}>Trip Status: </Text>
+                <Text style={{ ...styles.text, color: Colors.success }}>
+                  {contract.sts ? contract.sts : "Not Available"}
+                </Text>
               </View>
+              {contract.trpstartdte && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Trip Start Date: </Text>
+                  <Text style={{ ...styles.text, color: Colors.success }}>
+                    {Moment(contract.trpstartdte).format(
+                      "MMM Do YY, h:mm:ss a"
+                    )}
+                  </Text>
+                </View>
+              )}
+              {contract.trpenddte && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Trip End Date: </Text>
+                  <Text style={{ ...styles.text, color: Colors.success }}>
+                    {Moment(contract.trpenddte).format("MMM Do YY, h:mm:ss a")}
+                  </Text>
+                </View>
+              )}
+
               <View style={styles.actionsContainer}>
                 <Text style={styles.mainHead}>ACTIONS</Text>
                 {user.usrtyp === "U" && (
                   <View style={styles.btnContainer}>
-                    <RaisedButton
-                      title="CONFIRM"
-                      onPress={async () => {
-                        await getBiddings();
-                        setBids(true);
-                        setConfirm(true);
-                      }}
-                      style={{
-                        flex: null,
-                        height: 40,
-                        backgroundColor: Colors.success,
-                      }}
-                    />
-                    <RaisedButton
-                      title="CANCEL"
-                      style={{ color: Colors.success }}
-                      onPress={() => {
-                        setShowCancelModal(true);
-                      }}
-                      style={{
-                        flex: null,
-                        height: 40,
-                        backgroundColor: Colors.danger,
-                      }}
-                    />
+                    {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                      <RaisedButton
+                        title="CONFIRM"
+                        onPress={async () => {
+                          await getBiddings();
+                          setBids(true);
+                          setConfirm(true);
+                        }}
+                        style={{
+                          flex: null,
+                          height: 40,
+                          backgroundColor: Colors.success,
+                        }}
+                      />
+                    )}
+                    {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                      <RaisedButton
+                        title="CANCEL"
+                        style={{ color: Colors.success }}
+                        onPress={() => {
+                          setShowCancelModal(true);
+                        }}
+                        style={{
+                          flex: null,
+                          height: 40,
+                          backgroundColor: Colors.danger,
+                        }}
+                      />
+                    )}
+                    {contract.sts === "Trip End" && (
+                      <RaisedButton
+                        title="LOAD ACCEPT"
+                        onPress={() => {}}
+                        style={{
+                          flex: null,
+                          height: 40,
+                          backgroundColor: Colors.success,
+                        }}
+                      />
+                    )}
                     <RaisedButton
                       title="VIEW BIDS"
                       style={{ color: Colors.success }}
