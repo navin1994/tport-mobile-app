@@ -11,7 +11,7 @@ const requestedUrl = {
   SEARCH_CONTRACTS: "getsearchContract",
   CANCEL_CONTRACT: "cancelcontract",
   GET_ALLOTED_CONTRACTS: "allotedcontract",
-
+  USER_CONTRACT_HISTORY: "contracthistory",
   LOAD_ACCEPT: "loadaccept",
 };
 
@@ -239,6 +239,35 @@ export const loadAccept = (data) => {
     if (result.Result === "NOTOK") {
       throw new Error(result.Msg);
     }
+    return await result;
+  };
+};
+
+export const getContractsHistory = () => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.USER_CONTRACT_HISTORY, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userid: userId }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while fetching contracts.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+
+    dispatch({
+      type: GET_CONTRACTS,
+      contracts: result.Records,
+      totalContracts: 0,
+      offset: 0,
+    });
+
     return await result;
   };
 };

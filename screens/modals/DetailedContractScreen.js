@@ -27,6 +27,7 @@ import RatingModal from "../../shared/components/RatingModal";
 import * as biddingActions from "../../store/action/biding";
 import * as contractActions from "../../store/action/contract";
 import ScreenNames from "../../shared/constants/ScreenNames";
+import RatingStars from "../../shared/UI/RatingStars";
 
 const window = Dimensions.get("window");
 
@@ -271,7 +272,7 @@ const DetailedContractScreen = (props) => {
                 {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
                   <Text style={styles.heading}>Running Amount: </Text>
                 )}
-                {screen === ScreenNames.USER_RUNNING_CONTRACTS_SCREEN && (
+                {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
                   <Text style={styles.heading}>Bidding Amount: </Text>
                 )}
                 <Text style={styles.text}>
@@ -337,7 +338,7 @@ const DetailedContractScreen = (props) => {
                     {contract.weight + " " + contract.weightype}
                   </Text>
                 )}
-                {screen === ScreenNames.USER_RUNNING_CONTRACTS_SCREEN && (
+                {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
                   <Text style={styles.text}>
                     {contract.loadWeight + " " + contract.weightype}
                   </Text>
@@ -443,71 +444,119 @@ const DetailedContractScreen = (props) => {
                   </Text>
                 </View>
               )}
+              {contract.rating !== 0 && user.usrtyp === "U" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Transporter Ratings: </Text>
+                  <RatingStars
+                    rating={contract.rating}
+                    setRating={() => {}}
+                    starSize={20}
+                    style={{ margin: 0 }}
+                  />
+                </View>
+              )}
 
-              <View style={styles.actionsContainer}>
-                <Text style={styles.mainHead}>ACTIONS</Text>
-                {user.usrtyp === "U" && (
-                  <View style={styles.btnContainer}>
-                    {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+              {contract.canclreson !== null && contract.sts === "Trip Cancel" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Cancelled on: </Text>
+                  <Text
+                    style={{
+                      ...styles.text,
+                      marginTop: 5,
+                      color: Colors.primary,
+                    }}
+                  >
+                    {"                    " + contract.canclreson}
+                  </Text>
+                </View>
+              )}
+
+              {screen !== ScreenNames.USER_CONTRACTS_HISTORY_SCREEN && (
+                <View style={styles.actionsContainer}>
+                  <Text style={styles.mainHead}>ACTIONS</Text>
+                  {user.usrtyp === "U" && (
+                    <View style={styles.btnContainer}>
+                      {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                        <RaisedButton
+                          title="CONFIRM"
+                          onPress={async () => {
+                            await getBiddings();
+                            setBids(true);
+                            setConfirm(true);
+                          }}
+                          style={{
+                            flex: null,
+                            height: 40,
+                            backgroundColor: Colors.success,
+                          }}
+                        />
+                      )}
+                      {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                        <RaisedButton
+                          title="CANCEL"
+                          style={{ color: Colors.success }}
+                          onPress={() => {
+                            setShowCancelModal(true);
+                          }}
+                          style={{
+                            flex: null,
+                            height: 40,
+                            backgroundColor: Colors.danger,
+                          }}
+                        />
+                      )}
+                      {contract.sts === "Trip End" && (
+                        <RaisedButton
+                          title="LOAD ACCEPT"
+                          onPress={() => {
+                            setMessage("Please Rate Transporter");
+                            setShowRatingModal(true);
+                          }}
+                          style={{
+                            flex: null,
+                            height: 40,
+                            backgroundColor: Colors.success,
+                          }}
+                        />
+                      )}
                       <RaisedButton
-                        title="CONFIRM"
-                        onPress={async () => {
-                          await getBiddings();
-                          setBids(true);
-                          setConfirm(true);
-                        }}
-                        style={{
-                          flex: null,
-                          height: 40,
-                          backgroundColor: Colors.success,
-                        }}
-                      />
-                    )}
-                    {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
-                      <RaisedButton
-                        title="CANCEL"
+                        title="VIEW BIDS"
                         style={{ color: Colors.success }}
-                        onPress={() => {
-                          setShowCancelModal(true);
+                        onPress={async () => {
+                          await getBiddingHistory();
+                          setBids(true);
+                          setConfirm(false);
                         }}
                         style={{
                           flex: null,
                           height: 40,
-                          backgroundColor: Colors.danger,
+                          backgroundColor: Colors.info,
                         }}
                       />
-                    )}
-                    {contract.sts === "Trip End" && (
-                      <RaisedButton
-                        title="LOAD ACCEPT"
-                        onPress={() => {
-                          setMessage("Please Rate Transporter");
-                          setShowRatingModal(true);
-                        }}
-                        style={{
-                          flex: null,
-                          height: 40,
-                          backgroundColor: Colors.success,
-                        }}
-                      />
-                    )}
-                    <RaisedButton
-                      title="VIEW BIDS"
-                      style={{ color: Colors.success }}
-                      onPress={async () => {
-                        await getBiddingHistory();
-                        setBids(true);
-                        setConfirm(false);
-                      }}
-                      style={{
-                        flex: null,
-                        height: 40,
-                        backgroundColor: Colors.info,
-                      }}
-                    />
-                  </View>
-                )}
-              </View>
+                    </View>
+                  )}
+                </View>
+              )}
             </Card>
           </View>
         </View>

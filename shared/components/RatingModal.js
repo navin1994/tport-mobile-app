@@ -9,14 +9,12 @@ import {
   Platform,
   TouchableOpacity,
   TouchableNativeFeedback,
-  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 
 import Colors from "../constants/Colors";
 import TextButton from "./TextButton";
+import RatingStars from "../UI/RatingStars";
 
 const window = Dimensions.get("window");
 
@@ -25,8 +23,6 @@ const RatingModal = (props) => {
   const [showModal, setShowModal] = useState(visible);
   const [rating, setRating] = useState(0);
   const scaleValue = useRef(new Animated.Value(0)).current;
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
   let TouchableCmp = TouchableOpacity;
 
   if (Platform.OS === "android" && Platform.Version >= 21) {
@@ -68,83 +64,7 @@ const RatingModal = (props) => {
           <View style={styles.contentBox}>
             <Text style={styles.heading}>RATTING</Text>
             <Text style={styles.message}>{message}</Text>
-            <View style={styles.ratingContainer}>
-              <TouchableCmp onPress={() => setRating(1)}>
-                <Ionicons
-                  name={
-                    rating >= 1
-                      ? Platform.OS === "android"
-                        ? "md-star-sharp"
-                        : "ios-star-sharp"
-                      : Platform.OS === "android"
-                      ? "md-star-outline"
-                      : "ios-star-outline"
-                  }
-                  size={40}
-                  color={rating >= 1 ? "red" : "black"}
-                />
-              </TouchableCmp>
-              <TouchableCmp onPress={() => setRating(2)}>
-                <Ionicons
-                  name={
-                    rating >= 2
-                      ? Platform.OS === "android"
-                        ? "md-star-sharp"
-                        : "ios-star-sharp"
-                      : Platform.OS === "android"
-                      ? "md-star-outline"
-                      : "ios-star-outline"
-                  }
-                  size={40}
-                  color={rating >= 2 ? "red" : "black"}
-                />
-              </TouchableCmp>
-              <TouchableCmp onPress={() => setRating(3)}>
-                <Ionicons
-                  name={
-                    rating >= 3
-                      ? Platform.OS === "android"
-                        ? "md-star-sharp"
-                        : "ios-star-sharp"
-                      : Platform.OS === "android"
-                      ? "md-star-outline"
-                      : "ios-star-outline"
-                  }
-                  size={40}
-                  color={rating >= 3 ? "red" : "black"}
-                />
-              </TouchableCmp>
-              <TouchableCmp onPress={() => setRating(4)}>
-                <Ionicons
-                  name={
-                    rating >= 4
-                      ? Platform.OS === "android"
-                        ? "md-star-sharp"
-                        : "ios-star-sharp"
-                      : Platform.OS === "android"
-                      ? "md-star-outline"
-                      : "ios-star-outline"
-                  }
-                  size={40}
-                  color={rating >= 4 ? "red" : "black"}
-                />
-              </TouchableCmp>
-              <TouchableCmp onPress={() => setRating(5)}>
-                <Ionicons
-                  name={
-                    rating >= 5
-                      ? Platform.OS === "android"
-                        ? "md-star-sharp"
-                        : "ios-star-sharp"
-                      : Platform.OS === "android"
-                      ? "md-star-outline"
-                      : "ios-star-outline"
-                  }
-                  size={40}
-                  color={rating >= 5 ? "red" : "black"}
-                />
-              </TouchableCmp>
-            </View>
+            <RatingStars rating={rating} setRating={setRating} starSize={40} />
             <View style={styles.actionsContainer}>
               <TextButton
                 title="SUBMIT RATING"
@@ -201,14 +121,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontFamily: "open-sans",
     color: "black",
-  },
-  ratingContainer: {
-    flex: 1,
-    width: "100%",
-    margin: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   actionsContainer: {
     flex: 1,

@@ -65,7 +65,7 @@ const ContractTile = (props) => {
                   {item.weight + " " + item.weightype}
                 </Text>
               )}
-              {screen === ScreenNames.USER_RUNNING_CONTRACTS_SCREEN && (
+              {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
                 <Text style={styles.valueTxt}>
                   {item.loadWeight + " " + item.weightype}
                 </Text>
