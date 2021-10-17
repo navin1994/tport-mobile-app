@@ -240,7 +240,6 @@ const UserProfileScreen = (props) => {
 
   const changePassword = async () => {
     setIsSubmitted(true);
-    console.log(passForm);
     if (!passForm.formIsValid || !cnfPwdCheck) {
       Alert.alert("Wrong Input", "Please check the errors in the form.", [
         { text: "Okay" },

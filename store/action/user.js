@@ -99,7 +99,6 @@ export const updatePassword = (password) => {
       throw new Error("Something went wrong while updating user password.");
     }
     const result = await response.json();
-    console.log(result);
     if (result.Result === "NOTOK") {
       throw new Error(result.Msg);
     }
