@@ -9,6 +9,7 @@ const requestedUrl = {
   GET_USER_PROF: "getProfileData",
   UPDATE_USER_PROF: "updateProfile",
   UPDATE_USER_DATA: "update",
+  UPDATE_PASS: "chnagepwd",
 };
 
 export const formInputUpdate = (identifier, inputValue, inputValidity) => {
@@ -77,6 +78,31 @@ export const updateUserProfile = (data) => {
       throw new Error(result.Msg);
     }
 
+    return await result;
+  };
+};
+
+export const updatePassword = (password) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.UPDATE_PASS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        utid: userId,
+        password,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while updating user password.");
+    }
+    const result = await response.json();
+    console.log(result);
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
     return await result;
   };
 };

@@ -36,8 +36,29 @@ import Styles from "../../shared/styles/styles";
 import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
 import SwitchTab from "../../shared/UI/SwitchTab";
 import Card from "../../shared/UI/Card";
+import {
+  userIdValidator,
+  userIdValObj,
+} from "../../shared/Functions/Validators";
+import {
+  FORM_INPUT_UPDATE,
+  RESET_FORM,
+  formReducer,
+} from "../../shared/Functions/FormReducer";
 
 const window = Dimensions.get("window");
+
+const initialFormState = {
+  inputValues: {
+    password: "",
+    confirmPassword: "",
+  },
+  inputValidities: {
+    password: false,
+    confirmPassword: false,
+  },
+  formIsValid: false,
+};
 
 const UserProfileScreen = (props) => {
   const formState = useSelector((state) => state.user);
@@ -46,6 +67,7 @@ const UserProfileScreen = (props) => {
   const { navigation } = props;
   const [formType, setFormType] = useState(formState.inputValues.seq);
   const [error, setError] = useState();
+  const [cnfPwdCheck, setCnfPwdCheck] = useState(true);
   const [showImagePicker, setImagePicker] = useState(false);
   const [currentPicker, setCurrentPicker] = useState();
   const [isProfile, setProfile] = useState(true);
@@ -55,6 +77,10 @@ const UserProfileScreen = (props) => {
     state: false,
     msg: "Loading...",
   });
+  const [passForm, dispatchFormState] = useReducer(
+    formReducer,
+    initialFormState
+  );
   const dispatch = useDispatch();
 
   let TouchableCmp = TouchableOpacity;
@@ -124,6 +150,7 @@ const UserProfileScreen = (props) => {
       const result = await dispatch(userActions.updateUserProfile(formData));
       setEdit(false);
       setIsLoading({ state: false, msg: "" });
+      Alert.alert("Updated", result.Msg, [{ text: "Okay" }]);
     } catch (err) {
       setIsLoading({ state: false, msg: "" });
       setError(err.message);
@@ -190,6 +217,55 @@ const UserProfileScreen = (props) => {
     setImagePicker(false);
   }, [showImagePicker]);
 
+  const passInputChangeHandler = useCallback(
+    (identifier, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: identifier,
+      });
+    },
+    [dispatchFormState]
+  );
+
+  const confirmPasswordHandler = () => {
+    const formvalues = passForm.inputValues;
+    if (formvalues.password === formvalues.confirmPassword) {
+      setCnfPwdCheck(true);
+      return;
+    }
+    setCnfPwdCheck(false);
+  };
+
+  const changePassword = async () => {
+    setIsSubmitted(true);
+    console.log(passForm);
+    if (!passForm.formIsValid || !cnfPwdCheck) {
+      Alert.alert("Wrong Input", "Please check the errors in the form.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    setError(null);
+    setIsLoading({ state: true, msg: "Processing..." });
+    try {
+      const result = await dispatch(
+        userActions.updatePassword(passForm.inputValues.password)
+      );
+      setIsLoading({ state: false, msg: "" });
+      dispatchFormState({
+        type: RESET_FORM,
+        initialFormState: initialFormState,
+      });
+      setCnfPwdCheck(true);
+      Alert.alert("Updated", result.Msg, [{ text: "Okay" }]);
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: "TPort Profile",
@@ -231,7 +307,13 @@ const UserProfileScreen = (props) => {
             closeModal={onCloseModal}
           />
           <View style={styles.ScreenSwitchContainer}>
-            <TouchableCmp onPress={() => setProfile(true)}>
+            <TouchableCmp
+              onPress={() => {
+                setEdit(false);
+                setIsSubmitted(false);
+                setProfile(true);
+              }}
+            >
               <View
                 style={{
                   ...styles.leftTextCon,
@@ -248,7 +330,18 @@ const UserProfileScreen = (props) => {
                 </Text>
               </View>
             </TouchableCmp>
-            <TouchableCmp onPress={() => setProfile(false)}>
+            <TouchableCmp
+              onPress={() => {
+                setEdit(false);
+                setIsSubmitted(false);
+                setProfile(false);
+                dispatchFormState({
+                  type: RESET_FORM,
+                  initialFormState: initialFormState,
+                });
+                setCnfPwdCheck(true);
+              }}
+            >
               <View
                 style={{
                   ...styles.rightTextCon,
@@ -688,7 +781,95 @@ const UserProfileScreen = (props) => {
             </View>
           )}
 
-          {!isProfile && <View style={styles.screen}></View>}
+          {!isProfile && (
+            <View style={styles.screen}>
+              <Card style={{ ...styles.card, marginTop: 40 }}>
+                <View style={styles.passFormContainer}>
+                  <TextField
+                    readonly={true}
+                    value={userData.loginid}
+                    label={
+                      <Text>
+                        User Id
+                        <Text style={styles.required}>*</Text>
+                      </Text>
+                    }
+                    leadingIcon={
+                      <Ionicons name="person-outline" size={25} color="black" />
+                    }
+                  />
+                  <TextField
+                    value={passForm.inputValues.password}
+                    onEndEditing={confirmPasswordHandler}
+                    isSubmitted={isSubmitted}
+                    initiallyValid={false}
+                    id="password"
+                    required
+                    onInputChange={passInputChangeHandler}
+                    errorText="Please enter valid password."
+                    secureTextEntry={true}
+                    label={
+                      <Text>
+                        Password
+                        <Text style={styles.required}>*</Text>
+                      </Text>
+                    }
+                    leadingIcon={
+                      <Ionicons
+                        name="md-lock-closed-outline"
+                        size={25}
+                        color="black"
+                      />
+                    }
+                  />
+                  <TextField
+                    value={passForm.inputValues.confirmPassword}
+                    onEndEditing={confirmPasswordHandler}
+                    isSubmitted={isSubmitted}
+                    initiallyValid={false}
+                    id="confirmPassword"
+                    required
+                    onInputChange={passInputChangeHandler}
+                    errorText="Please enter valid confirm password."
+                    secureTextEntry={true}
+                    label={
+                      <Text>
+                        Confirm Password
+                        <Text style={styles.required}>*</Text>
+                      </Text>
+                    }
+                    leadingIcon={
+                      <Ionicons
+                        name="md-lock-closed-outline"
+                        size={25}
+                        color="black"
+                      />
+                    }
+                  />
+                  {!cnfPwdCheck && (
+                    <View style={styles.errorContainer}>
+                      <Text style={styles.errorText}>
+                        Confirm password does not match!
+                      </Text>
+                    </View>
+                  )}
+                  <View style={Styles.actionsContainer}>
+                    <View style={Styles.btnContainer}>
+                      <RaisedButton
+                        title="CHANGE PASSWORD"
+                        onPress={changePassword}
+                        style={{
+                          flex: null,
+                          height: 40,
+                          backgroundColor: Colors.danger,
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </Card>
+            </View>
+          )}
         </View>
       </ScrollView>
     </BackgroundImage>
@@ -782,6 +963,11 @@ const styles = StyleSheet.create({
   },
   required: {
     color: "red",
+  },
+  passFormContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
