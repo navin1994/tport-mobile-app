@@ -27,7 +27,10 @@ export const SwitchTab = (props) => {
   }, [props.formType]);
 
   return (
-    <View style={styles.switchContainer}>
+    <View
+      style={{ ...styles.switchContainer, ...props.style }}
+      pointerEvents={props.readonly ? "none" : "auto"}
+    >
       <TouchableCmp onPress={() => tabChangeHandler(1)}>
         <View
           style={{
@@ -35,7 +38,7 @@ export const SwitchTab = (props) => {
             backgroundColor: formType === 1 ? Colors.success : "grey",
           }}
         >
-          <Text style={styles.ownershipText}>Individual</Text>
+          <Text style={styles.ownershipText}>{props.leftText}</Text>
         </View>
       </TouchableCmp>
       <TouchableCmp onPress={() => tabChangeHandler(2)}>
@@ -45,7 +48,7 @@ export const SwitchTab = (props) => {
             backgroundColor: formType === 2 ? Colors.success : "grey",
           }}
         >
-          <Text style={styles.ownershipText}>Transport Company</Text>
+          <Text style={styles.ownershipText}>{props.rightText}</Text>
         </View>
       </TouchableCmp>
     </View>

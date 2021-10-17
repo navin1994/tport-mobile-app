@@ -41,7 +41,7 @@ const DrawerHeaderLeft = (props) => {
 
 const styles = StyleSheet.create({
   headerLeft: {
-    width: window.width * 0.3,
+    width: window.width * 0.25,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",

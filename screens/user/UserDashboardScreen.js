@@ -99,6 +99,25 @@ const UserDashboardScreen = (props) => {
   ];
 
   useEffect(() => {
+    if (userData.docflag === "N") {
+      Alert.alert(
+        "Alert!",
+        "User profile is not completed. Please complete the user profile, upload required documents only then you are allowed to proceed further.",
+        [
+          {
+            text: "Okay",
+            onPress: () => {
+              navigation.navigate("UserNavigator", {
+                screen: "userProfile",
+              });
+            },
+          },
+        ]
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     const backAction = () => {
       if (isFocused) {
         Alert.alert(

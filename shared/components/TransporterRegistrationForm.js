@@ -85,6 +85,7 @@ const TransporterRegistrationForm = (props) => {
 
   const formTypeHandler = (formNumber) => {
     const formData = formState.inputValues;
+    inputChangeHandler("seq", formNumber, true);
     setFormType(formNumber);
     if (formNumber === 1) {
       inputChangeHandler("companyname", formData.companyname, true);
@@ -138,7 +139,12 @@ const TransporterRegistrationForm = (props) => {
 
   return (
     <View style={{ ...styles.container, ...props.style }}>
-      <SwitchTab onFormChange={formTypeHandler} formType={formType} />
+      <SwitchTab
+        onFormChange={formTypeHandler}
+        formType={formType}
+        leftText="Individual"
+        rightText="Transport Company"
+      />
       <ImageDocPicker
         inputchangeHandler={inputChangeHandler}
         visible={showImagePicker}

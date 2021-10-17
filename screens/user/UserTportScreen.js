@@ -617,8 +617,8 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: "center",
-    height: 35,
-    width: 40,
+    height: 25,
+    width: 35,
   },
   selContainer: {
     width: window.width * 0.75,
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 16,
     fontFamily: "open-sans",
-    color: Colors.warning,
+    color: "yellow",
   },
   finalBtn: {
     flex: 1,

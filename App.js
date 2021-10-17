@@ -10,6 +10,7 @@ import TportNavigator from "./navigation/TportNavigator";
 import authReducer from "./store/reducer/auth";
 import fleetReducer from "./store/reducer/fleet";
 import transporterReducer from "./store/reducer/transporter";
+import userReducer from "./store/reducer/user";
 import contractReducers from "./store/reducer/contract";
 import bidingReducers from "./store/reducer/biding";
 
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   transp: transporterReducer,
   contract: contractReducers,
   biding: bidingReducers,
+  user: userReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

@@ -2,7 +2,6 @@ import React from "react";
 import { View, StyleSheet, Dimensions, ScrollView, Image } from "react-native";
 
 import BackgroundImage from "../UI/BackgroundImage";
-import CircularImage from "../UI/CircularImage";
 import Card from "../UI/Card";
 
 const window = Dimensions.get("window");
@@ -21,12 +20,13 @@ const AuthScreenContainer = (props) => {
           style={styles.screen}
           pointerEvents={preventBackground ? "none" : "auto"}
         >
-          <View style={{ ...styles.halfCircle }}></View>
-          <Card style={{ ...styles.container, ...props.style }}>
+          <View style={{ ...styles.halfCircle }}>
             <Image
               source={require("../../assets/images/logo.jpg")}
               style={{ ...styles.image, ...props.imageStyle }}
             />
+          </View>
+          <Card style={{ ...styles.container, ...props.style }}>
             {props.children}
           </Card>
         </View>
@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     overflow: "hidden",
-    // borderRadius: 200 / 2,
     borderTopEndRadius: 200 / 2,
     borderTopStartRadius: 200 / 2,
     height: 75,
