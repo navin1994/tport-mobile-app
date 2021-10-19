@@ -9,6 +9,8 @@ const requestedUrl = {
   USER_REGISTRATION: "customerRegstr",
   TRANSPORTER_REGISTRATION: "registration",
   LOGIN: "loginaction",
+  FORGET_PASSWORD: "frgtpwd",
+  VERIFY_OTP: "verifyotp",
 };
 
 export const checkUserId = (userId) => {
@@ -110,4 +112,46 @@ export const login = (loginData) => {
 
 export const logout = () => {
   return { type: LOGOUT };
+};
+
+export const getOtpForgotPass = (userid) => {
+  return async (dispatch) => {
+    const response = await fetch(api + requestedUrl.FORGET_PASSWORD, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userid: userid,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while sending OTP.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const forgotPasswordUpdate = (data) => {
+  return async (dispatch) => {
+    const response = await fetch(api + requestedUrl.VERIFY_OTP, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while updating password.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
 };

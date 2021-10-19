@@ -37,10 +37,6 @@ import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
 import SwitchTab from "../../shared/UI/SwitchTab";
 import Card from "../../shared/UI/Card";
 import {
-  userIdValidator,
-  userIdValObj,
-} from "../../shared/Functions/Validators";
-import {
   FORM_INPUT_UPDATE,
   RESET_FORM,
   formReducer,
