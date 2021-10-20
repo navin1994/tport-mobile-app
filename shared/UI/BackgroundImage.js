@@ -1,5 +1,9 @@
 import React from "react";
-import { ImageBackground, StyleSheet } from "react-native";
+import { ImageBackground, StyleSheet, Dimensions } from "react-native";
+
+import ContactUs from "../components/ContactUs";
+
+const { width, height } = Dimensions.get("window");
 
 const BackgroundImage = (props) => {
   return (
@@ -8,6 +12,7 @@ const BackgroundImage = (props) => {
       style={{ ...styles.backgroundImage, ...props.style }}
     >
       {props.children}
+      <ContactUs style={styles.contactUs} />
     </ImageBackground>
   );
 };
@@ -17,9 +22,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: null,
-    height: null,
     paddingBottom: 10,
+  },
+  contactUs: {
+    bottom: height - height + 70,
+    right: width - width + 70,
   },
 });
 
