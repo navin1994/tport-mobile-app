@@ -63,7 +63,6 @@ const ContactUs = (props) => {
         },
       ],
     };
-    console.log(newStyle);
     return newStyle;
   };
 

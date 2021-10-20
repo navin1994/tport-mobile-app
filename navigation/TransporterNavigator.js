@@ -69,7 +69,7 @@ const TransporterNavigator = () => {
           options={{ title: "TPort Arena" }}
         />
         <Drawer.Screen
-          name="trnsptrContractor"
+          name="trnsptrContracts"
           component={TransporterContractScreen}
           options={{ title: "Transporter Contracts" }}
         />
