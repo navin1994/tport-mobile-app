@@ -118,7 +118,7 @@ const ContractHistoryScreen = (props) => {
     try {
       setIsLoading({ state: true, msg: "Searching Contracts..." });
       const result = await dispatch(
-        contractActions.searchRunningContracts(fromLoc, toLoc, date)
+        contractActions.searchContractsLocal(fromLoc, toLoc, date)
       );
       setIsLoading({ state: false, msg: "" });
     } catch (err) {

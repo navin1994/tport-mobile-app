@@ -13,6 +13,7 @@ const requestedUrl = {
   GET_ALLOTED_CONTRACTS: "allotedcontract",
   USER_CONTRACT_HISTORY: "contracthistory",
   LOAD_ACCEPT: "loadaccept",
+  TRANS_CONTRACT_HISTORY: "transhistory",
 };
 
 export const getLocations = (loctyp) => {
@@ -192,7 +193,7 @@ export const getAllotedContracts = () => {
   };
 };
 
-export const searchRunningContracts = (fromLocn, toLocn, pickupdate) => {
+export const searchContractsLocal = (fromLocn, toLocn, pickupdate) => {
   return async (dispatch, getState) => {
     const contracts = getState().contract.contracts;
     const searchedContracts = await Promise.all(
@@ -245,13 +246,20 @@ export const loadAccept = (data) => {
 
 export const getContractsHistory = () => {
   return async (dispatch, getState) => {
-    const userId = getState().auth.tid;
-    const response = await fetch(api + requestedUrl.USER_CONTRACT_HISTORY, {
+    let data = {};
+    const userType = getState().auth.usrtyp;
+    const contractHistory =
+      userType === "T"
+        ? requestedUrl.TRANS_CONTRACT_HISTORY
+        : requestedUrl.USER_CONTRACT_HISTORY;
+    const key = userType === "T" ? "tid" : "userid";
+    data[key] = getState().auth.tid;
+    const response = await fetch(api + contractHistory, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userid: userId }),
+      body: JSON.stringify(data),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while fetching contracts.");

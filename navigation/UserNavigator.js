@@ -3,7 +3,6 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import Colors from "../shared/constants/Colors";
 import UserDashboardScreen from "../screens/user/UserDashboardScreen";
-import BidHistoryScreen from "../screens/user/BidHistoryScreen";
 import ContractHistoryScreen from "../screens/user/ContractHistoryScreen";
 import RunningContractsScreen from "../screens/user/RunningContractsScreen";
 import UserContractsScreen from "../screens/user/UserContractsScreen";
