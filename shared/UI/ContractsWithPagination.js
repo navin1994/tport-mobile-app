@@ -66,7 +66,6 @@ const ContractsWithPagination = (props) => {
       return;
     }
     setPage(1);
-    console.log(" getInitialData called");
     getContracts(0);
   };
 
@@ -107,8 +106,6 @@ const ContractsWithPagination = (props) => {
       const result = await dispatch(
         contractActions.getContracts(limit, _offset)
       );
-      console.log("_offset=> ", _offset);
-      console.log("page=> ", page);
       setIsLoading({ state: false, msg: "" });
     } catch (err) {
       setIsLoading({ state: false, msg: "" });
