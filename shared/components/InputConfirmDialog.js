@@ -31,7 +31,6 @@ const InputConfirmDialog = (props) => {
     errorText,
     keyboardType,
   } = props;
-  console.log(method);
   const [input, setReason] = useState({ value: "", validity: false });
   const [showModal, setShowModal] = useState(visible);
   const scaleValue = useRef(new Animated.Value(0)).current;

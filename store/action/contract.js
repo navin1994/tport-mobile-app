@@ -175,13 +175,16 @@ export const cancelContract = (contractid, canclreson) => {
 
 export const getAllotedContracts = () => {
   return async (dispatch, getState) => {
-    const userId = getState().auth.tid;
+    let data = {};
+    const userType = getState().auth.usrtyp;
+    const key = userType === "T" ? "tid" : "userid";
+    data[key] = getState().auth.tid;
     const response = await fetch(api + requestedUrl.GET_ALLOTED_CONTRACTS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userid: userId }),
+      body: JSON.stringify(data),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while fetching contracts.");

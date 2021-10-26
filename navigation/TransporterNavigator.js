@@ -28,6 +28,7 @@ const TransporterNavigator = () => {
         headerTintColor: "white",
         headerTitleStyle: {
           fontFamily: "open-sans-bold",
+          fontSize: 16,
         },
         headerTitleAlign: "center",
       }}

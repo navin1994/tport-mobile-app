@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from "react";
-import { StyleSheet, Image, Dimensions } from "react-native";
+import { StyleSheet, Image } from "react-native";
 
 import ContractHistory from "../../shared/UI/ContractHistory";
 import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
@@ -10,7 +10,7 @@ const ContractsHistoryScreen = (props) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "TPORT HISTORY",
+      title: "TPort History",
       headerLeft: () => (
         <DrawerHeaderLeft
           titleIcon={

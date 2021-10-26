@@ -1,19 +1,37 @@
-import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import React, { useLayoutEffect } from "react";
+import { StyleSheet, Image } from "react-native";
+
+import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
+import ScreenNames from "../../shared/constants/ScreenNames";
+import AllotedContracts from "../../shared/UI/AllotedContracts";
 
 const AllotedContractsScreen = (props) => {
+  const { navigation } = props;
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: "Alloted TPorts",
+      headerLeft: () => (
+        <DrawerHeaderLeft
+          titleIcon={
+            <Image
+              source={require("../../assets/images/dashboard-logo.png")}
+              style={styles.image}
+            />
+          }
+        />
+      ),
+    });
+  }, [navigation]);
   return (
-    <View style={styles.screen}>
-      <Text>The Alloted Contracts Screen!</Text>
-    </View>
+    <AllotedContracts screenName={ScreenNames.TRANS_ALLOTED_CONTRACTS_SCREEN} />
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  image: {
+    resizeMode: "center",
+    height: 35,
+    width: 40,
   },
 });
 

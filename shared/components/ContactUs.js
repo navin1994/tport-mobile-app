@@ -7,6 +7,7 @@ import {
   Image,
   Platform,
   Linking,
+  Text,
 } from "react-native";
 
 const ContactUs = (props) => {
@@ -143,6 +144,9 @@ const ContactUs = (props) => {
           />
         </Animated.View>
       </TouchableWithoutFeedback>
+      <View style={styles.textContainer}>
+        <Text style={styles.contactUsTxt}>Contact Us</Text>
+      </View>
     </View>
   );
 };
@@ -182,6 +186,16 @@ const styles = StyleSheet.create({
   },
   callBgColor: {
     backgroundColor: "#1565C0",
+  },
+  textContainer: {
+    position: "absolute",
+    top: 55,
+  },
+  contactUsTxt: {
+    fontFamily: "open-sans",
+    alignSelf: "center",
+    color: "#FFF",
+    fontSize: 10,
   },
 });
 export default ContactUs;

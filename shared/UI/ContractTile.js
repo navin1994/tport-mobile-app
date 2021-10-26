@@ -41,7 +41,14 @@ const ContractTile = (props) => {
         <View style={styles.innerContainer}>
           <View style={styles.rnAmtRow}>
             <View style={styles.rnAmtContainer}>
-              <Text style={styles.runningAmtHead}>Running Amount:</Text>
+              {(screen === ScreenNames.TRANS_CONTRACTS_SCREEN ||
+                screen === ScreenNames.USER_CONTRACTS_SCREEN) && (
+                <Text style={styles.runningAmtHead}>Running Amount:</Text>
+              )}
+              {screen !== ScreenNames.TRANS_CONTRACTS_SCREEN &&
+                screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
+                  <Text style={styles.runningAmtHead}>Bidding Amount:</Text>
+                )}
               <Text style={styles.runningAmt}>
                 {item.bidamt ? item.bidamt : item.totalprice}
               </Text>

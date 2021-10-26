@@ -55,11 +55,9 @@ const DetailedContractScreen = (props) => {
     state: false,
     msg: "Loading...",
   });
-  let currentMethod = cancelContract;
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth);
-
   let TouchableCmp = TouchableOpacity;
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
@@ -297,7 +295,7 @@ const DetailedContractScreen = (props) => {
                 <Text style={styles.heading}>To: </Text>
                 <Text style={styles.text}>{contract.trnsto}</Text>
               </View>
-              {user.usrtyp === "T" && (
+              {user.usrtyp === "T" && contract.updton && (
                 <View style={styles.cntDtls}>
                   <Ionicons
                     style={{ marginRight: 5 }}
@@ -315,7 +313,7 @@ const DetailedContractScreen = (props) => {
                   </Text>
                 </View>
               )}
-              {user.usrtyp === "T" && (
+              {user.usrtyp === "T" && contract.amount !== 0 && (
                 <View style={styles.cntDtls}>
                   <Ionicons
                     style={{ marginRight: 5 }}
@@ -343,7 +341,12 @@ const DetailedContractScreen = (props) => {
                     size={20}
                     color={Colors.danger}
                   />
-                  <Text style={styles.heading}>Running Amount: </Text>
+                  {screen === ScreenNames.TRANS_CONTRACTS_SCREEN && (
+                    <Text style={styles.heading}>Running Amount: </Text>
+                  )}
+                  {screen !== ScreenNames.TRANS_CONTRACTS_SCREEN && (
+                    <Text style={styles.heading}>Bidding Amount: </Text>
+                  )}
                   <Text style={styles.text}>
                     {contract.bidamt ? contract.bidamt : contract.totalprice}
                   </Text>
@@ -454,7 +457,10 @@ const DetailedContractScreen = (props) => {
                   />
                   <Text style={styles.heading}>Load: </Text>
                   <Text style={styles.text}>
-                    {contract.weight + " " + contract.weightype}
+                    {contract.weight === 0
+                      ? contract.loadWeight
+                      : contract.weight}
+                    <Text style={styles.text}>{" " + contract.weightype}</Text>
                   </Text>
                 </View>
               )}
@@ -687,27 +693,51 @@ const DetailedContractScreen = (props) => {
                 screen !== ScreenNames.TRANS_CONTRACTS_HISTORY_SCREEN && (
                   <View style={styles.actionsContainer}>
                     <Text style={styles.mainHead}>ACTIONS</Text>
-                    <View style={styles.btnContainer}>
-                      <RaisedButton
-                        title="APPLY"
-                        onPress={() => {
-                          setTitle("Bidding");
-                          setMsg("Please enter the bidding amount.");
-                          setInputLabel("Bidding Amount");
-                          setConfirmBtnText("Apply");
-                          setErrTxt("Please enter valid bidding amount.");
-                          setKeyboardType("decimal-pad");
-                          currentMethod = applyContract;
-                          setIsSubmitted(false);
-                          setInpCnfDialog(true);
-                        }}
-                        style={{
-                          flex: null,
-                          height: 40,
-                          backgroundColor: Colors.info,
-                        }}
-                      />
-                    </View>
+                    {screen === ScreenNames.TRANS_CONTRACTS_SCREEN && (
+                      <View style={styles.btnContainer}>
+                        <RaisedButton
+                          title="APPLY"
+                          onPress={() => {
+                            setTitle("Bidding");
+                            setMsg("Please enter the bidding amount.");
+                            setInputLabel("Bidding Amount");
+                            setConfirmBtnText("Apply");
+                            setErrTxt("Please enter valid bidding amount.");
+                            setKeyboardType("decimal-pad");
+                            currentMethod = applyContract;
+                            setIsSubmitted(false);
+                            setInpCnfDialog(true);
+                          }}
+                          style={{
+                            flex: null,
+                            height: 40,
+                            backgroundColor: Colors.info,
+                          }}
+                        />
+                      </View>
+                    )}
+                    {screen === ScreenNames.TRANS_ALLOTED_CONTRACTS_SCREEN && (
+                      <View style={styles.btnContainer}>
+                        <RaisedButton
+                          title="CONFIRM"
+                          onPress={() => {}}
+                          style={{
+                            flex: null,
+                            height: 40,
+                            backgroundColor: Colors.info,
+                          }}
+                        />
+                        <RaisedButton
+                          title="CANCEL"
+                          onPress={() => {}}
+                          style={{
+                            flex: null,
+                            height: 40,
+                            backgroundColor: Colors.danger,
+                          }}
+                        />
+                      </View>
+                    )}
                   </View>
                 )}
             </Card>
