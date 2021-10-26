@@ -41,14 +41,21 @@ const DetailedContractScreen = (props) => {
     uri: contract.loadphoto !== null ? contract.loadphoto[0] : "",
   });
   const [showBids, setBids] = useState(false);
-  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [inpCnfDialog, setInpCnfDialog] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isConfirm, setConfirm] = useState(false);
+  const [title, setTitle] = useState("");
+  const [msg, setMsg] = useState("");
+  const [inputLabel, setInputLabel] = useState("");
+  const [confirmBtnText, setConfirmBtnText] = useState("");
+  const [errTxt, setErrTxt] = useState("");
+  const [keyboardType, setKeyboardType] = useState("");
   const [isLoading, setIsLoading] = useState({
     state: false,
     msg: "Loading...",
   });
+  let currentMethod = cancelContract;
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth);
@@ -57,7 +64,6 @@ const DetailedContractScreen = (props) => {
   if (Platform.OS === "android" && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
   }
-
   useEffect(() => {
     if (error) {
       Alert.alert("An Error Occurred", error, [{ text: "Okay" }]);
@@ -72,10 +78,10 @@ const DetailedContractScreen = (props) => {
     setShowRatingModal(false);
   }, [setShowRatingModal]);
 
-  const onCloseCancelModal = useCallback(() => {
-    setShowCancelModal(false);
+  const onCloseInpCnfDialog = useCallback(() => {
+    setInpCnfDialog(false);
     setIsSubmitted(false);
-  }, [setShowCancelModal]);
+  }, [setInpCnfDialog]);
 
   const getBiddings = async () => {
     setError(null);
@@ -148,11 +154,43 @@ const DetailedContractScreen = (props) => {
         contractActions.cancelContract(contract.contractid, reasonTxt)
       );
       if (result.Result === "OK") {
-        setShowCancelModal(false);
+        setInpCnfDialog(false);
         navigation.goBack();
         Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
       }
       setIsLoading({ state: false, msg: "" });
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
+  const applyContract = async (biddingAmount) => {
+    console.log("biddingAmount", biddingAmount);
+    setIsSubmitted(true);
+    if (
+      biddingAmount === "" ||
+      biddingAmount === null ||
+      biddingAmount === undefined
+    ) {
+      return;
+    }
+    if (biddingAmount < 1) {
+      alert("Please check bidding amount you have entered.");
+      return;
+    }
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "Bidding..." });
+      const result = await dispatch(
+        contractActions.saveTPortContractBid(contract.contractid, biddingAmount)
+      );
+      setIsLoading({ state: false, msg: "" });
+      if (result.Result === "OK") {
+        setInpCnfDialog(false);
+        navigation.goBack();
+        Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+      }
     } catch (err) {
       setIsLoading({ state: false, msg: "" });
       setError(err.message);
@@ -184,15 +222,16 @@ const DetailedContractScreen = (props) => {
             setIsLoading={setIsLoading}
           />
           <InputConfirmDialog
-            visible={showCancelModal}
-            closeModal={onCloseCancelModal}
-            title="Confirmation"
-            message="Please enter the reason for contract cancellation."
-            method={cancelContract}
-            inputLabel="Cancellation Reason"
+            visible={inpCnfDialog}
+            closeModal={onCloseInpCnfDialog}
+            title={title}
+            message={msg}
+            method={keyboardType === "default" ? cancelContract : applyContract}
+            inputLabel={inputLabel}
             isSubmitted={isSubmitted}
-            confirmBtnText="Cancel Contract"
-            errorText="Please enter valid cancellation reason."
+            confirmBtnText={confirmBtnText}
+            errorText={errTxt}
+            keyboardType={keyboardType}
           />
           {contract.loadphoto && (
             <View style={styles.imgContainer}>
@@ -258,27 +297,82 @@ const DetailedContractScreen = (props) => {
                 <Text style={styles.heading}>To: </Text>
                 <Text style={styles.text}>{contract.trnsto}</Text>
               </View>
-              <View style={styles.cntDtls}>
-                <Ionicons
-                  style={{ marginRight: 5 }}
-                  name={
-                    Platform.OS === "android"
-                      ? "md-checkmark-circle"
-                      : "ios-checkmark-circle"
-                  }
-                  size={20}
-                  color={Colors.danger}
-                />
-                {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+              {user.usrtyp === "T" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Bidding Date: </Text>
+                  <Text style={styles.text}>
+                    {Moment(contract.updton).format("MMM Do YYYY, h:mm:ss a")}
+                  </Text>
+                </View>
+              )}
+              {user.usrtyp === "T" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Your Bidding Amount: </Text>
+                  <Text style={styles.text}>{contract.amount}</Text>
+                </View>
+              )}
+              {user.usrtyp === "T" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
                   <Text style={styles.heading}>Running Amount: </Text>
-                )}
-                {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
-                  <Text style={styles.heading}>Bidding Amount: </Text>
-                )}
-                <Text style={styles.text}>
-                  {contract.bidamt ? contract.bidamt : contract.totalprice}
-                </Text>
-              </View>
+                  <Text style={styles.text}>
+                    {contract.bidamt ? contract.bidamt : contract.totalprice}
+                  </Text>
+                </View>
+              )}
+
+              {user.usrtyp === "U" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                    <Text style={styles.heading}>Running Amount: </Text>
+                  )}
+                  {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
+                    <Text style={styles.heading}>Bidding Amount: </Text>
+                  )}
+                  <Text style={styles.text}>
+                    {contract.bidamt ? contract.bidamt : contract.totalprice}
+                  </Text>
+                </View>
+              )}
               <View style={styles.cntDtls}>
                 <Ionicons
                   style={{ marginRight: 5 }}
@@ -321,29 +415,49 @@ const DetailedContractScreen = (props) => {
                 <Text style={styles.heading}>Distance: </Text>
                 <Text style={styles.text}>{contract.distance + "Km"}</Text>
               </View>
-              <View style={styles.cntDtls}>
-                <Ionicons
-                  style={{ marginRight: 5 }}
-                  name={
-                    Platform.OS === "android"
-                      ? "md-checkmark-circle"
-                      : "ios-checkmark-circle"
-                  }
-                  size={20}
-                  color={Colors.danger}
-                />
-                <Text style={styles.heading}>Load: </Text>
-                {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+              {user.usrtyp === "U" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Load: </Text>
+                  {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+                    <Text style={styles.text}>
+                      {contract.weight + " " + contract.weightype}
+                    </Text>
+                  )}
+                  {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
+                    <Text style={styles.text}>
+                      {contract.loadWeight + " " + contract.weightype}
+                    </Text>
+                  )}
+                </View>
+              )}
+              {user.usrtyp === "T" && (
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Load: </Text>
                   <Text style={styles.text}>
                     {contract.weight + " " + contract.weightype}
                   </Text>
-                )}
-                {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
-                  <Text style={styles.text}>
-                    {contract.loadWeight + " " + contract.weightype}
-                  </Text>
-                )}
-              </View>
+                </View>
+              )}
               <View style={styles.cntDtls}>
                 <Ionicons
                   style={{ marginRight: 5 }}
@@ -374,7 +488,7 @@ const DetailedContractScreen = (props) => {
                   <Text style={styles.text}>{contract.vehtyp}</Text>
                 </View>
               )}
-              {contract.vehtyp && (
+              {contract.drivername && (
                 <View style={styles.cntDtls}>
                   <Ionicons
                     style={{ marginRight: 5 }}
@@ -390,22 +504,24 @@ const DetailedContractScreen = (props) => {
                   <Text style={styles.text}>{contract.drivername}</Text>
                 </View>
               )}
-              <View style={styles.cntDtls}>
-                <Ionicons
-                  style={{ marginRight: 5 }}
-                  name={
-                    Platform.OS === "android"
-                      ? "md-checkmark-circle"
-                      : "ios-checkmark-circle"
-                  }
-                  size={20}
-                  color={Colors.danger}
-                />
-                <Text style={styles.heading}>Trip Status: </Text>
-                <Text style={{ ...styles.text, color: Colors.success }}>
-                  {contract.sts ? contract.sts : "Not Available"}
-                </Text>
-              </View>
+              {
+                <View style={styles.cntDtls}>
+                  <Ionicons
+                    style={{ marginRight: 5 }}
+                    name={
+                      Platform.OS === "android"
+                        ? "md-checkmark-circle"
+                        : "ios-checkmark-circle"
+                    }
+                    size={20}
+                    color={Colors.danger}
+                  />
+                  <Text style={styles.heading}>Trip Status: </Text>
+                  <Text style={{ ...styles.text, color: Colors.success }}>
+                    {contract.sts ? contract.sts : "Not Available"}
+                  </Text>
+                </View>
+              }
               {contract.trpstartdte && (
                 <View style={styles.cntDtls}>
                   <Ionicons
@@ -491,10 +607,10 @@ const DetailedContractScreen = (props) => {
                 </View>
               )}
 
-              {screen !== ScreenNames.USER_CONTRACTS_HISTORY_SCREEN && (
-                <View style={styles.actionsContainer}>
-                  <Text style={styles.mainHead}>ACTIONS</Text>
-                  {user.usrtyp === "U" && (
+              {user.usrtyp === "U" &&
+                screen !== ScreenNames.USER_CONTRACTS_HISTORY_SCREEN && (
+                  <View style={styles.actionsContainer}>
+                    <Text style={styles.mainHead}>ACTIONS</Text>
                     <View style={styles.btnContainer}>
                       {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
                         <RaisedButton
@@ -516,7 +632,18 @@ const DetailedContractScreen = (props) => {
                           title="CANCEL"
                           style={{ color: Colors.success }}
                           onPress={() => {
-                            setShowCancelModal(true);
+                            setTitle("Confirmation");
+                            setMsg(
+                              "Please enter the reason for contract cancellation."
+                            );
+                            setInputLabel("Cancellation Reason");
+                            setConfirmBtnText("CANCEL CONTRACT");
+                            setErrTxt(
+                              "Please enter valid cancellation reason."
+                            );
+                            setKeyboardType("default");
+                            setIsSubmitted(false);
+                            setInpCnfDialog(true);
                           }}
                           style={{
                             flex: null,
@@ -554,9 +681,35 @@ const DetailedContractScreen = (props) => {
                         }}
                       />
                     </View>
-                  )}
-                </View>
-              )}
+                  </View>
+                )}
+              {user.usrtyp === "T" &&
+                screen !== ScreenNames.TRANS_CONTRACTS_HISTORY_SCREEN && (
+                  <View style={styles.actionsContainer}>
+                    <Text style={styles.mainHead}>ACTIONS</Text>
+                    <View style={styles.btnContainer}>
+                      <RaisedButton
+                        title="APPLY"
+                        onPress={() => {
+                          setTitle("Bidding");
+                          setMsg("Please enter the bidding amount.");
+                          setInputLabel("Bidding Amount");
+                          setConfirmBtnText("Apply");
+                          setErrTxt("Please enter valid bidding amount.");
+                          setKeyboardType("decimal-pad");
+                          currentMethod = applyContract;
+                          setIsSubmitted(false);
+                          setInpCnfDialog(true);
+                        }}
+                        style={{
+                          flex: null,
+                          height: 40,
+                          backgroundColor: Colors.info,
+                        }}
+                      />
+                    </View>
+                  </View>
+                )}
             </Card>
           </View>
         </View>

@@ -14,6 +14,8 @@ const requestedUrl = {
   USER_CONTRACT_HISTORY: "contracthistory",
   LOAD_ACCEPT: "loadaccept",
   TRANS_CONTRACT_HISTORY: "transhistory",
+  TPORT_CONTRACT_GET_TRANS: "TportContractTrans",
+  TPORT_CONTRACT_BID: "Contractbid",
 };
 
 export const getLocations = (loctyp) => {
@@ -78,13 +80,20 @@ export const saveTPortContract = (data) => {
 
 export const getContracts = (limit, offset) => {
   return async (dispatch, getState) => {
-    const userId = getState().auth.tid;
-    const response = await fetch(api + requestedUrl.GET_TPORT_CONTRACT, {
+    let data = { limit, offset };
+    const userType = getState().auth.usrtyp;
+    const endpoint =
+      userType === "T"
+        ? requestedUrl.TPORT_CONTRACT_GET_TRANS
+        : requestedUrl.GET_TPORT_CONTRACT;
+    const key = userType === "T" ? "tid" : "userid";
+    data[key] = getState().auth.tid;
+    const response = await fetch(api + endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ limit: limit, offset: offset, usrid: userId }),
+      body: JSON.stringify(data),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while fetching contracts.");
@@ -276,6 +285,31 @@ export const getContractsHistory = () => {
       offset: 0,
     });
 
+    return await result;
+  };
+};
+
+export const saveTPortContractBid = (contractId, bidAmount) => {
+  return async (dispatch, getState) => {
+    const data = {
+      tid: getState().auth.tid,
+      contractid: contractId,
+      bidamt: bidAmount,
+    };
+    const response = await fetch(api + requestedUrl.TPORT_CONTRACT_BID, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while saving bid.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
     return await result;
   };
 };

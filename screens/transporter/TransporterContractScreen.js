@@ -1,19 +1,39 @@
-import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import React, { useLayoutEffect } from "react";
+import { StyleSheet, Image } from "react-native";
+
+import ContractsWithPagination from "../../shared/UI/ContractsWithPagination";
+import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
+import ScreenNames from "../../shared/constants/ScreenNames";
 
 const TransporterContractsScreen = (props) => {
+  const { navigation } = props;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: "MY TPORT",
+      headerLeft: () => (
+        <DrawerHeaderLeft
+          titleIcon={
+            <Image
+              source={require("../../assets/images/dashboard-logo.png")}
+              style={styles.image}
+            />
+          }
+        />
+      ),
+    });
+  }, [navigation]);
+
   return (
-    <View style={styles.screen}>
-      <Text>The Transporter Contracts Screen!</Text>
-    </View>
+    <ContractsWithPagination screenName={ScreenNames.TRANS_CONTRACTS_SCREEN} />
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  image: {
+    resizeMode: "center",
+    height: 35,
+    width: 40,
   },
 });
 

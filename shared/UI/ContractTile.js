@@ -8,6 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Moment from "moment";
 
 import Colors from "../constants/Colors";
 import ScreenNames from "../constants/ScreenNames";
@@ -46,6 +47,16 @@ const ContractTile = (props) => {
               </Text>
             </View>
           </View>
+          {screen === ScreenNames.TRANS_CONTRACTS_SCREEN && item.amount !== 0 && (
+            <View style={{ flexDirection: "row", width: "100%" }}>
+              <Text style={styles.lastBidding}>
+                {"Your last bidding amount is " +
+                  item.amount +
+                  " on " +
+                  Moment(item?.updton).format("MMM Do YYYY, h:mm:ss a")}
+              </Text>
+            </View>
+          )}
           <Text style={styles.headTxt}>
             From: <Text style={styles.valueTxt}>{item.trnsfrm}</Text>
           </Text>
@@ -60,16 +71,18 @@ const ContractTile = (props) => {
             </Text>
             <Text style={styles.headTxt}>
               Load:{" "}
-              {screen === ScreenNames.USER_CONTRACTS_SCREEN && (
+              {(screen === ScreenNames.USER_CONTRACTS_SCREEN ||
+                screen === ScreenNames.TRANS_CONTRACTS_SCREEN) && (
                 <Text style={styles.valueTxt}>
                   {item.weight + " " + item.weightype}
                 </Text>
               )}
-              {screen !== ScreenNames.USER_CONTRACTS_SCREEN && (
-                <Text style={styles.valueTxt}>
-                  {item.loadWeight + " " + item.weightype}
-                </Text>
-              )}
+              {screen !== ScreenNames.USER_CONTRACTS_SCREEN &&
+                screen !== ScreenNames.TRANS_CONTRACTS_SCREEN && (
+                  <Text style={styles.valueTxt}>
+                    {item.loadWeight + " " + item.weightype}
+                  </Text>
+                )}
             </Text>
           </View>
           <View style={styles.datesContainer}>
@@ -164,6 +177,11 @@ const styles = StyleSheet.create({
     fontFamily: "open-sans-bold",
     fontSize: 14,
     color: "black",
+  },
+  lastBidding: {
+    fontFamily: "open-sans",
+    fontSize: 12,
+    color: Colors.success,
   },
 });
 

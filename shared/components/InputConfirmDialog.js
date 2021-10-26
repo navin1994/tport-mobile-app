@@ -29,8 +29,10 @@ const InputConfirmDialog = (props) => {
     isSubmitted,
     confirmBtnText,
     errorText,
+    keyboardType,
   } = props;
-  const [cancelReason, setReason] = useState({ value: "", validity: false });
+  console.log(method);
+  const [input, setReason] = useState({ value: "", validity: false });
   const [showModal, setShowModal] = useState(visible);
   const scaleValue = useRef(new Animated.Value(0)).current;
 
@@ -80,19 +82,20 @@ const InputConfirmDialog = (props) => {
             <Text style={styles.heading}>{title}</Text>
             <Text style={styles.message}>{message}</Text>
             <TextField
-              value={cancelReason.value}
-              initiallyValid={cancelReason.validity}
+              value={input.value}
+              initiallyValid={input.validity}
               onInputChange={inputChangeHandler}
               label={inputLabel}
               style={{ width: "100%" }}
               required={true}
               isSubmitted={isSubmitted}
               errorText={errorText}
+              keyboardType={keyboardType}
             />
             <View style={styles.actionsContainer}>
               <TextButton
                 title={confirmBtnText}
-                onPress={method.bind(this, cancelReason.value)}
+                onPress={() => method(input.value)}
                 style={styles.textBtn}
                 titleStyle={{ ...styles.titleStyle, color: Colors.success }}
               />
