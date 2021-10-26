@@ -16,6 +16,12 @@ const requestedUrl = {
   TRANS_CONTRACT_HISTORY: "transhistory",
   TPORT_CONTRACT_GET_TRANS: "TportContractTrans",
   TPORT_CONTRACT_BID: "Contractbid",
+  CANCEL_BY_TRANSPORTER: "canclbytrans",
+  TRIP_START: "tripstart",
+  TRIP_END: "tripend",
+  SAVE_FEEDBACK: "feedback",
+  TRANS_CONFIRM_CONTRACT: "transconfirm",
+  UPDATE_DRIVER: "updtdriverdtl",
 };
 
 export const getLocations = (loctyp) => {
@@ -150,17 +156,19 @@ export const searchContracts = (fromLocn, toLocn, pickupdate) => {
 
 export const cancelContract = (contractid, canclreson) => {
   return async (dispatch, getState) => {
-    const userId = getState().auth.tid;
-    const response = await fetch(api + requestedUrl.CANCEL_CONTRACT, {
+    let data = { contractid, canclreson };
+    const userType = getState().auth.usrtyp;
+    const endpoint =
+      userType === "T"
+        ? requestedUrl.CANCEL_BY_TRANSPORTER
+        : requestedUrl.CANCEL_CONTRACT;
+    data["tid"] = getState().auth.tid;
+    const response = await fetch(api + endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        tid: userId,
-        contractid,
-        canclreson,
-      }),
+      body: JSON.stringify(data),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while cancelling the contracts.");
@@ -237,8 +245,11 @@ export const searchContractsLocal = (fromLocn, toLocn, pickupdate) => {
 };
 
 export const loadAccept = (data) => {
-  return async (dispatch) => {
-    const response = await fetch(api + requestedUrl.LOAD_ACCEPT, {
+  return async (dispatch, getState) => {
+    const userType = getState().auth.usrtyp;
+    const endpoint =
+      userType === "T" ? requestedUrl.SAVE_FEEDBACK : requestedUrl.LOAD_ACCEPT;
+    const response = await fetch(api + endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -246,7 +257,7 @@ export const loadAccept = (data) => {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      throw new Error("Something went wrong while closing contracts.");
+      throw new Error("Something went wrong while saving ratings.");
     }
     const result = await response.json();
     if (result.Result === "NOTOK") {
@@ -308,6 +319,54 @@ export const saveTPortContractBid = (contractId, bidAmount) => {
     });
     if (!response.ok) {
       throw new Error("Something went wrong while saving bid.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const tripActions = (contractid, flag) => {
+  return async (dispatch) => {
+    const endPoint =
+      flag === "START" ? requestedUrl.TRIP_START : requestedUrl.TRIP_END;
+    const response = await fetch(api + endPoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ contractid }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while ending/starting trip.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const transConfirmAndUpdateDriver = (data, flag) => {
+  return async (dispatch) => {
+    const endPoint =
+      flag === "CONFIRM"
+        ? requestedUrl.TRANS_CONFIRM_CONTRACT
+        : requestedUrl.UPDATE_DRIVER;
+    const response = await fetch(api + endPoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(
+        "Something went wrong while confirming/updating contract."
+      );
     }
     const result = await response.json();
     if (result.Result === "NOTOK") {

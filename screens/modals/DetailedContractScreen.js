@@ -23,9 +23,11 @@ import Card from "../../shared/UI/Card";
 import BidsModal from "../../shared/components/BidsModal";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import InputConfirmDialog from "../../shared/components/InputConfirmDialog";
+import CnfContractOrChangeDriverDialog from "../../shared/components/CnfContractOrChangeDriverDialog";
 import RatingModal from "../../shared/components/RatingModal";
 import * as biddingActions from "../../store/action/biding";
 import * as contractActions from "../../store/action/contract";
+import * as fleetActions from "../../store/action/fleet";
 import ScreenNames from "../../shared/constants/ScreenNames";
 import RatingStars from "../../shared/UI/RatingStars";
 
@@ -51,6 +53,10 @@ const DetailedContractScreen = (props) => {
   const [confirmBtnText, setConfirmBtnText] = useState("");
   const [errTxt, setErrTxt] = useState("");
   const [keyboardType, setKeyboardType] = useState("");
+  const [reset, setReset] = useState(false);
+  const [vehTypes, setVehTypes] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [flag, setFlag] = useState();
   const [isLoading, setIsLoading] = useState({
     state: false,
     msg: "Loading...",
@@ -68,6 +74,18 @@ const DetailedContractScreen = (props) => {
     }
   }, [error]);
 
+  useEffect(() => {
+    if (showDialog) {
+      setReset(!reset);
+      getVehicleType();
+    }
+  }, [showDialog]);
+
+  const onCloseDialog = useCallback(() => {
+    setShowDialog(false);
+    setIsSubmitted(false);
+  }, [setShowDialog]);
+
   const onCloseModal = useCallback(() => {
     setBids(false);
   }, [setBids]);
@@ -80,6 +98,21 @@ const DetailedContractScreen = (props) => {
     setInpCnfDialog(false);
     setIsSubmitted(false);
   }, [setInpCnfDialog]);
+
+  const getVehicleType = async () => {
+    setError(null);
+    try {
+      const resData = await dispatch(fleetActions.getVehicleTypes());
+      if (resData.Result === "ERR") {
+        Alert.alert("Error", resData.Msg, [{ text: "Okay" }]);
+        return;
+      } else if (resData.Result === "OK") {
+        setVehTypes(resData.Records);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   const getBiddings = async () => {
     setError(null);
@@ -120,8 +153,8 @@ const DetailedContractScreen = (props) => {
     const data = {
       contractid: contract.contractid,
       rateting: rating,
-      toid: user.tid,
-      sts: "C",
+      toid: user.usrtyp === "T" ? contract.usrid : user.tid,
+      sts: user.usrtyp === "T" ? "T" : "C",
     };
 
     setError(null);
@@ -164,7 +197,6 @@ const DetailedContractScreen = (props) => {
   };
 
   const applyContract = async (biddingAmount) => {
-    console.log("biddingAmount", biddingAmount);
     setIsSubmitted(true);
     if (
       biddingAmount === "" ||
@@ -195,6 +227,97 @@ const DetailedContractScreen = (props) => {
     }
   };
 
+  const startJourney = () => {
+    Alert.alert("Confirmation!", "Do you want to start the trip of contract?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel",
+      },
+      {
+        text: "Start Trip",
+        onPress: async () => {
+          setError(null);
+          try {
+            setIsLoading({ state: true, msg: "Starting Trip..." });
+            const result = await dispatch(
+              contractActions.tripActions(contract.contractid, "START")
+            );
+            setIsLoading({ state: false, msg: "" });
+            if (result.Result === "OK") {
+              navigation.goBack();
+              Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+            }
+          } catch (err) {
+            setIsLoading({ state: false, msg: "" });
+            setError(err.message);
+          }
+        },
+      },
+    ]);
+  };
+
+  const endJourney = () => {
+    Alert.alert("Confirmation!", "Do you want to end the trip of contract?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel",
+      },
+      {
+        text: "End Trip",
+        onPress: async () => {
+          setError(null);
+          try {
+            setIsLoading({ state: true, msg: "Ending Trip..." });
+            const result = await dispatch(
+              contractActions.tripActions(contract.contractid, "END")
+            );
+            setIsLoading({ state: false, msg: "" });
+            if (result.Result === "OK") {
+              Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+              setMessage("Please Rate Customer");
+              setShowRatingModal(true);
+            }
+          } catch (err) {
+            setIsLoading({ state: false, msg: "" });
+            setError(err.message);
+          }
+        },
+      },
+    ]);
+  };
+
+  const cnfOrUpdateContract = async (formData) => {
+    setIsSubmitted(true);
+    if (!formData.formIsValid) {
+      alert("Please check errors in the form");
+      return;
+    }
+    const data = {
+      vid: formData.inputValues.vehicle.id,
+      vehnme: formData.inputValues.vehicle.text,
+      drivernme: formData.inputValues.driverName,
+      contractid: contract.contractid,
+    };
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "Please wait..." });
+      const result = await dispatch(
+        contractActions.transConfirmAndUpdateDriver(data, flag)
+      );
+      setIsLoading({ state: false, msg: "" });
+      if (result.Result === "OK") {
+        setShowDialog(false);
+        navigation.goBack();
+        Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+      }
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
   return (
     <BackgroundImage>
       {isLoading.state && <ProgressIndicator msg={isLoading.msg} />}
@@ -207,6 +330,14 @@ const DetailedContractScreen = (props) => {
           style={styles.screen}
           pointerEvents={isLoading.state ? "none" : "auto"}
         >
+          <CnfContractOrChangeDriverDialog
+            visible={showDialog}
+            closeModal={onCloseDialog}
+            method={cnfOrUpdateContract}
+            vehTypes={vehTypes}
+            isSubmitted={isSubmitted}
+            reset={reset}
+          />
           <RatingModal
             visible={showRatingModal}
             closeModal={onCloseRatingModal}
@@ -566,7 +697,7 @@ const DetailedContractScreen = (props) => {
                   </Text>
                 </View>
               )}
-              {contract.rating !== 0 && user.usrtyp === "U" && (
+              {contract.rating !== 0 && (
                 <View style={styles.cntDtls}>
                   <Ionicons
                     style={{ marginRight: 5 }}
@@ -578,7 +709,12 @@ const DetailedContractScreen = (props) => {
                     size={20}
                     color={Colors.danger}
                   />
-                  <Text style={styles.heading}>Transporter Ratings: </Text>
+                  {user.usrtyp === "U" && (
+                    <Text style={styles.heading}>Transporter Ratings: </Text>
+                  )}
+                  {user.usrtyp === "T" && (
+                    <Text style={styles.heading}>Customer Ratings: </Text>
+                  )}
                   <RatingStars
                     rating={contract.rating}
                     setRating={() => {}}
@@ -718,24 +854,80 @@ const DetailedContractScreen = (props) => {
                     )}
                     {screen === ScreenNames.TRANS_ALLOTED_CONTRACTS_SCREEN && (
                       <View style={styles.btnContainer}>
-                        <RaisedButton
-                          title="CONFIRM"
-                          onPress={() => {}}
-                          style={{
-                            flex: null,
-                            height: 40,
-                            backgroundColor: Colors.info,
-                          }}
-                        />
-                        <RaisedButton
-                          title="CANCEL"
-                          onPress={() => {}}
-                          style={{
-                            flex: null,
-                            height: 40,
-                            backgroundColor: Colors.danger,
-                          }}
-                        />
+                        {contract.sts === "Confirm By Transporter" && (
+                          <RaisedButton
+                            title="CHANGE DRIVER"
+                            onPress={() => {
+                              setFlag("CH_DRIVER");
+                              setShowDialog(true);
+                            }}
+                            style={{
+                              flex: null,
+                              height: 40,
+                              backgroundColor: Colors.warning,
+                            }}
+                          />
+                        )}
+                        {contract.sts === "Confirm By Transporter" && (
+                          <RaisedButton
+                            title="START TRIP"
+                            onPress={startJourney}
+                            style={{
+                              flex: null,
+                              height: 40,
+                              backgroundColor: Colors.success,
+                            }}
+                          />
+                        )}
+                        {contract.sts === "Trip Started" && (
+                          <RaisedButton
+                            title="END TRIP"
+                            onPress={endJourney}
+                            style={{
+                              flex: null,
+                              height: 40,
+                              backgroundColor: Colors.success,
+                            }}
+                          />
+                        )}
+                        {contract.sts === "Confirm By Customer" && (
+                          <RaisedButton
+                            title="CONFIRM"
+                            onPress={() => {
+                              setFlag("CONFIRM");
+                              setShowDialog(true);
+                            }}
+                            style={{
+                              flex: null,
+                              height: 40,
+                              backgroundColor: Colors.info,
+                            }}
+                          />
+                        )}
+                        {contract.sts === "Confirm By Customer" && (
+                          <RaisedButton
+                            title="CANCEL"
+                            onPress={() => {
+                              setTitle("Confirmation");
+                              setMsg(
+                                "Please enter the reason for contract cancellation."
+                              );
+                              setInputLabel("Cancellation Reason");
+                              setConfirmBtnText("CANCEL CONTRACT");
+                              setErrTxt(
+                                "Please enter valid cancellation reason."
+                              );
+                              setKeyboardType("default");
+                              setIsSubmitted(false);
+                              setInpCnfDialog(true);
+                            }}
+                            style={{
+                              flex: null,
+                              height: 40,
+                              backgroundColor: Colors.danger,
+                            }}
+                          />
+                        )}
                       </View>
                     )}
                   </View>
