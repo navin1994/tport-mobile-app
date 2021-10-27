@@ -123,17 +123,22 @@ export const getContracts = (limit, offset) => {
 export const searchContracts = (fromLocn, toLocn, pickupdate) => {
   return async (dispatch, getState) => {
     const userId = getState().auth.tid;
+    const data = {
+      fromLocn,
+      toLocn,
+      pickupdate,
+      usrid: userId,
+    };
+    if (getState().auth.usrtyp === "T") {
+      delete data.usrid;
+    }
+    console.log(data);
     const response = await fetch(api + requestedUrl.SEARCH_CONTRACTS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        fromLocn: fromLocn,
-        toLocn: toLocn,
-        pickupdate: pickupdate,
-        usrid: userId,
-      }),
+      body: JSON.stringify(data),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while searching contracts.");
