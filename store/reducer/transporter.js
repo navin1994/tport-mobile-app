@@ -1,4 +1,8 @@
-import { FORM_INPUT_UPDATE, RESET_FORM } from "../action/transporter";
+import {
+  FORM_INPUT_UPDATE,
+  GET_TRANS_PROF,
+  RESET_FORM,
+} from "../action/transporter";
 
 const initialFormState = {
   inputValues: {
@@ -79,6 +83,50 @@ export default (state = initialFormState, action) => {
 
     case RESET_FORM:
       return initialFormState;
+
+    case GET_TRANS_PROF:
+      const updtedValues = {
+        seq: action.transp.seq,
+        companyname: action.transp.companyname,
+        company_regno: action.transp.companyregno,
+        company_pan: action.transp.comapnypanno,
+        companyaddress: action.transp.companyaddress,
+        company_gstn: action.transp.companygstno,
+        evgstnid: action.transp.evgstnid,
+        ownrnme: action.transp.ownrnme,
+        ownrmobile: action.transp.ownrmobile,
+        ownremail: action.transp.ownremail,
+        ownraddr: action.transp.ownraddr,
+        ownridno: action.transp.ownridno,
+        ownrpanno: action.transp.ownrpanno,
+        ownrpincd: action.transp.ownrpincd,
+      };
+
+      let updtedValidities = {
+        seq: true,
+        companyname: true,
+        company_regno: true,
+        company_pan: true,
+        companyaddress: true,
+        company_gstn: true,
+        evgstnid: true,
+        ownrnme: true,
+        ownrmobile: true,
+        ownremail: true,
+        ownraddr: true,
+        ownridno: true,
+        ownrpanno: true,
+        ownrpincd: true,
+      };
+      let formIsValidFlag = true;
+      for (const key in updtedValidities) {
+        formIsValidFlag = formIsValidFlag && updtedValidities[key];
+      }
+      return {
+        inputValues: updtedValues,
+        inputValidities: updtedValidities,
+        formIsValid: formIsValidFlag,
+      };
 
     default:
       return state;

@@ -81,27 +81,3 @@ export const updateUserProfile = (data) => {
     return await result;
   };
 };
-
-export const updatePassword = (password) => {
-  return async (dispatch, getState) => {
-    const userId = getState().auth.tid;
-    const response = await fetch(api + requestedUrl.UPDATE_PASS, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        utid: userId,
-        password,
-      }),
-    });
-    if (!response.ok) {
-      throw new Error("Something went wrong while updating user password.");
-    }
-    const result = await response.json();
-    if (result.Result === "NOTOK") {
-      throw new Error(result.Msg);
-    }
-    return await result;
-  };
-};

@@ -11,6 +11,7 @@ const requestedUrl = {
   LOGIN: "loginaction",
   FORGET_PASSWORD: "frgtpwd",
   VERIFY_OTP: "verifyotp",
+  UPDATE_PASS: "chnagepwd",
 };
 
 export const checkUserId = (userId) => {
@@ -144,6 +145,30 @@ export const forgotPasswordUpdate = (data) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while updating password.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const updatePassword = (password) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.tid;
+    const response = await fetch(api + requestedUrl.UPDATE_PASS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        utid: userId,
+        password,
+      }),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while updating password.");

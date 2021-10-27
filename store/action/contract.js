@@ -132,7 +132,6 @@ export const searchContracts = (fromLocn, toLocn, pickupdate) => {
     if (getState().auth.usrtyp === "T") {
       delete data.usrid;
     }
-    console.log(data);
     const response = await fetch(api + requestedUrl.SEARCH_CONTRACTS, {
       method: "POST",
       headers: {

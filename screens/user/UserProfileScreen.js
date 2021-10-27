@@ -246,7 +246,7 @@ const UserProfileScreen = (props) => {
     setIsLoading({ state: true, msg: "Processing..." });
     try {
       const result = await dispatch(
-        userActions.updatePassword(passForm.inputValues.password)
+        authActions.updatePassword(passForm.inputValues.password)
       );
       setIsLoading({ state: false, msg: "" });
       dispatchFormState({
