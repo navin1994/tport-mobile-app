@@ -9,7 +9,6 @@ const requestedUrl = {
   GET_USER_PROF: "getProfileData",
   UPDATE_USER_PROF: "updateProfile",
   UPDATE_USER_DATA: "update",
-  UPDATE_PASS: "chnagepwd",
 };
 
 export const formInputUpdate = (identifier, inputValue, inputValidity) => {

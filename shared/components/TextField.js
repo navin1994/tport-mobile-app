@@ -33,7 +33,7 @@ const TextField = (props) => {
 
   useEffect(() => {
     if (formType === 2) {
-      textChangeHandler(props.value.toString());
+      textChangeHandler(props.value !== null ? props.value.toString() : "");
     }
   }, [formType]);
 

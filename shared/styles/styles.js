@@ -1,6 +1,9 @@
 import { StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
 
 import Colors from "../constants/Colors";
+
+const window = Dimensions.get("window");
 
 const Styles = StyleSheet.create({
   label: {
@@ -43,6 +46,79 @@ const Styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     flexWrap: "wrap",
+  },
+  ScreenSwitchContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.primaryDark,
+    overflow: "hidden",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  leftTextCon: {
+    width: "50%",
+    height: 50,
+    paddingLeft: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 3,
+    paddingVertical: 8,
+  },
+  rightTextCon: {
+    width: "50%",
+    height: 50,
+    paddingRight: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 3,
+    paddingVertical: 8,
+    backgroundColor: Colors.success,
+  },
+  focusedTab: {
+    fontFamily: "open-sans",
+    fontSize: 13,
+    color: "#fff",
+  },
+  card: {
+    alignSelf: "center",
+    width: "95%",
+  },
+  formContainer: {
+    alignSelf: "center",
+    marginTop: 20,
+    alignItems: "center",
+    width: window.width * 0.9,
+    backgroundColor: Colors.semiTransparentBlack,
+    borderRadius: 8,
+    paddingVertical: 20,
+  },
+  errorContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    width: "80%",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  errorText: {
+    fontFamily: "open-sans",
+    color: Colors.danger,
+    fontSize: 13,
+  },
+  separator: {
+    width: "90%",
+    height: 2,
+    backgroundColor: Colors.danger,
+    marginVertical: 10,
+  },
+  required: {
+    color: "red",
   },
 });
 

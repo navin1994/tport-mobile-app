@@ -139,6 +139,7 @@ const UserProfileScreen = (props) => {
       Alert.alert("An Error Occurred", "Please check error in the form.", [
         { text: "Okay" },
       ]);
+      return;
     }
     setError(null);
     setIsLoading({ state: true, msg: "Updating Profile Data..." });
@@ -301,7 +302,7 @@ const UserProfileScreen = (props) => {
             id={currentPicker}
             closeModal={onCloseModal}
           />
-          <View style={styles.ScreenSwitchContainer}>
+          <View style={Styles.ScreenSwitchContainer}>
             <TouchableCmp
               onPress={() => {
                 setEdit(false);
@@ -311,13 +312,13 @@ const UserProfileScreen = (props) => {
             >
               <View
                 style={{
-                  ...styles.leftTextCon,
+                  ...Styles.leftTextCon,
                   backgroundColor: isProfile === true ? "white" : "black",
                 }}
               >
                 <Text
                   style={{
-                    ...styles.focusedTab,
+                    ...Styles.focusedTab,
                     color: isProfile === true ? "black" : "white",
                   }}
                 >
@@ -339,13 +340,13 @@ const UserProfileScreen = (props) => {
             >
               <View
                 style={{
-                  ...styles.rightTextCon,
+                  ...Styles.rightTextCon,
                   backgroundColor: isProfile === false ? "white" : "black",
                 }}
               >
                 <Text
                   style={{
-                    ...styles.focusedTab,
+                    ...Styles.focusedTab,
                     color: isProfile === true ? "white" : "black",
                   }}
                 >
@@ -371,16 +372,16 @@ const UserProfileScreen = (props) => {
                 }}
               />
               {!isEdit && (
-                <Card style={styles.card}>
+                <Card style={Styles.card}>
                   <Text style={Styles.mainHead}>USER DETAILS</Text>
                   {userData.docflag === "N" && (
                     <View
                       style={{
-                        ...styles.errorContainer,
+                        ...Styles.errorContainer,
                         display: formType === 1 ? "none" : "flex",
                       }}
                     >
-                      <Text style={styles.errorText}>
+                      <Text style={Styles.errorText}>
                         Please upload the User ID Proof document to proceed
                         further.
                       </Text>
@@ -450,7 +451,7 @@ const UserProfileScreen = (props) => {
                 </Card>
               )}
               {isEdit && (
-                <View style={styles.formContainer}>
+                <View style={Styles.formContainer}>
                   <TextField
                     labelStyle={Styles.label}
                     labelContainerStyle={Styles.labelContainer}
@@ -465,7 +466,7 @@ const UserProfileScreen = (props) => {
                     label={
                       <Text>
                         Company Name
-                        <Text style={styles.required}>*</Text>
+                        <Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -477,11 +478,11 @@ const UserProfileScreen = (props) => {
                     formType === 2 && (
                       <View
                         style={{
-                          ...styles.errorContainer,
+                          ...Styles.errorContainer,
                           display: formType === 1 ? "none" : "flex",
                         }}
                       >
-                        <Text style={styles.errorText}>
+                        <Text style={Styles.errorText}>
                           Please enter valid company name.
                         </Text>
                       </View>
@@ -502,7 +503,7 @@ const UserProfileScreen = (props) => {
                     label={
                       <Text>
                         Registered Address
-                        <Text style={styles.required}>*</Text>
+                        <Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -518,11 +519,11 @@ const UserProfileScreen = (props) => {
                     formType === 2 && (
                       <View
                         style={{
-                          ...styles.errorContainer,
+                          ...Styles.errorContainer,
                           display: formType === 1 ? "none" : "flex",
                         }}
                       >
-                        <Text style={styles.errorText}>
+                        <Text style={Styles.errorText}>
                           Please enter valid company registered address.
                         </Text>
                       </View>
@@ -545,7 +546,7 @@ const UserProfileScreen = (props) => {
                   {!formState.inputValidities.company_regno_doc &&
                     isSubmitted &&
                     formType === 2 && (
-                      <Text style={styles.errorText}>
+                      <Text style={Styles.errorText}>
                         Please upload company registration document.
                       </Text>
                     )}
@@ -573,11 +574,11 @@ const UserProfileScreen = (props) => {
                     formType === 2 && (
                       <View
                         style={{
-                          ...styles.errorContainer,
+                          ...Styles.errorContainer,
                           display: formType === 1 ? "none" : "flex",
                         }}
                       >
-                        <Text style={styles.errorText}>
+                        <Text style={Styles.errorText}>
                           Please enter valid company GST number.
                         </Text>
                       </View>
@@ -600,13 +601,13 @@ const UserProfileScreen = (props) => {
                   {!formState.inputValidities.company_gstn_doc &&
                     isSubmitted &&
                     formType === 2 && (
-                      <Text style={styles.errorText}>
+                      <Text style={Styles.errorText}>
                         Please upload valid GST certificate.
                       </Text>
                     )}
                   <View
                     style={{
-                      ...styles.separator,
+                      ...Styles.separator,
                       display: formType === 1 ? "none" : "flex",
                     }}
                   ></View>
@@ -624,7 +625,7 @@ const UserProfileScreen = (props) => {
                     label={
                       <Text>
                         Name Of Contact/Owner
-                        <Text style={styles.required}>*</Text>
+                        <Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -657,7 +658,7 @@ const UserProfileScreen = (props) => {
                   {!formState.inputValidities.owner_idno_doc &&
                     isSubmitted &&
                     formType === 2 && (
-                      <Text style={styles.errorText}>
+                      <Text style={Styles.errorText}>
                         Please upload valid id proof.
                       </Text>
                     )}
@@ -679,7 +680,7 @@ const UserProfileScreen = (props) => {
                     keyboardType="numeric"
                     label={
                       <Text>
-                        Mobile Number<Text style={styles.required}>*</Text>
+                        Mobile Number<Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -732,7 +733,7 @@ const UserProfileScreen = (props) => {
                     errorText="Please enter valid address details."
                     label={
                       <Text>
-                        Address Details<Text style={styles.required}>*</Text>
+                        Address Details<Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -778,7 +779,7 @@ const UserProfileScreen = (props) => {
 
           {!isProfile && (
             <View style={styles.screen}>
-              <Card style={{ ...styles.card, marginTop: 40 }}>
+              <Card style={{ ...Styles.card, marginTop: 40 }}>
                 <View style={styles.passFormContainer}>
                   <TextField
                     readonly={true}
@@ -786,7 +787,7 @@ const UserProfileScreen = (props) => {
                     label={
                       <Text>
                         User Id
-                        <Text style={styles.required}>*</Text>
+                        <Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -806,7 +807,7 @@ const UserProfileScreen = (props) => {
                     label={
                       <Text>
                         Password
-                        <Text style={styles.required}>*</Text>
+                        <Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -830,7 +831,7 @@ const UserProfileScreen = (props) => {
                     label={
                       <Text>
                         Confirm Password
-                        <Text style={styles.required}>*</Text>
+                        <Text style={Styles.required}>*</Text>
                       </Text>
                     }
                     leadingIcon={
@@ -842,8 +843,8 @@ const UserProfileScreen = (props) => {
                     }
                   />
                   {!cnfPwdCheck && (
-                    <View style={styles.errorContainer}>
-                      <Text style={styles.errorText}>
+                    <View style={Styles.errorContainer}>
+                      <Text style={Styles.errorText}>
                         Confirm password does not match!
                       </Text>
                     </View>
@@ -874,90 +875,13 @@ const UserProfileScreen = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    alignItems: "center",
-  },
-  ScreenSwitchContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.primaryDark,
-    overflow: "hidden",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  leftTextCon: {
-    width: "50%",
-    height: 50,
-    paddingLeft: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 3,
-    paddingVertical: 8,
-  },
-  rightTextCon: {
-    width: "50%",
-    height: 50,
-    paddingRight: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 3,
-    paddingVertical: 8,
-    backgroundColor: Colors.success,
-  },
-  focusedTab: {
-    fontFamily: "open-sans",
-    fontSize: 13,
-    color: "#fff",
-  },
-  screen: {
-    flex: 1,
     width: window.width,
     flexDirection: "column",
-  },
-  card: {
-    alignSelf: "center",
-    width: "95%",
-  },
-  formContainer: {
-    alignSelf: "center",
-    marginTop: 20,
-    alignItems: "center",
-    width: window.width * 0.9,
-    backgroundColor: Colors.semiTransparentBlack,
-    borderRadius: 8,
-    paddingVertical: 20,
-  },
-  errorContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    width: "80%",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  errorText: {
-    fontFamily: "open-sans",
-    color: Colors.danger,
-    fontSize: 13,
   },
   fileUploadBtn: {
     paddingVertical: 5,
     marginVertical: 10,
     width: 200,
-  },
-  separator: {
-    width: "90%",
-    height: 2,
-    backgroundColor: Colors.danger,
-    marginVertical: 10,
-  },
-  required: {
-    color: "red",
   },
   passFormContainer: {
     flex: 1,

@@ -46,7 +46,7 @@ export const getTransporterProfile = () => {
 
     dispatch({
       type: GET_TRANS_PROF,
-      user: result.Record,
+      transp: result.Records[0],
     });
 
     return await result;
