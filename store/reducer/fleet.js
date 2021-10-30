@@ -1,4 +1,9 @@
-import { ADD_FLEET, REMOVE_FLEET, RESET_FLEET } from "../action/fleet";
+import {
+  ADD_FLEET,
+  REMOVE_FLEET,
+  RESET_FLEET,
+  GET_FLEETS,
+} from "../action/fleet";
 import Fleet from "../../shared/models/fleet";
 
 const initialState = {
@@ -20,6 +25,7 @@ const initialState = {
     //   vtypid: 2,
     // },
   },
+  regFleets: [],
 };
 
 export default (state = initialState, action) => {
@@ -61,6 +67,40 @@ export default (state = initialState, action) => {
     case RESET_FLEET:
       return {
         fleets: {},
+        regFleets: [],
+      };
+
+    case GET_FLEETS:
+      const udtFleets = action.fleets.map(function (fleet) {
+        return {
+          vehid: fleet.vehid,
+          tid: fleet.tid,
+          vtypid: fleet.vtypid,
+          vtypnm: fleet.vtypnm,
+          vehno: fleet.vehno,
+          vehchesino: fleet.vehchesino,
+          vehinsuno: fleet.vehinsuno,
+          vehinsexpdte: fleet.vehinsexpdte,
+          vehregdte: fleet.vehregdte,
+          vehinsurancedoc: fleet.vehinsurancedoc,
+          vehphoto: fleet.vehphoto,
+          vehregdoc: fleet.vehregdoc,
+          docname: fleet.docname,
+          sts: fleet.sts,
+          latitude: fleet.latitude,
+          longitude: fleet.longitude,
+          speed: fleet.speed,
+          vehiphoto: fleet.vehiphoto,
+          iconimage: fleet.iconimage,
+          vehfitcetexpdte: fleet.vehfitcetexpdte,
+          vehfitcetphoto: fleet.vehfitcetphoto,
+          vehpucexpdte: fleet.vehpucexpdte,
+          vehpucphoto: fleet.vehpucphoto,
+        };
+      });
+      return {
+        ...state,
+        regFleets: udtFleets,
       };
 
     default:

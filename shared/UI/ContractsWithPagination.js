@@ -18,7 +18,7 @@ import SearchBox from "../components/SearchBox";
 
 const window = Dimensions.get("window");
 
-const limit = 5;
+const limit = 30;
 
 const ContractsWithPagination = (props) => {
   const { screenName } = props;
