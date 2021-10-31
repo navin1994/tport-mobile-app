@@ -33,7 +33,7 @@ const TransporterDashboardScreen = (props) => {
       title: "Your Fleets",
       onClick: () => {
         navigation.navigate("TransporterNavigator", {
-          screen: "trnsptrFleet",
+          screen: "transFleetsRoute",
         });
       },
     },

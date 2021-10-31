@@ -5,6 +5,8 @@ const api = environment.api;
 const requestedUrl = {
   GETVEHTYPE: "getvtyp",
   GET_REGFLEETS: "getfleets",
+  DELETE_FLEET: "deletefleet",
+  UPDATE_FLEET: "updatefleet",
 };
 
 export const ADD_FLEET = "ADD_FLEET";
@@ -44,14 +46,14 @@ export const getVehicleTypes = () => {
   };
 };
 
-export const getFleetsData = () => {
+export const getFleetsData = (v_id) => {
   return async (dispatch, getState) => {
     const response = await fetch(api + requestedUrl.GET_REGFLEETS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ tid: getState().auth.tid }),
+      body: JSON.stringify({ tid: getState().auth.tid, v_id }),
     });
     if (!response.ok) {
       throw new Error(
@@ -66,6 +68,46 @@ export const getFleetsData = () => {
       type: GET_FLEETS,
       fleets: result.Records,
     });
+    return await result;
+  };
+};
+
+export const deleteFleet = (v_id) => {
+  return async (dispatch, getState) => {
+    const response = await fetch(api + requestedUrl.DELETE_FLEET, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tid: getState().auth.tid, v_id }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while deleting fleet.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const updateFleet = (data) => {
+  return async (dispatch, getState) => {
+    const response = await fetch(api + requestedUrl.UPDATE_FLEET, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tid: getState().auth.tid, ...data }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while deleting fleet.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
     return await result;
   };
 };

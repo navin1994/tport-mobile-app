@@ -1,5 +1,6 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Colors from "../shared/constants/Colors";
 import TransporterDashboardScreen from "../screens/transporter/TransporterDashboardScreen";
@@ -15,6 +16,47 @@ import TransporterFleetScreen from "../screens/transporter/TransporterFleetScree
 import CustomDrawerContent from "../shared/components/CustomDrawerContent";
 
 const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
+
+const FleetsNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: Colors.titleBackground,
+        },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontFamily: "open-sans-bold",
+        },
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Group>
+        <Stack.Screen
+          name="trnsptrFleet"
+          component={TransporterFleetScreen}
+          options={{ title: "Transporter Fleet" }}
+        />
+        <Stack.Screen
+          name="fleetDtls"
+          component={FleetDetailsScreen}
+          options={{ title: "Fleet Details" }}
+        />
+        <Stack.Screen
+          name="fleetSrvcs"
+          component={FleetServicesScreen}
+          options={{ title: "Fleet Services" }}
+        />
+        <Stack.Screen
+          name="tyreDtls"
+          component={TyreDetailsScreen}
+          options={{ title: "Tyre Details" }}
+        />
+      </Stack.Group>
+    </Stack.Navigator>
+  );
+};
 
 const TransporterNavigator = () => {
   return (
@@ -50,21 +92,6 @@ const TransporterNavigator = () => {
           options={{ title: "Contracts History" }}
         />
         <Drawer.Screen
-          name="fleetDtls"
-          component={FleetDetailsScreen}
-          options={{ title: "Fleet Details" }}
-        />
-        <Drawer.Screen
-          name="fleetSrvcs"
-          component={FleetServicesScreen}
-          options={{ title: "Fleet Services" }}
-        />
-        <Drawer.Screen
-          name="tyreDtls"
-          component={TyreDetailsScreen}
-          options={{ title: "Tyre Details" }}
-        />
-        <Drawer.Screen
           name="tprtArena"
           component={TportArenaScreen}
           options={{ title: "TPort Arena" }}
@@ -80,9 +107,9 @@ const TransporterNavigator = () => {
           options={{ title: "Transporter Profile" }}
         />
         <Drawer.Screen
-          name="trnsptrFleet"
-          component={TransporterFleetScreen}
-          options={{ title: "Transporter Fleet" }}
+          name="transFleetsRoute"
+          component={FleetsNavigator}
+          options={{ headerShown: false, title: "Your Fleets" }}
         />
       </Drawer.Group>
     </Drawer.Navigator>

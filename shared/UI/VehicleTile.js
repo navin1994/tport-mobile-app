@@ -53,19 +53,37 @@ const VehicleTile = (props) => {
               style={styles.textBtn}
               titleStyle={styles.titleStyle}
               title="Fleet Details"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate("fleetDtls", fleet.vehid);
+              }}
             />
             <TextButton
               style={styles.textBtn}
               titleStyle={styles.titleStyle}
               title="Service Details"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate("TransporterNavigator", {
+                  screen: "transFleetsRoute",
+                  params: {
+                    screen: "fleetSrvcs",
+                    params: fleet.vehid,
+                  },
+                });
+              }}
             />
             <TextButton
               style={styles.textBtn}
               titleStyle={styles.titleStyle}
               title="Tyre Details"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate("TransporterNavigator", {
+                  screen: "transFleetsRoute",
+                  params: {
+                    screen: "tyreDtls",
+                    params: fleet.vehid,
+                  },
+                });
+              }}
             />
           </View>
         </View>
