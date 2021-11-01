@@ -17,6 +17,7 @@ import {
   Alert,
   Image,
   FlatList,
+  Linking,
 } from "react-native";
 import {
   Ionicons,
@@ -26,6 +27,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import Moment from "moment";
+import * as FileSystem from "expo-file-system";
 
 import Colors from "../../shared/constants/Colors";
 import ImageDocPicker from "../../shared/components/ImageDocPicker";
@@ -210,6 +212,26 @@ const FleetDetailsScreen = (props) => {
       sts: INSURANCE,
     };
     finalMethod(data, "Updating Insurance...");
+  };
+
+  const downloadAndOpenFile = async (remoteUrl) => {
+    let localPath = `${
+      FileSystem.documentDirectory +
+      remoteUrl.substring(remoteUrl.lastIndexOf("/") + 1)
+    }`;
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "Downloading..." });
+      const savedObj = await FileSystem.downloadAsync(remoteUrl, localPath);
+      setIsLoading({ state: false, msg: "" });
+      console.log(savedObj.uri);
+      if (savedObj.status === 200) {
+        Linking.openURL(savedObj.uri);
+      }
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err);
+    }
   };
 
   const finalMethod = async (data, msg) => {
@@ -401,7 +423,11 @@ const FleetDetailsScreen = (props) => {
                     <Text style={{ ...styles.vehInfoData, marginRight: 5 }}>
                       {fleet.vehinsuno}
                     </Text>
-                    <TouchableCmp onPress={() => {}}>
+                    <TouchableCmp
+                      onPress={() => {
+                        Linking.openURL(fleet.vehinsurancedoc);
+                      }}
+                    >
                       <MaterialCommunityIcons
                         name="download-circle-outline"
                         size={24}
@@ -525,7 +551,11 @@ const FleetDetailsScreen = (props) => {
                     <Text style={{ ...styles.vehInfoData, marginRight: 5 }}>
                       {fleet.vehpucexpdte}
                     </Text>
-                    <TouchableCmp onPress={() => {}}>
+                    <TouchableCmp
+                      onPress={() => {
+                        Linking.openURL(fleet.vehpucphoto);
+                      }}
+                    >
                       <MaterialCommunityIcons
                         name="download-circle-outline"
                         size={24}
@@ -618,7 +648,11 @@ const FleetDetailsScreen = (props) => {
                     <Text style={{ ...styles.vehInfoData, marginRight: 5 }}>
                       {fleet.vehfitcetexpdte}
                     </Text>
-                    <TouchableCmp onPress={() => {}}>
+                    <TouchableCmp
+                      onPress={() => {
+                        Linking.openURL(fleet.vehfitcetphoto);
+                      }}
+                    >
                       <MaterialCommunityIcons
                         name="download-circle-outline"
                         size={24}
@@ -693,6 +727,8 @@ const FleetDetailsScreen = (props) => {
                   <TouchableCmp
                     onPress={() => {
                       setFitEdit(false);
+                      inputChangeHandler("fitnessDoc", "", false);
+                      inputChangeHandler("fitExpDte", "", false);
                     }}
                   >
                     <MaterialCommunityIcons
