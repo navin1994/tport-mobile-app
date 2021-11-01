@@ -62,13 +62,7 @@ const VehicleTile = (props) => {
               titleStyle={styles.titleStyle}
               title="Service Details"
               onPress={() => {
-                navigation.navigate("TransporterNavigator", {
-                  screen: "transFleetsRoute",
-                  params: {
-                    screen: "fleetSrvcs",
-                    params: fleet.vehid,
-                  },
-                });
+                navigation.navigate("fleetSrvcs", fleet.vehid);
               }}
             />
             <TextButton

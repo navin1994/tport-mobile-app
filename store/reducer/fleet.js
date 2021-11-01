@@ -3,29 +3,14 @@ import {
   REMOVE_FLEET,
   RESET_FLEET,
   GET_FLEETS,
+  GET_SERVICES,
 } from "../action/fleet";
 import Fleet from "../../shared/models/fleet";
 
 const initialState = {
-  fleets: {
-    // "MH35 V0498": {
-    //   vehphoto: "",
-    //   vehregfle: "",
-    //   vehinsurancedoc: "",
-    //   vehfitcetexpdte: "20/02/2003",
-    //   vehfitcetphoto: "",
-    //   vehpucexpdte: "20/02/2003",
-    //   vehpucphoto: "",
-    //   vehno: "MH35 V0498",
-    //   vtypnm: "Truck",
-    //   vehregdte: "20/02/2003",
-    //   vehchesino: "12568544",
-    //   vehinsuno: "545665652",
-    //   vehinsexpdte: "20/02/2003",
-    //   vtypid: 2,
-    // },
-  },
+  fleets: {},
   regFleets: [],
+  services: [],
 };
 
 export default (state = initialState, action) => {
@@ -66,8 +51,8 @@ export default (state = initialState, action) => {
       };
     case RESET_FLEET:
       return {
+        ...state,
         fleets: {},
-        regFleets: [],
       };
 
     case GET_FLEETS:
@@ -101,6 +86,29 @@ export default (state = initialState, action) => {
       return {
         ...state,
         regFleets: udtFleets,
+      };
+
+    case GET_SERVICES:
+      const updatedSrv = action.services.map(function (src) {
+        return {
+          changed_date: src.changed_date,
+          infoid: src.infoid,
+          km_reading: src.km_reading,
+          km_run: src.km_run,
+          remark: src.remark,
+          service_date: src.service_date,
+          sts: src.sts,
+          tid: src.tid,
+          type: src.type,
+          tyre_make: src.tyre_make,
+          tyre_no: src.tyre_no,
+          tyres: src.tyres,
+          vehid: src.vehid,
+        };
+      });
+      return {
+        ...state,
+        services: updatedSrv,
       };
 
     default:

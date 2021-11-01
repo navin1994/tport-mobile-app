@@ -7,12 +7,15 @@ const requestedUrl = {
   GET_REGFLEETS: "getfleets",
   DELETE_FLEET: "deletefleet",
   UPDATE_FLEET: "updatefleet",
+  GET_FLEET_INFO: "getFleetinfo",
+  DELETE_FLEET_INFO: "deleteFleetinfo",
 };
 
 export const ADD_FLEET = "ADD_FLEET";
 export const REMOVE_FLEET = "REMOVE_FLEET";
 export const RESET_FLEET = "RESET_FLEET";
 export const GET_FLEETS = "GET_FLEETS";
+export const GET_SERVICES = "GET_SERVICES";
 
 export const addFleet = (fleet) => {
   return { type: ADD_FLEET, fleet: fleet };
@@ -103,6 +106,50 @@ export const updateFleet = (data) => {
     });
     if (!response.ok) {
       throw new Error("Something went wrong while deleting fleet.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const vehicleServices = (vehid) => {
+  return async (dispatch) => {
+    const response = await fetch(api + requestedUrl.GET_FLEET_INFO, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ vehid }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while getting fleet information.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    dispatch({
+      type: GET_SERVICES,
+      services: result.Records,
+    });
+    return await result;
+  };
+};
+
+export const deleteFleetInfo = (infoid) => {
+  return async (dispatch) => {
+    const response = await fetch(api + requestedUrl.DELETE_FLEET_INFO, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ infoid }),
+    });
+    if (!response.ok) {
+      throw new Error("Something went wrong while deleting fleet information.");
     }
     const result = await response.json();
     if (result.Result === "NOTOK") {
