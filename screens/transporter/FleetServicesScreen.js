@@ -13,12 +13,12 @@ import {
   Platform,
   TouchableNativeFeedback,
   TouchableOpacity,
-  ScrollView,
   Alert,
   FlatList,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "../../shared/constants/Colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -26,12 +26,15 @@ import BackgroundImage from "../../shared/UI/BackgroundImage";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import * as fleetActions from "../../store/action/fleet";
 import ServiceTile from "../../shared/UI/ServiceTile";
+import ServiceFormDialog from "../../shared/components/ServiceFormDialog";
 
 const window = Dimensions.get("window");
 
 const FleetServicesScreen = (props) => {
   const { navigation, route } = props;
   const [error, setError] = useState();
+  const [showDialog, setShowDialog] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const fleet = useSelector((state) =>
     state.fleets.regFleets.find((x) => x.vehid === route.params)
   );
@@ -44,6 +47,11 @@ const FleetServicesScreen = (props) => {
   });
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.OS === "android" && Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
 
   useEffect(() => {
     if (isFocused) {
@@ -99,9 +107,53 @@ const FleetServicesScreen = (props) => {
     ]);
   };
 
+  const saveService = async (formState) => {
+    setIsSubmitted(true);
+    formState.inputValues.vehid = fleet.vehid;
+    if (!formState.formIsValid) {
+      Alert.alert("Error", "Please check errors in the form.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "saving..." });
+      const result = await dispatch(
+        fleetActions.saveFleetInfo(formState.inputValues)
+      );
+      setIsLoading({ state: false, msg: "" });
+      if (result.Result === "OK") {
+        Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+        onCloseDialog();
+      } else {
+        Alert.alert("Error", result.Msg, [{ text: "Okay" }]);
+      }
+      getFleetInfo();
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
+  const onCloseDialog = useCallback(() => {
+    setShowDialog(false);
+    setIsSubmitted(false);
+  }, [setShowDialog]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: fleet.vtypnm,
+      headerRight: () => (
+        <TouchableCmp
+          useForeground
+          onPress={() => {
+            setShowDialog(true);
+          }}
+        >
+          <Ionicons name="add-circle-outline" size={35} color="#FFF" />
+        </TouchableCmp>
+      ),
     });
   }, [navigation]);
 
@@ -112,6 +164,11 @@ const FleetServicesScreen = (props) => {
         style={styles.screen}
         pointerEvents={isLoading.state ? "none" : "auto"}
       >
+        <ServiceFormDialog
+          visible={showDialog}
+          closeModal={onCloseDialog}
+          saveService={saveService}
+        />
         <View style={styles.vehicleNumber}>
           <Text style={styles.vehNum}>{fleet.vehno}</Text>
         </View>
