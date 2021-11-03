@@ -6,9 +6,13 @@ import {
   Dimensions,
   FlatList,
   Alert,
+  Platform,
+  TouchableNativeFeedback,
+  TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import DrawerHeaderLeft from "../../shared/components/DrawerHeaderLeft";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
@@ -28,6 +32,11 @@ const TransporterFleetScreen = (props) => {
   });
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.OS === "android" && Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
 
   useEffect(() => {
     if (isFocused) {
@@ -65,6 +74,16 @@ const TransporterFleetScreen = (props) => {
             />
           }
         />
+      ),
+      headerRight: () => (
+        <TouchableCmp
+          useForeground
+          onPress={() => {
+            navigation.navigate("addFleet");
+          }}
+        >
+          <Ionicons name="add-circle-outline" size={35} color="#FFF" />
+        </TouchableCmp>
       ),
     });
   }, [navigation]);

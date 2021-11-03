@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useCallback,
   useLayoutEffect,
-  useReducer,
 } from "react";
 import {
   Text,
@@ -21,7 +20,6 @@ import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "../../shared/constants/Colors";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import BackgroundImage from "../../shared/UI/BackgroundImage";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import * as fleetActions from "../../store/action/fleet";
@@ -125,7 +123,7 @@ const FleetServicesScreen = (props) => {
       setIsLoading({ state: false, msg: "" });
       if (result.Result === "OK") {
         Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
-        onCloseDialog();
+        // onCloseDialog();
       } else {
         Alert.alert("Error", result.Msg, [{ text: "Okay" }]);
       }

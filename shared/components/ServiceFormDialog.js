@@ -215,7 +215,10 @@ const ServiceFormDialog = (props) => {
             <View style={Styles.btnContainer}>
               <RaisedButton
                 title="SAVE SERVICE"
-                onPress={saveService.bind(this, formState)}
+                onPress={() => {
+                  saveService(formState);
+                  closeModalWindow();
+                }}
                 style={{
                   flex: null,
                   height: 40,

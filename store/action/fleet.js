@@ -10,6 +10,7 @@ const requestedUrl = {
   GET_FLEET_INFO: "getFleetinfo",
   DELETE_FLEET_INFO: "deleteFleetinfo",
   FLEET_INFO_SAVE: "saveFleetinfo",
+  REG_NEWFLEET: "fleetsregistr",
 };
 
 export const ADD_FLEET = "ADD_FLEET";
@@ -171,6 +172,28 @@ export const saveFleetInfo = (data) => {
     });
     if (!response.ok) {
       throw new Error("Something went wrong while saving fleet information.");
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const regNewFleet = (data) => {
+  return async (dispatch, getState) => {
+    const response = await fetch(api + requestedUrl.REG_NEWFLEET, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tid: getState().auth.tid, ...data }),
+    });
+    if (!response.ok) {
+      throw new Error(
+        "Something went wrong while registering new fleet information."
+      );
     }
     const result = await response.json();
     if (result.Result === "NOTOK") {
