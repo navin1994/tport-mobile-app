@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useReducer, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -12,44 +12,7 @@ import RaisedButton from "./RaisedButton";
 import * as transporterActions from "../../store/action/transporter";
 import * as fleetActions from "../../store/action/fleet";
 import FleetForm from "./FleetForm";
-
-const window = Dimensions.get("window");
-
-const vehInitFormState = {
-  inputValues: {
-    vtypid: "",
-    vtypnm: "",
-    vehno: "",
-    vehregdte: "",
-    vehinsexpdte: "",
-    vehinsuno: "",
-    vehchesino: "",
-    vehphoto: [],
-    vehregfle: "",
-    vehinsurancedoc: "",
-    vehfitcetexpdte: "",
-    vehfitcetphoto: "",
-    vehpucexpdte: "",
-    vehpucphoto: "",
-  },
-  inputValidities: {
-    vtypid: false,
-    vtypnm: false,
-    vehno: false,
-    vehregdte: false,
-    vehinsexpdte: false,
-    vehinsuno: false,
-    vehchesino: false,
-    vehphoto: false,
-    vehregfle: false,
-    vehinsurancedoc: false,
-    vehfitcetexpdte: false,
-    vehfitcetphoto: false,
-    vehpucexpdte: true,
-    vehpucphoto: true,
-  },
-  formIsValid: false,
-};
+import { vehInitFormState } from "../constants/Variables";
 
 const FleetRegistrationForm = (props) => {
   const [isFleetSubmit, setIsFleetSubmit] = useState(false);
