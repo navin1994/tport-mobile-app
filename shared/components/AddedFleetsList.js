@@ -130,9 +130,9 @@ const AddedFleetsList = (props) => {
       dispatch(transporterActions.resetForm());
       setIsSubLoader(false);
       setChecked(false);
+      setIsSubLoader(false);
       navigation.goBack();
       Alert.alert("Registration", resData.Msg, [{ text: "Okay" }]);
-      setIsSubLoader(false);
     } catch (err) {
       setIsSubLoader(false);
       setError(err.message);
