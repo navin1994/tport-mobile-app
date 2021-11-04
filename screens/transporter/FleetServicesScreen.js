@@ -32,7 +32,6 @@ const FleetServicesScreen = (props) => {
   const { navigation, route } = props;
   const [error, setError] = useState();
   const [showDialog, setShowDialog] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const fleet = useSelector((state) =>
     state.fleets.regFleets.find((x) => x.vehid === route.params)
   );
@@ -106,7 +105,6 @@ const FleetServicesScreen = (props) => {
   };
 
   const saveService = async (formState) => {
-    setIsSubmitted(true);
     formState.inputValues.vehid = fleet.vehid;
     if (!formState.formIsValid) {
       Alert.alert("Error", "Please check errors in the form.", [
@@ -136,7 +134,6 @@ const FleetServicesScreen = (props) => {
 
   const onCloseDialog = useCallback(() => {
     setShowDialog(false);
-    setIsSubmitted(false);
   }, [setShowDialog]);
 
   useLayoutEffect(() => {
@@ -196,12 +193,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   vehicleNumber: {
+    position: "absolute",
     marginTop: 5,
     paddingVertical: 5,
     paddingHorizontal: 20,
     backgroundColor: Colors.success,
     borderRadius: 20,
     opacity: 0.9,
+    shadowColor: "black",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 12,
   },
   vehNum: {
     fontFamily: "open-sans",
