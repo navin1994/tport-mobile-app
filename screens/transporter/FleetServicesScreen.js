@@ -19,8 +19,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
-import Colors from "../../shared/constants/Colors";
 import BackgroundImage from "../../shared/UI/BackgroundImage";
+import Styles from "../../shared/styles/styles";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import * as fleetActions from "../../store/action/fleet";
 import ServiceTile from "../../shared/UI/ServiceTile";
@@ -164,12 +164,12 @@ const FleetServicesScreen = (props) => {
           closeModal={onCloseDialog}
           saveService={saveService}
         />
-        <View style={styles.vehicleNumber}>
-          <Text style={styles.vehNum}>{fleet.vehno}</Text>
+        <View style={Styles.vehicleNumber}>
+          <Text style={Styles.vehNum}>{fleet.vehno}</Text>
         </View>
         {services.length === 0 && (
-          <View style={styles.msgBackGround}>
-            <Text style={styles.msg}>Service Data Not Available</Text>
+          <View style={Styles.msgBackGround}>
+            <Text style={Styles.msg}>Service Data Not Available</Text>
           </View>
         )}
         {services.length > 0 && (
@@ -191,37 +191,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     alignItems: "center",
-  },
-  vehicleNumber: {
-    position: "absolute",
-    marginTop: 5,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
-    backgroundColor: Colors.success,
-    borderRadius: 20,
-    opacity: 0.9,
-    shadowColor: "black",
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 12,
-  },
-  vehNum: {
-    fontFamily: "open-sans",
-    fontSize: 14,
-    color: "#fff",
-  },
-  msgBackGround: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.semiTransparentBlack,
-    width: window.width,
-  },
-  msg: {
-    color: "#FFF",
-    fontFamily: "open-sans-bold",
-    fontSize: 18,
   },
 });
 

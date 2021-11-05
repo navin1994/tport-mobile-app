@@ -15,6 +15,7 @@ import TransporterProfileScreen from "../screens/transporter/TransporterProfileS
 import TransporterFleetScreen from "../screens/transporter/TransporterFleetScreen";
 import CustomDrawerContent from "../shared/components/CustomDrawerContent";
 import AddFleetScreen from "../screens/transporter/AddFleetScreen";
+import AddTyreScreen from "../screens/transporter/AddTyreScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -58,6 +59,11 @@ const FleetsNavigator = () => {
           name="addFleet"
           component={AddFleetScreen}
           options={{ title: "Add New Fleet" }}
+        />
+        <Stack.Screen
+          name="addTyre"
+          component={AddTyreScreen}
+          options={{ title: "Add Tyre Details" }}
         />
       </Stack.Group>
     </Stack.Navigator>

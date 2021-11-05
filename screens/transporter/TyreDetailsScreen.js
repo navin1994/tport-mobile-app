@@ -24,12 +24,19 @@ import BackgroundImage from "../../shared/UI/BackgroundImage";
 import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import TyreTile from "../../shared/UI/TyreTile";
 import * as fleetActions from "../../store/action/fleet";
+import ScreenNames from "../../shared/constants/ScreenNames";
+import TyreFormDialog from "../../shared/components/TyreFormDialog";
 
 const window = Dimensions.get("window");
 
 const TyreDetailsScreen = (props) => {
   const { navigation, route } = props;
   const [error, setError] = useState();
+  const [editTyre, setEditTyre] = useState();
+  const [showDialog, setShowDialog] = useState(false);
+  const [isClearForm, setClearForm] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   const fleet = useSelector((state) =>
     state.fleets.regFleets.find((x) => x.vehid === route.params)
@@ -61,12 +68,62 @@ const TyreDetailsScreen = (props) => {
     }
   }, [error]);
 
+  const onEditTyre = (tyre) => {
+    setEditTyre(tyre);
+    setShowDialog(true);
+    setIsEdit(true);
+  };
+
   const getFleetInfo = async () => {
     setError(null);
     try {
       setIsLoading({ state: true, msg: "Getting Fleets info..." });
       const result = await dispatch(fleetActions.vehicleServices(fleet.vehid));
       setIsLoading({ state: false, msg: "" });
+    } catch (err) {
+      setIsLoading({ state: false, msg: "" });
+      setError(err.message);
+    }
+  };
+
+  const updateTyreDetails = async (
+    { inputValues, inputValidities, formIsValid },
+    vehId
+  ) => {
+    setIsSubmitted(true);
+    if (!formIsValid) {
+      Alert.alert("Error", "Please check error in the form.", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    const data = {
+      vehid: vehId,
+      sts: "T",
+      tyres: [
+        {
+          infoid: inputValues.infoid,
+          type: inputValues.type,
+          tyre_make: inputValues.tyre_make,
+          tyre_no: inputValues.tyre_no,
+          changed_date: inputValues.changed_date,
+          km_reading: inputValues.km_reading,
+          remark: inputValues.remark,
+        },
+      ],
+    };
+    setError(null);
+    try {
+      setIsLoading({ state: true, msg: "Updating data..." });
+      const result = await dispatch(fleetActions.updateFleetInfo(data));
+      setIsLoading({ state: false, msg: "" });
+      if (result.Result === "OK") {
+        Alert.alert("Success", result.Msg, [{ text: "Okay" }]);
+      } else {
+        Alert.alert("Error", result.Msg, [{ text: "Okay" }]);
+      }
+      getFleetInfo();
+      onCloseDialog();
     } catch (err) {
       setIsLoading({ state: false, msg: "" });
       setError(err.message);
@@ -109,6 +166,14 @@ const TyreDetailsScreen = (props) => {
     );
   };
 
+  const onCloseDialog = useCallback(() => {
+    setShowDialog(false);
+    setClearForm(!isClearForm);
+    setIsSubmitted(false);
+    setIsEdit(false);
+    setEditTyre(null);
+  }, [setShowDialog]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: fleet.vtypnm,
@@ -116,7 +181,7 @@ const TyreDetailsScreen = (props) => {
         <TouchableCmp
           useForeground
           onPress={() => {
-            // setShowDialog(true);
+            navigation.navigate("addTyre", fleet.vehid);
           }}
         >
           <Ionicons name="add-circle-outline" size={35} color="#FFF" />
@@ -124,6 +189,7 @@ const TyreDetailsScreen = (props) => {
       ),
     });
   }, [navigation]);
+
   return (
     <BackgroundImage>
       {isLoading.state && <ProgressIndicator msg={isLoading.msg} />}
@@ -131,6 +197,16 @@ const TyreDetailsScreen = (props) => {
         style={styles.screen}
         pointerEvents={isLoading.state ? "none" : "auto"}
       >
+        <TyreFormDialog
+          visible={showDialog}
+          closeModal={onCloseDialog}
+          isSubmitted={isSubmitted}
+          updateTyre={updateTyreDetails}
+          isClearForm={isClearForm}
+          screen={ScreenNames.TRANS_TYRE_DTL_SCREEN}
+          isEdit={isEdit}
+          formData={editTyre}
+        />
         <View style={styles.vehicleNumber}>
           <Text style={styles.vehNum}>{fleet.vehno}</Text>
         </View>
@@ -148,7 +224,10 @@ const TyreDetailsScreen = (props) => {
               <TyreTile
                 tyre={item}
                 onDelete={deleteService}
-                onEdit={() => {}}
+                onEdit={() => {
+                  onEditTyre(item);
+                }}
+                screen={ScreenNames.TRANS_TYRE_DTL_SCREEN}
               />
             )}
           />

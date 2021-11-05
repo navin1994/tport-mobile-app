@@ -11,6 +11,7 @@ const requestedUrl = {
   DELETE_FLEET_INFO: "deleteFleetinfo",
   FLEET_INFO_SAVE: "saveFleetinfo",
   REG_NEWFLEET: "fleetsregistr",
+  UPDATE_FLEET_INFO: "updateFleetinfo",
 };
 
 export const ADD_FLEET = "ADD_FLEET";
@@ -18,6 +19,9 @@ export const REMOVE_FLEET = "REMOVE_FLEET";
 export const RESET_FLEET = "RESET_FLEET";
 export const GET_FLEETS = "GET_FLEETS";
 export const GET_SERVICES = "GET_SERVICES";
+export const ADD_TYRE = "ADD_TYRE";
+export const REMOVE_TYRE = "REMOVE_TYRE";
+export const RESET_TYRE = "RESET_TYRE";
 
 export const addFleet = (fleet) => {
   return { type: ADD_FLEET, fleet: fleet };
@@ -29,6 +33,18 @@ export const removeFleet = (fleetId) => {
 
 export const resetFleet = () => {
   return { type: RESET_FLEET };
+};
+
+export const addTyre = (tyre) => {
+  return { type: ADD_TYRE, tyre: tyre };
+};
+
+export const removeTyre = (tyreId) => {
+  return { type: REMOVE_TYRE, tyId: tyreId };
+};
+
+export const resetTyre = () => {
+  return { type: RESET_TYRE };
 };
 
 export const getVehicleTypes = () => {
@@ -193,6 +209,28 @@ export const regNewFleet = (data) => {
     if (!response.ok) {
       throw new Error(
         "Something went wrong while registering new fleet information."
+      );
+    }
+    const result = await response.json();
+    if (result.Result === "NOTOK") {
+      throw new Error(result.Msg);
+    }
+    return await result;
+  };
+};
+
+export const updateFleetInfo = (data) => {
+  return async (dispatch, getState) => {
+    const response = await fetch(api + requestedUrl.UPDATE_FLEET_INFO, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tid: getState().auth.tid, ...data }),
+    });
+    if (!response.ok) {
+      throw new Error(
+        "Something went wrong while updating fleet tyres information."
       );
     }
     const result = await response.json();

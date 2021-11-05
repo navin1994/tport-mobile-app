@@ -4,6 +4,9 @@ import {
   RESET_FLEET,
   GET_FLEETS,
   GET_SERVICES,
+  ADD_TYRE,
+  REMOVE_TYRE,
+  RESET_TYRE,
 } from "../action/fleet";
 import Fleet from "../../shared/models/fleet";
 
@@ -11,6 +14,7 @@ const initialState = {
   fleets: {},
   regFleets: [],
   services: [],
+  tyres: [],
 };
 
 export default (state = initialState, action) => {
@@ -53,6 +57,35 @@ export default (state = initialState, action) => {
       return {
         ...state,
         fleets: {},
+      };
+
+    case ADD_TYRE:
+      const addedTyre = action.tyre;
+      const newTyre = {
+        id: new Date(),
+        type: addedTyre.type,
+        tyre_make: addedTyre.tyre_make,
+        tyre_no: addedTyre.tyre_no,
+        changed_date: addedTyre.changed_date,
+        km_reading: addedTyre.km_reading,
+        remark: addedTyre.remark,
+      };
+      return {
+        ...state,
+        tyres: [...state.tyres, newTyre],
+      };
+
+    case REMOVE_TYRE:
+      let updatedTyres = [...state.tyres];
+      updatedTyres = updatedTyres.filter((x) => x.id !== action.tyId);
+      return {
+        ...state,
+        tyres: updatedTyres,
+      };
+    case RESET_TYRE:
+      return {
+        ...state,
+        tyres: [],
       };
 
     case GET_FLEETS:

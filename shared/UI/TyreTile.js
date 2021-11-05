@@ -1,25 +1,26 @@
 import React from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 import Card from "./Card";
 import Styles from "../styles/styles";
 import TextButton from "../components/TextButton";
 import Colors from "../constants/Colors";
+import ScreenNames from "../constants/ScreenNames";
 
 const window = Dimensions.get("window");
 
 const TyreTile = (props) => {
-  const navigation = useNavigation();
-  const { tyre, onDelete, onEdit } = props;
+  const { tyre, onDelete, onEdit, onRemove, screen } = props;
 
   return (
     <View style={styles.servContainer}>
       <Card style={styles.servInfoContainer}>
-        <View style={styles.servInfoRow}>
-          <Text style={styles.servInfoHead}>ID:</Text>
-          <Text style={styles.servInfoData}>{tyre.infoid}</Text>
-        </View>
+        {screen === ScreenNames.TRANS_TYRE_DTL_SCREEN && (
+          <View style={styles.servInfoRow}>
+            <Text style={styles.servInfoHead}>ID:</Text>
+            <Text style={styles.servInfoData}>{tyre.infoid}</Text>
+          </View>
+        )}
         <View style={styles.separator}></View>
         <View style={styles.servInfoRow}>
           <Text style={styles.servInfoHead}>Type:</Text>
@@ -53,22 +54,36 @@ const TyreTile = (props) => {
           <Text style={styles.servInfoData}>{tyre.remark}</Text>
         </View>
         <View style={styles.separator}></View>
-        <View style={{ ...Styles.actionsContainer, marginVertical: 5 }}>
-          <View style={Styles.btnContainer}>
-            <TextButton
-              style={styles.textBtn}
-              titleStyle={{ ...styles.titleStyle, color: Colors.danger }}
-              title="DELETE"
-              onPress={onDelete.bind(this, tyre.infoid)}
-            />
-            <TextButton
-              style={styles.textBtn}
-              titleStyle={{ ...styles.titleStyle, color: Colors.info }}
-              title="EDIT"
-              onPress={() => {}}
-            />
+        {ScreenNames.TRANS_TYRE_DTL_SCREEN === screen && (
+          <View style={{ ...Styles.actionsContainer, marginVertical: 5 }}>
+            <View style={Styles.btnContainer}>
+              <TextButton
+                style={styles.textBtn}
+                titleStyle={{ ...styles.titleStyle, color: Colors.danger }}
+                title="DELETE"
+                onPress={onDelete.bind(this, tyre.infoid)}
+              />
+              <TextButton
+                style={styles.textBtn}
+                titleStyle={{ ...styles.titleStyle, color: Colors.info }}
+                title="EDIT"
+                onPress={onEdit}
+              />
+            </View>
           </View>
-        </View>
+        )}
+        {ScreenNames.TRANS_ADD_TYRE_SCREEN === screen && (
+          <View style={{ ...Styles.actionsContainer, marginVertical: 5 }}>
+            <View style={Styles.btnContainer}>
+              <TextButton
+                style={styles.textBtn}
+                titleStyle={{ ...styles.titleStyle, color: Colors.danger }}
+                title="REMOVE"
+                onPress={onRemove.bind(this, tyre.id)}
+              />
+            </View>
+          </View>
+        )}
       </Card>
     </View>
   );

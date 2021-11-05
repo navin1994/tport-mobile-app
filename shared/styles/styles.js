@@ -120,6 +120,38 @@ const Styles = StyleSheet.create({
   required: {
     color: "red",
   },
+
+  vehicleNumber: {
+    position: "absolute",
+    marginTop: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.success,
+    borderRadius: 20,
+    opacity: 0.9,
+    shadowColor: "black",
+    shadowOpacity: 0.26,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 12,
+  },
+  vehNum: {
+    fontFamily: "open-sans",
+    fontSize: 14,
+    color: "#fff",
+  },
+  msgBackGround: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.semiTransparentBlack,
+    width: window.width,
+  },
+  msg: {
+    color: "#FFF",
+    fontFamily: "open-sans-bold",
+    fontSize: 18,
+  },
 });
 
 export default Styles;
