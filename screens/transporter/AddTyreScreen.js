@@ -5,10 +5,8 @@ import React, {
   useLayoutEffect,
 } from "react";
 import {
-  Text,
   View,
   StyleSheet,
-  Dimensions,
   Platform,
   TouchableNativeFeedback,
   TouchableOpacity,
@@ -16,7 +14,6 @@ import {
   FlatList,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "../../shared/constants/Colors";
@@ -40,7 +37,6 @@ const AddTyreScreen = (props) => {
     msg: "Loading...",
   });
   const dispatch = useDispatch();
-  const isFocused = useIsFocused();
 
   const tyres = useSelector((state) => state.fleets.tyres);
 

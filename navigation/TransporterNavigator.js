@@ -16,6 +16,7 @@ import TransporterFleetScreen from "../screens/transporter/TransporterFleetScree
 import CustomDrawerContent from "../shared/components/CustomDrawerContent";
 import AddFleetScreen from "../screens/transporter/AddFleetScreen";
 import AddTyreScreen from "../screens/transporter/AddTyreScreen";
+import AddPrefScreen from "../screens/transporter/AddPrefScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -65,6 +66,42 @@ const FleetsNavigator = () => {
           component={AddTyreScreen}
           options={{ title: "Add Tyre Details" }}
         />
+        <Stack.Screen
+          name="addPref"
+          component={AddPrefScreen}
+          options={{ title: "Add Preference" }}
+        />
+      </Stack.Group>
+    </Stack.Navigator>
+  );
+};
+
+const PreferencesNavigator = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="tportPrefArena"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: Colors.titleBackground,
+        },
+        headerTintColor: "white",
+        headerTitleStyle: {
+          fontFamily: "open-sans-bold",
+        },
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Group>
+        <Stack.Screen
+          name="tportPrefArena"
+          component={TportArenaScreen}
+          options={{ title: "TPort Arena" }}
+        />
+        <Stack.Screen
+          name="addPref"
+          component={AddPrefScreen}
+          options={{ title: "Add Preference" }}
+        />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -105,8 +142,8 @@ const TransporterNavigator = () => {
         />
         <Drawer.Screen
           name="tprtArena"
-          component={TportArenaScreen}
-          options={{ title: "TPort Arena" }}
+          component={PreferencesNavigator}
+          options={{ title: "TPort Arena", headerShown: false }}
         />
         <Drawer.Screen
           name="trnsptrContracts"

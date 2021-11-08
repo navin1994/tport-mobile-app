@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useReducer, useEffect } from "react";
 import { View, StyleSheet, Alert, ScrollView } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import {
   formReducer,

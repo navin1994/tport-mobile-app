@@ -8,7 +8,6 @@ import {
   Text,
   View,
   StyleSheet,
-  Dimensions,
   Platform,
   TouchableNativeFeedback,
   TouchableOpacity,
@@ -25,8 +24,6 @@ import ProgressIndicator from "../../shared/UI/ProgressIndicator";
 import * as fleetActions from "../../store/action/fleet";
 import ServiceTile from "../../shared/UI/ServiceTile";
 import ServiceFormDialog from "../../shared/components/ServiceFormDialog";
-
-const window = Dimensions.get("window");
 
 const FleetServicesScreen = (props) => {
   const { navigation, route } = props;
