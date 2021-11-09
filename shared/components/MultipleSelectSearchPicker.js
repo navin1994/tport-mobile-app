@@ -85,7 +85,7 @@ const MultipleSelectSearchPicker = (props) => {
             .filter((item) =>
               item[displayKey].toLowerCase().startsWith(text.toLowerCase())
             )
-            .splice(0, 10);
+            .splice(0, 50);
     setItems(filteredItems);
   };
 
@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     padding: 2,
+    flexWrap: "wrap",
   },
   label: {
     color: "black",

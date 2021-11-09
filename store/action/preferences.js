@@ -17,8 +17,8 @@ export const addPreference = (preference) => {
   return { type: ADD_PREFERENCE, preference: preference };
 };
 
-export const removePreference = (index) => {
-  return { type: REMOVE_PREFERENCE, indx: index };
+export const removePreference = (prId) => {
+  return { type: REMOVE_PREFERENCE, id: prId };
 };
 
 export const resetPreference = () => {
@@ -76,7 +76,7 @@ export const saveTransporterLocanPref = (data) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ tid: getState().auth.tid, ...data }),
+      body: JSON.stringify({ tid: getState().auth.tid, pref: data }),
     });
     if (!response.ok) {
       throw new Error("Something went wrong while saving preferences.");

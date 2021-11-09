@@ -51,9 +51,13 @@ export default (state = initialState, action) => {
     case ADD_PREFERENCE:
       const addedPref = action.preference;
       const newPrefer = {
-        seleFleets: addedPref.seleFleets,
-        seleFrmLocn: addedPref.seleFrmLocn,
-        seleToLocn: addedPref.seleToLocn,
+        prefId: new Date(),
+        fleetids: addedPref.fleetids,
+        Fleets: addedPref.Fleets,
+        locnm: addedPref.locnm,
+        locid: addedPref.locid,
+        charges: addedPref.charges,
+        fleetType: addedPref.fleetType,
         isLoad: addedPref.isLoad,
         loadamt: addedPref.loadamt,
         isUnLoad: addedPref.isUnLoad,
@@ -69,7 +73,7 @@ export default (state = initialState, action) => {
 
     case REMOVE_PREFERENCE:
       let updatedPref = [...state.unsavedPref];
-      updatedPref.splice(action.indx);
+      updatedPref = updatedPref.filter((pref) => pref.prefId !== action.id);
       return {
         ...state,
         unsavedPref: updatedPref,

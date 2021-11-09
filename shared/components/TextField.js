@@ -74,13 +74,15 @@ const TextField = (props) => {
   return (
     <View>
       <View style={{ ...styles.inputContainer, ...props.style }}>
-        <View
-          style={{ ...styles.labelContainer, ...props.labelContainerStyle }}
-        >
-          <Text style={{ ...styles.label, ...props.labelStyle }}>
-            {props.label}
-          </Text>
-        </View>
+        {props.label && (
+          <View
+            style={{ ...styles.labelContainer, ...props.labelContainerStyle }}
+          >
+            <Text style={{ ...styles.label, ...props.labelStyle }}>
+              {props.label}
+            </Text>
+          </View>
+        )}
         {props.leadingIcon}
         <View style={{ flex: 1 }} pointerEvents={readonly ? "none" : "auto"}>
           <TextInput
